@@ -103,7 +103,10 @@ theme: next
 # Deployment
 ## Docs: https://hexo.io/docs/one-command-deployment
 deploy:
-  type: ''
+  type: 'git'
+  repo: https://github.com/SeaChan0117/SeaChan0117.github.io
+  branch: master
+  message: ''
 
 # 支持本地搜索
 search:
