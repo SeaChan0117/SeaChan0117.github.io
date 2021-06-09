@@ -9,6 +9,7 @@ branches:
   only:
     - master # build master branch only
 script:
+  - hexo clean # clean static files
   - hexo generate # generate static files
 deploy:
   provider: pages
