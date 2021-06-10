@@ -2549,6 +2549,14 @@ ul.breadcrumb li:last-child {
     color: #eee;
   }
 }
+.gt-header a,
+.gt-comments a,
+.gt-popup a {
+  border-bottom: 0;
+}
+.gt-container .gt-popup .gt-action.is--active::before {
+  top: 0.7em;
+}
 .search-active {
   overflow: hidden;
 }
@@ -2978,4 +2986,19 @@ mark.search-keyword {
   .comments {
     padding: 10px 12px;
   }
+}
+body {
+  background: var(--body-bg-color);
+  background-image: url("http://api.dujin.org/bing/1920.php");
+  color: var(--text-color);
+  font-family: Lato, 'PingFang SC', 'Microsoft YaHei', sans-serif;
+  font-size: 1em;
+  line-height: 2;
+  min-height: 100%;
+  position: relative;
+  transition: padding 0.2s ease-in-out;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+  background-position: 50% 50%;
+  background-size: cover;
 }
