@@ -41,26 +41,19 @@
     <title>JavaScript 性能优化</title>
     <url>/2021/06/11/javascript-optimize/</url>
     <content><![CDATA[<p>找工作的小伙伴是否有注意到，现在招聘要求中基本都会涉及性能优化的部分？<br>前端涉及优化点很多，本文重点关注JavaScript语言层面能做的优化，今天我们就来让 JavaScript 搞快点，从以下几点展开介绍：</p>
-<ul>
-<li><p>内存管理</p>
-</li>
-<li><p>垃圾回收与常见的GC算法</p>
-</li>
-<li><p>V8引擎的垃圾回收</p>
-</li>
-<li><p>Performance工具</p>
-</li>
-<li><p>代码优化实例  </p>
 <span id="more"></span>
-<h1 id="JavaScript内存管理（Memory-Management）"><a href="#JavaScript内存管理（Memory-Management）" class="headerlink" title="JavaScript内存管理（Memory Management）"></a>JavaScript内存管理（Memory Management）</h1><h2 id="内存管理介绍"><a href="#内存管理介绍" class="headerlink" title="内存管理介绍"></a>内存管理介绍</h2></li>
-<li><p>内存：由可读写单元组成，表示一片可操作空间</p>
-</li>
-<li><p>管理：人为地去操作一片空间的申请、使用和释放</p>
-</li>
-<li><p>内存管理：开发者主动申请空间、使用空间、释放空间</p>
-</li>
-<li><p>管理流程：申请 –&gt; 使用 –&gt; 释放</p>
-</li>
+<ul>
+<li>内存管理</li>
+<li>垃圾回收与常见的GC算法</li>
+<li>V8引擎的垃圾回收</li>
+<li>Performance工具</li>
+<li>代码优化实例  </li>
+</ul>
+<h1 id="JavaScript内存管理（Memory-Management）"><a href="#JavaScript内存管理（Memory-Management）" class="headerlink" title="JavaScript内存管理（Memory Management）"></a>JavaScript内存管理（Memory Management）</h1><h2 id="内存管理介绍"><a href="#内存管理介绍" class="headerlink" title="内存管理介绍"></a>内存管理介绍</h2><ul>
+<li>内存：由可读写单元组成，表示一片可操作空间</li>
+<li>管理：人为地去操作一片空间的申请、使用和释放</li>
+<li>内存管理：开发者主动申请空间、使用空间、释放空间</li>
+<li>管理流程：申请 –&gt; 使用 –&gt; 释放</li>
 </ul>
 <h2 id="JavaScript中的内存管理"><a href="#JavaScript中的内存管理" class="headerlink" title="JavaScript中的内存管理"></a>JavaScript中的内存管理</h2><p>JavaScript中没有提供API供开发者主动调用操作内存空间，但是js中的一个生命周期也经历了这几个阶段：</p>
 <figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line"><span class="comment">// 申请 ===================</span></span><br><span class="line"><span class="keyword">let</span> obj = &#123;&#125;    <span class="comment">// 变量声明时，分配内存</span></span><br><span class="line"> </span><br><span class="line"><span class="comment">// 使用 ===================</span></span><br><span class="line">obj.name = <span class="string">&#x27;SeaChan&#x27;</span>    <span class="comment">// 变量的读写操作，操作内存过程</span></span><br><span class="line"> </span><br><span class="line"><span class="comment">// 释放 ===================</span></span><br><span class="line">obj = <span class="literal">null</span>            <span class="comment">// 变量置空，释放内存</span></span><br></pre></td></tr></table></figure>
@@ -310,13 +303,11 @@
     <title>ES新特性</title>
     <url>/2021/06/10/ecmaScript/</url>
     <content><![CDATA[<h1 id="ECMAScript（ES）："><a href="#ECMAScript（ES）：" class="headerlink" title="ECMAScript（ES）："></a>ECMAScript（ES）：</h1><p>也是脚本语言，通常被看成是JavaScript的标准化规范，实际上JavaScript是ES的扩展语言，ES提供了基本的语法，比如怎么去定义变量，怎么进行条件判断等。JavaScript则实现了这些语法，并做了相应的扩展，比如在浏览器环境中操作BOM/DOM，在node环境中操作文件等操作。</p>
-<p>浏览器环境：JavaScript = ES + Web APIs（BOM+DOM）</p>
-<p>node环境：JavaScript = ES + Node APIs（fs + net + etc.）</p>
+<p>浏览器环境：JavaScript = ES + Web APIs（BOM+DOM）<br>node环境：JavaScript = ES + Node APIs（fs + net + etc.）</p>
+<span id="more"></span>
 <blockquote>
 <p>ECMAScript和JavaScript的关系：<br>1996年11月，JavaScript的创造者–Netscape公司，决定将JavaScript提交给国际标准化组织ECMA，希望这门语言能够成为国际标准。<br>次年，ECMA发布262号标准文件（ECMA-262）的第一版，规定了浏览器脚本语言的标准，并将这种语言称为ECMAScript，这个版本就是1.0版。该标准一开始就是针对JavaScript语言制定的，但是没有称其为JavaScript，<br>有两个方面的原因。<br>一是商标，JavaScript本身已被Netscape注册为商标。<br>二是想体现这门语言的制定者是ECMA，而不是Netscape，这样有利于保证这门语言的开发性和中立性。</p>
 </blockquote>
-<span id="more"></span>
-
 <h1 id="ECMAScript2015（ES2015-ES6）："><a href="#ECMAScript2015（ES2015-ES6）：" class="headerlink" title="ECMAScript2015（ES2015/ES6）："></a>ECMAScript2015（ES2015/ES6）：</h1><h2 id="1-较之前版本的变化"><a href="#1-较之前版本的变化" class="headerlink" title="1.较之前版本的变化"></a>1.较之前版本的变化</h2><ul>
 <li>解决原有语法上的问题或不足（let，const提供的块级作用域）；</li>
 <li>对原有语法进行增强（解构展开，模板字符串等）；</li>
