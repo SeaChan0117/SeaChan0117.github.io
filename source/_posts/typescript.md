@@ -8,7 +8,7 @@ tags:
 - TypeScript
 - 大前端
 ---
-![TypeScript](./typescript/1.jpg)
+![TypeScript](https://raw.githubusercontent.com/SeaChan0117/SeaChan0117.github.io/master/source/_posts/typescript/1.jpg)
 <!--more-->
 TypeScript（本文后续统一使用TS），是一门解决JavaScript自有类型系统问题的语音（提高代码可靠程度）。它是JavaScript类型的超集，可以编译出纯净、 简洁的JavaScript代码，并且可以运行在任何浏览器上、Node.js环境中和任何支持ECMAScript 3（或更高版本）的JavaScript引擎中。
 
