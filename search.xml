@@ -2,7 +2,7 @@
 <search>
   <entry>
     <title>通过 Hexo 和 Travis 构建一个属于自己的博客</title>
-    <url>/2021/06/11/20210607/</url>
+    <url>/2021/06/11/hexo-usage/</url>
     <content><![CDATA[<p>　　<strong>最近开启了大前端学习的道路，从事前端行业两年多了，想要一个自己的 Blog，不管是学习记录还是生活记录，都可以使用起来，而不是繁杂难选的三方平台，乘着学习过程中看到过的 Hexo＋Travis 的方式搭建自己的博客，我也兴致勃勃的想试试，此时你看到的就是搭建结果，这也是第一篇博客！</strong>  </p>
 <h1 id="前置准备"><a href="#前置准备" class="headerlink" title="前置准备"></a>前置准备</h1><p>　　流浪在大前端的今天怎么能没有 node 呢，node 是必备的，大家自行安装即可=。=；  </p>
 <span id="more"></span>
@@ -308,7 +308,7 @@
   </entry>
   <entry>
     <title>ES新特性</title>
-    <url>/2021/06/10/20210610205248/</url>
+    <url>/2021/06/10/ecmaScript/</url>
     <content><![CDATA[<h1 id="ECMAScript（ES）："><a href="#ECMAScript（ES）：" class="headerlink" title="ECMAScript（ES）："></a>ECMAScript（ES）：</h1><p>也是脚本语言，通常被看成是JavaScript的标准化规范，实际上JavaScript是ES的扩展语言，ES提供了基本的语法，比如怎么去定义变量，怎么进行条件判断等。JavaScript则实现了这些语法，并做了相应的扩展，比如在浏览器环境中操作BOM/DOM，在node环境中操作文件等操作。</p>
 <p>浏览器环境：JavaScript = ES + Web APIs（BOM+DOM）</p>
 <p>node环境：JavaScript = ES + Node APIs（fs + net + etc.）</p>
@@ -541,7 +541,7 @@
   </entry>
   <entry>
     <title>JavaScript 中的 this 到底是什么</title>
-    <url>/2021/06/07/20210607233246/</url>
+    <url>/2021/06/07/this/</url>
     <content><![CDATA[<p>文章刚初始化，后续完善内容。。。</p>
 <iframe src="../page/index.html" frameborder="0"></iframe>
 ]]></content>
