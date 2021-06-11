@@ -43,7 +43,7 @@ console.log(a)  // foo
 ```
 
 以下是一些语言的划分，可以看出强类型不等于静态类型，弱类型不等于动态类型。
-![语言类型划分](2.jpg)
+![语言类型划分](https://raw.githubusercontent.com/SeaChan0117/SeaChan0117.github.io/master/source/_posts/typescript/2.jpg)
 
 # JavaScript自有系统类型问题
 JavaScript是一门标准的弱类型且动态类型的语音，所以JS灵活多变，所以JS缺失类型系统的可靠性。
@@ -93,25 +93,25 @@ TS功能强大，生态健全完善，工具支持度高。
 在工程目录（TS为例）下执行 npm init -y 初始化项目管理的 package.json 文件；
 
 执行 npm install typescript --save --dev 安装TS到开发依赖，此时node_modules目录下会多出.bin文件夹，目录下的tsc命令用于后续编译TS代码；  
-![图3](3.jpg)
+![图3](https://raw.githubusercontent.com/SeaChan0117/SeaChan0117.github.io/master/source/_posts/typescript/3.jpg)
 
 在TS根目录下新建第一个TS文件，01-getting-started.ts ，执行命令npx tsc 01-getting-started.ts 将TS文件编译为JS文件：  
-![图4](4.jpg)
-![图5](5.jpg)
-![图6](6.jpg)
+![图4](https://raw.githubusercontent.com/SeaChan0117/SeaChan0117.github.io/master/source/_posts/typescript/4.jpg)
+![图5](https://raw.githubusercontent.com/SeaChan0117/SeaChan0117.github.io/master/source/_posts/typescript/5.jpg)
+![图6](https://raw.githubusercontent.com/SeaChan0117/SeaChan0117.github.io/master/source/_posts/typescript/6.jpg)
 
 TS强类型体现：
-![图7](7.jpg)
-![图8](8.jpg)
-
-## TS 配置文件
-tsc命令不单可以编译单个TS文件，也可以编译整个项目或工程，在编译整个项目之前，需要创建一个TS的配置文件，通过命令初始化生成该配置文件 npx tsc --init ，在项目根目录下生成一个 tsconfig.json 的配置文件。  
-![图9](9.jpg)  
+![图7](https://raw.githubusercontent.com/SeaChan0117/SeaChan0117.github.io/master/source/_posts/typescript/7.jpg)
+![图8](https://raw.gitTS文件，也可以编译整个项目或工程，在编译整个项目之前，需要创建一个TS的配置文件，通过命令初始化生成该配置文件 npx tsc --init ，在项目根目录下生成一个 tsconfig.json 的配置文件。  
+![图9](https://raw.githubusercontent.com/SeaChan0117/SeaChan0117.github.io/master/source/_posts/typescript/9.jpg)  
 tsconfig.json详细配置项详情参考以下链接：  
 * [tsconfig.json入门指南](https://link.zhihu.com/?target=https%3A//juejin.cn/post/6844904054770892813)
 * [掌握 tsconfig.json](https://link.zhihu.com/?target=https%3A//juejin.cn/post/6844904178234458120)
 * [Documentation - What is a tsconfig.json](https://link.zhihu.com/?target=https%3A//www.typescriptlang.org/docs/handbook/tsconfig-json.html)
-* [jsconfig.json Reference](https://link.zhihu.com/?target=https%3A//code.visualstudio.com/docs/languages/jsconfig)
+* [jsconfig.json Refehubusercontent.com/SeaChan0117/SeaChan0117.github.io/master/source/_posts/typescript/8.jpg)
+                     
+                     ## TS 配置文件
+                     tsc命令不单可以编译单个rence](https://link.zhihu.com/?target=https%3A//code.visualstudio.com/docs/languages/jsconfig)
 ```json
 {
   "compilerOptions": {
@@ -186,17 +186,17 @@ tsconfig.json详细配置项详情参考以下链接：
 }
 ```
 配置文件初始化并配置想过配置项后，运行 npx tsc 就可编译整个项目：  
-![图10](10.jpg)  
+![图10](https://raw.githubusercontent.com/SeaChan0117/SeaChan0117.github.io/master/source/_posts/typescript/10.jpg)  
 
 ## TS 原始类型
 TypeScript的原始类型包括: boolean、number、string、void、undefined、null、symbol、bigint，在声明变量时都应该加上类型约束。  
-![图11](11.jpg)
+![图11](https://raw.githubusercontent.com/SeaChan0117/SeaChan0117.github.io/master/source/_posts/typescript/11.jpg)
 
 ## TS 作用域问题
 
 以上 02-primitive.ts 文件中定义了 a 变量，此时在 03-module-scope.ts 中再次声明一个 a 变量，代码提示报错，变量名重复。  
-![图12](12.jpg)  
-![图13](13.jpg)  
+![图12](https://raw.githubusercontent.com/SeaChan0117/SeaChan0117.github.io/master/source/_posts/typescript/12.jpg)  
+![图13](https://raw.githubusercontent.com/SeaChan0117/SeaChan0117.github.io/master/source/_posts/typescript/13.jpg)  
 
 ## TS Object类型（所有非原始类型，对象、数组、函数等）
 ```javascript
