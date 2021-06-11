@@ -42,17 +42,25 @@
     <url>/2021/06/11/javascript-optimize/</url>
     <content><![CDATA[<p>找工作的小伙伴是否有注意到，现在招聘要求中基本都会涉及性能优化的部分？<br>前端涉及优化点很多，本文重点关注JavaScript语言层面能做的优化，今天我们就来让 JavaScript 搞快点，从以下几点展开介绍：</p>
 <ul>
-<li>内存管理</li>
-<li>垃圾回收与常见的GC算法</li>
-<li>V8引擎的垃圾回收</li>
-<li>Performance工具</li>
-<li>代码优化实例  </li>
-</ul>
-<h1 id="JavaScript内存管理（Memory-Management）"><a href="#JavaScript内存管理（Memory-Management）" class="headerlink" title="JavaScript内存管理（Memory Management）"></a>JavaScript内存管理（Memory Management）</h1><h2 id="内存管理介绍"><a href="#内存管理介绍" class="headerlink" title="内存管理介绍"></a>内存管理介绍</h2><ul>
-<li>内存：由可读写单元组成，表示一片可操作空间</li>
-<li>管理：人为地去操作一片空间的申请、使用和释放</li>
-<li>内存管理：开发者主动申请空间、使用空间、释放空间</li>
-<li>管理流程：申请 –&gt; 使用 –&gt; 释放</li>
+<li><p>内存管理</p>
+</li>
+<li><p>垃圾回收与常见的GC算法</p>
+</li>
+<li><p>V8引擎的垃圾回收</p>
+</li>
+<li><p>Performance工具</p>
+</li>
+<li><p>代码优化实例  </p>
+<span id="more"></span>
+<h1 id="JavaScript内存管理（Memory-Management）"><a href="#JavaScript内存管理（Memory-Management）" class="headerlink" title="JavaScript内存管理（Memory Management）"></a>JavaScript内存管理（Memory Management）</h1><h2 id="内存管理介绍"><a href="#内存管理介绍" class="headerlink" title="内存管理介绍"></a>内存管理介绍</h2></li>
+<li><p>内存：由可读写单元组成，表示一片可操作空间</p>
+</li>
+<li><p>管理：人为地去操作一片空间的申请、使用和释放</p>
+</li>
+<li><p>内存管理：开发者主动申请空间、使用空间、释放空间</p>
+</li>
+<li><p>管理流程：申请 –&gt; 使用 –&gt; 释放</p>
+</li>
 </ul>
 <h2 id="JavaScript中的内存管理"><a href="#JavaScript中的内存管理" class="headerlink" title="JavaScript中的内存管理"></a>JavaScript中的内存管理</h2><p>JavaScript中没有提供API供开发者主动调用操作内存空间，但是js中的一个生命周期也经历了这几个阶段：</p>
 <figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line"><span class="comment">// 申请 ===================</span></span><br><span class="line"><span class="keyword">let</span> obj = &#123;&#125;    <span class="comment">// 变量声明时，分配内存</span></span><br><span class="line"> </span><br><span class="line"><span class="comment">// 使用 ===================</span></span><br><span class="line">obj.name = <span class="string">&#x27;SeaChan&#x27;</span>    <span class="comment">// 变量的读写操作，操作内存过程</span></span><br><span class="line"> </span><br><span class="line"><span class="comment">// 释放 ===================</span></span><br><span class="line">obj = <span class="literal">null</span>            <span class="comment">// 变量置空，释放内存</span></span><br></pre></td></tr></table></figure>
