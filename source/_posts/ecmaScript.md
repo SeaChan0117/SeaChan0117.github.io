@@ -12,17 +12,15 @@ tags:
 # ECMAScript（ES）：
 也是脚本语言，通常被看成是JavaScript的标准化规范，实际上JavaScript是ES的扩展语言，ES提供了基本的语法，比如怎么去定义变量，怎么进行条件判断等。JavaScript则实现了这些语法，并做了相应的扩展，比如在浏览器环境中操作BOM/DOM，在node环境中操作文件等操作。
 
-浏览器环境：JavaScript = ES + Web APIs（BOM+DOM）
-
+浏览器环境：JavaScript = ES + Web APIs（BOM+DOM）  
 node环境：JavaScript = ES + Node APIs（fs + net + etc.）
-
+<!--more-->
 > ECMAScript和JavaScript的关系：  
 1996年11月，JavaScript的创造者--Netscape公司，决定将JavaScript提交给国际标准化组织ECMA，希望这门语言能够成为国际标准。  
 次年，ECMA发布262号标准文件（ECMA-262）的第一版，规定了浏览器脚本语言的标准，并将这种语言称为ECMAScript，这个版本就是1.0版。该标准一开始就是针对JavaScript语言制定的，但是没有称其为JavaScript，
 有两个方面的原因。  
 一是商标，JavaScript本身已被Netscape注册为商标。  
 二是想体现这门语言的制定者是ECMA，而不是Netscape，这样有利于保证这门语言的开发性和中立性。
-<!--more-->
 
 # ECMAScript2015（ES2015/ES6）：
 ## 1.较之前版本的变化
