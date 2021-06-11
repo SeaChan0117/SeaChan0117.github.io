@@ -102,7 +102,10 @@ TS功能强大，生态健全完善，工具支持度高。
 
 TS强类型体现：
 ![图7](https://raw.githubusercontent.com/SeaChan0117/SeaChan0117.github.io/master/source/_posts/typescript/7.jpg)
-![图8](https://raw.gitTS文件，也可以编译整个项目或工程，在编译整个项目之前，需要创建一个TS的配置文件，通过命令初始化生成该配置文件 npx tsc --init ，在项目根目录下生成一个 tsconfig.json 的配置文件。  
+![图8](https://raw.githubusercontent.com/SeaChan0117/SeaChan0117.github.io/master/source/_posts/typescript/8.jpg)
+
+## TS 配置文件
+tsc命令不单可以编译单个TS文件，也可以编译整个项目或工程，在编译整个项目之前，需要创建一个TS的配置文件，通过命令初始化生成该配置文件 npx tsc --init ，在项目根目录下生成一个 tsconfig.json 的配置文件。  
 ![图9](https://raw.githubusercontent.com/SeaChan0117/SeaChan0117.github.io/master/source/_posts/typescript/9.jpg)  
 tsconfig.json详细配置项详情参考以下链接：  
 * [tsconfig.json入门指南](https://link.zhihu.com/?target=https%3A//juejin.cn/post/6844904054770892813)
