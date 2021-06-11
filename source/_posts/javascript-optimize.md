@@ -14,7 +14,7 @@ tags:
 * V8引擎的垃圾回收
 * Performance工具
 * 代码优化实例  
-
+<!--more-->
 # JavaScript内存管理（Memory Management）
 ## 内存管理介绍
 
