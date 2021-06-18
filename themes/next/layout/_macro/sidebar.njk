@@ -36,6 +36,13 @@
 
           {{- next_inject('sidebar') }}
         </div>
+
+        <div>
+          {%- if theme.background_music %}
+            <iframe frameborder="no" border="0" marginwidth="0" marginheight="0" width=210 height=80 src="{{theme.background_music}}"></iframe>
+          {%- endif %}
+        </div>
+
       </div>
 
       {%- if theme.back2top.enable and theme.back2top.sidebar %}
