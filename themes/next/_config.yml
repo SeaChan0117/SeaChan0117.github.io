@@ -50,10 +50,10 @@ darkmode: true
 # ---------------------------------------------------------------
 
 favicon:
-  small: /images/miao.ico
-  medium: /images/miao.ico
-  apple_touch_icon: /images/miao.ico
-  safari_pinned_tab: /images/miao.ico
+  small: /images/favicon.ico
+  medium: /images/favicon.ico
+  apple_touch_icon: /images/favicon.ico
+  safari_pinned_tab: /images/favicon.ico
   #android_manifest: /manifest.json
 
 # Custom Logo (Warning: Do not support scheme Mist)
