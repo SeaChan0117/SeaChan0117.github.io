@@ -2,7 +2,7 @@
 <search>
   <entry>
     <title>通过 Hexo 和 Travis 构建一个属于自己的博客</title>
-    <url>/2021/06/11/hexo-usage/</url>
+    <url>/2021/06/18/hexo-usage/</url>
     <content><![CDATA[<p>　　<strong>最近开启了大前端学习的道路，从事前端行业两年多了，想要一个自己的 Blog，不管是学习记录还是生活记录，都可以使用起来，而不是繁杂难选的三方平台，乘着学习过程中看到过的 Hexo＋Travis 的方式搭建自己的博客，我也兴致勃勃的想试试，此时你看到的就是搭建结果，这也是第一篇博客！</strong>  </p>
 <h1 id="前置准备"><a href="#前置准备" class="headerlink" title="前置准备"></a>前置准备</h1><p>　　流浪在大前端的今天怎么能没有 node 呢，node 是必备的，大家自行安装即可=。=；  </p>
 <span id="more"></span>
@@ -35,6 +35,75 @@
       </categories>
       <tags>
         <tag>hexo</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Github Actions 自动化构建服务</title>
+    <url>/2021/06/18/github-action-deploy/</url>
+    <content><![CDATA[<p><strong>CI/CD</strong> 已经是现代互联网项目的主流，它能帮助我们处理繁琐的打包构建工作，本博客是基于 <strong>Travis CI</strong> 构建的，最近在学习中遇到了 Github Actions，感觉很强大，很好玩，就此记录一下学习过程中的使用。</p>
+<h1 id="Github-Actions"><a href="#Github-Actions" class="headerlink" title="Github Actions"></a>Github Actions</h1><p>GitHub Actions 是 GitHub 于2018年10月推出的持续集成服务。<br>官方定义如下，在 GitHub Actions 的仓库中自动化、自定义和执行软件开发工作流程。 您可以发现、创建和共享操作以执行您喜欢的任何作业（包括 CI/CD），并将操作合并到完全自定义的工作流程中。  <span id="more"></span><br>总之它的目的，和其他三方平台一样，帮助我们解决构建部署的工作；不一样的是，它无需我们自己编写复杂的打包构建脚本，如果我们需要某项操作时，可以直接下载别人写好的 Action 即可，所有的 Action 构成自己的工作集合，即 Actions。Github 还做了一个<a href="https://github.com/marketplace?type=actions"><strong>官方市场</strong></a>，方便我们找到相应的 Action 使用。</p>
+<h1 id="前置准备"><a href="#前置准备" class="headerlink" title="前置准备"></a>前置准备</h1><p>既然是 CI/CD 的操作，前提就是需要有项目和服务器，部署就交给 Github Actions。</p>
+<h2 id="项目准备"><a href="#项目准备" class="headerlink" title="项目准备"></a>项目准备</h2><p>此处我使用了一个基于 Nuxtjs 的 Demo 项目做测试；<br>该项目是基于 realworld 模板文件根据原网功能使用 Nuxtjs 完成的；  </p>
+<ul>
+<li>本次测试项目地址：<a href="https://github.com/SeaChan0117/realworld-nuxtjs">https://github.com/SeaChan0117/realworld-nuxtjs</a>  </li>
+<li>realworld 模板文件地址：<a href="https://github.com/gothinkster/realworld-starter-kit/blob/master/FRONTEND_INSTRUCTIONS.md">https://github.com/gothinkster/realworld-starter-kit/blob/master/FRONTEND_INSTRUCTIONS.md</a>  </li>
+<li>项目使用的后台 API：<a href="https://github.com/gothinkster/realworld/tree/master/api">https://github.com/gothinkster/realworld/tree/master/api</a>  </li>
+<li>原项目 Demo 地址：<a href="https://demo.realworld.io/">https://demo.realworld.io/</a></li>
+</ul>
+<p>最后将项目功能开发完。</p>
+<h2 id="服务器"><a href="#服务器" class="headerlink" title="服务器"></a>服务器</h2><p>服务器各自大同小异，我用的是 <a href="https://passport.ucloud.cn/#login">ucloud 云主机</a>，使用方法参考 <a href="https://juejin.cn/post/6904234342575407111#heading-0">https://juejin.cn/post/6904234342575407111#heading-0</a>，开启相关端口用于后续部署项目；<br>注意，需要在云主机上安装 node 和 pm2，可参考<a href="https://www.bilibili.com/video/BV14v4117712?p=4">视频</a>；  </p>
+<h2 id="Github-Actions-配置"><a href="#Github-Actions-配置" class="headerlink" title="Github Actions 配置"></a>Github Actions 配置</h2><h3 id="生成-Personal-access-tokens"><a href="#生成-Personal-access-tokens" class="headerlink" title="生成 Personal access tokens"></a>生成 Personal access tokens</h3><ul>
+<li>1）Github 登录；</li>
+<li>2）头像 –&gt; Settings；</li>
+<li>3）左侧栏 –&gt; Developer settings；</li>
+<li>4）左侧栏 –&gt; Personal access tokens；</li>
+<li>5）按钮 Generate new token；</li>
+<li>6）Note 输入 token 的键值，eg: TOKEN ；</li>
+<li>7）scopes 选择 repo 即可，用于给 Actions 赋权操作仓库；</li>
+<li>8）点击最先 Generate token 按钮；</li>
+<li>9）生成的 token 只会展示一次，自己做好备份，后续会用到；</li>
+</ul>
+<h3 id="配置项目-Secrets"><a href="#配置项目-Secrets" class="headerlink" title="配置项目 Secrets"></a>配置项目 Secrets</h3><ul>
+<li>1）进入预要部署项目，eg: <a href="https://github.com/SeaChan0117/realworld-nuxtjs%EF%BC%9B">https://github.com/SeaChan0117/realworld-nuxtjs；</a></li>
+<li>2）点击 Settings；</li>
+<li>3）左侧栏 –&gt; Secrets；</li>
+<li>4）点击按钮 New repository secret；</li>
+<li>5）Name 填写 token 键名，eg：TOKEN_REALWORLD，Value 填写 2.3.1 第 9 步中生成的 token 值，点击 Add secret 按钮；</li>
+<li>6）重复第 4、5 步，分别生成服务器对应的 secrets，<strong>USERNAME</strong>，<strong>PASSWORD</strong>，<strong>HOST</strong>，<strong>PORT</strong>；<br>此处我的设置为，USERNAME –&gt; root，PASSWORD –&gt; *****（保密），HOST  –&gt; 117.50.1.138，PORT –&gt; 8080</li>
+</ul>
+<h3 id="项目配置文件"><a href="#项目配置文件" class="headerlink" title="项目配置文件"></a>项目配置文件</h3><p>1）项目根路径下新增文件 pm2.config.json，内容为：</p>
+<figure class="highlight json"><table><tr><td class="code"><pre><span class="line">&#123;</span><br><span class="line">  <span class="attr">&quot;apps&quot;</span>: [</span><br><span class="line">    &#123;</span><br><span class="line">      <span class="attr">&quot;name&quot;</span>: <span class="string">&quot;RealWorld&quot;</span>,</span><br><span class="line">      <span class="attr">&quot;script&quot;</span>: <span class="string">&quot;npm&quot;</span>,</span><br><span class="line">      <span class="attr">&quot;args&quot;</span>: <span class="string">&quot;start&quot;</span></span><br><span class="line">    &#125;</span><br><span class="line">  ]</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>2）项目根路径下新建文件夹 .github，下边再建文件夹 workflows，在下边配置 Actions 脚本，此处为 main.yml，即 .github/workflows/main.yml，文件内容如下：  </p>
+<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">name:</span> <span class="string">Publish</span> <span class="string">And</span> <span class="string">Deploy</span> <span class="string">Demo</span></span><br><span class="line"><span class="attr">on:</span></span><br><span class="line">  <span class="attr">push:</span></span><br><span class="line">    <span class="attr">tags:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">&#x27;v*&#x27;</span> <span class="comment"># 提交标签并且内容是 v 开头时，触发自动构建部署</span></span><br><span class="line"></span><br><span class="line"><span class="attr">jobs:</span></span><br><span class="line">  <span class="attr">build-and-deploy:</span></span><br><span class="line">    <span class="attr">runs-on:</span> <span class="string">ubuntu-latest</span> <span class="comment"># 运行环境</span></span><br><span class="line">    <span class="attr">steps:</span></span><br><span class="line"></span><br><span class="line">    <span class="comment"># 下载源码</span></span><br><span class="line">    <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">Checkout</span></span><br><span class="line">      <span class="attr">uses:</span> <span class="string">actions/checkout@master</span></span><br><span class="line"></span><br><span class="line">    <span class="comment"># 打包构建</span></span><br><span class="line">    <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">Build</span></span><br><span class="line">      <span class="attr">uses:</span> <span class="string">actions/setup-node@master</span></span><br><span class="line">    <span class="bullet">-</span> <span class="attr">run:</span> <span class="string">npm</span> <span class="string">install</span></span><br><span class="line">    <span class="bullet">-</span> <span class="attr">run:</span> <span class="string">npm</span> <span class="string">run</span> <span class="string">build</span></span><br><span class="line">    <span class="bullet">-</span> <span class="attr">run:</span> <span class="string">tar</span> <span class="string">-zcvf</span> <span class="string">release.tgz</span> <span class="string">.nuxt</span> <span class="string">static</span> <span class="string">nuxt.config.js</span> <span class="string">package.json</span> <span class="string">package-lock.json</span> <span class="string">pm2.config.json</span> <span class="comment"># 代码构建后，选择后边这些文件及文件夹，压缩为 release.tgz 压缩包</span></span><br><span class="line"></span><br><span class="line">    <span class="comment"># 发布 Release</span></span><br><span class="line">    <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">Create</span> <span class="string">Release</span></span><br><span class="line">      <span class="attr">id:</span> <span class="string">create_release</span></span><br><span class="line">      <span class="attr">uses:</span> <span class="string">actions/create-release@master</span></span><br><span class="line">      <span class="attr">env:</span></span><br><span class="line">        <span class="attr">GITHUB_TOKEN:</span> <span class="string">$&#123;&#123;</span> <span class="string">secrets.TOKEN_REALWORLD</span> <span class="string">&#125;&#125;</span></span><br><span class="line">      <span class="attr">with:</span></span><br><span class="line">        <span class="attr">tag_name:</span> <span class="string">$&#123;&#123;</span> <span class="string">github.ref</span> <span class="string">&#125;&#125;</span></span><br><span class="line">        <span class="attr">release_name:</span> <span class="string">Release</span> <span class="string">$&#123;&#123;</span> <span class="string">github.ref</span> <span class="string">&#125;&#125;</span></span><br><span class="line">        <span class="attr">draft:</span> <span class="literal">false</span></span><br><span class="line">        <span class="attr">prerelease:</span> <span class="literal">false</span></span><br><span class="line"></span><br><span class="line">    <span class="comment"># 上传构建结果到 Release</span></span><br><span class="line">    <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">Upload</span> <span class="string">Release</span> <span class="string">Asset</span></span><br><span class="line">      <span class="attr">id:</span> <span class="string">upload-release-asset</span></span><br><span class="line">      <span class="attr">uses:</span> <span class="string">actions/upload-release-asset@master</span></span><br><span class="line">      <span class="attr">env:</span></span><br><span class="line">        <span class="attr">GITHUB_TOKEN:</span> <span class="string">$&#123;&#123;</span> <span class="string">secrets.TOKEN_REALWORLD</span> <span class="string">&#125;&#125;</span></span><br><span class="line">      <span class="attr">with:</span></span><br><span class="line">        <span class="attr">upload_url:</span> <span class="string">$&#123;&#123;</span> <span class="string">steps.create_release.outputs.upload_url</span> <span class="string">&#125;&#125;</span></span><br><span class="line">        <span class="attr">asset_path:</span> <span class="string">./release.tgz</span></span><br><span class="line">        <span class="attr">asset_name:</span> <span class="string">release.tgz</span></span><br><span class="line">        <span class="attr">asset_content_type:</span> <span class="string">application/x-tgz</span></span><br><span class="line"></span><br><span class="line">    <span class="comment"># 部署到服务器</span></span><br><span class="line">    <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">Deploy</span></span><br><span class="line">      <span class="attr">uses:</span> <span class="string">appleboy/ssh-action@master</span></span><br><span class="line">      <span class="attr">with:</span></span><br><span class="line">        <span class="attr">host:</span> <span class="string">$&#123;&#123;</span> <span class="string">secrets.HOST</span> <span class="string">&#125;&#125;</span></span><br><span class="line">        <span class="attr">username:</span> <span class="string">$&#123;&#123;</span> <span class="string">secrets.USERNAME</span> <span class="string">&#125;&#125;</span></span><br><span class="line">        <span class="attr">password:</span> <span class="string">$&#123;&#123;</span> <span class="string">secrets.PASSWORD</span> <span class="string">&#125;&#125;</span></span><br><span class="line">        <span class="attr">port:</span> <span class="string">$&#123;&#123;</span> <span class="string">secrets.PORT</span> <span class="string">&#125;&#125;</span></span><br><span class="line">        <span class="attr">script:</span> <span class="string">|</span></span><br><span class="line"><span class="string">          cd /root/realworld-nuxt</span></span><br><span class="line"><span class="string">          wget https://github.com/SeaChan0117/realworld-nuxtjs/releases/latest/download/release.tgz -O release.tgz</span></span><br><span class="line"><span class="string">          tar zxvf release.tgz</span></span><br><span class="line"><span class="string">          npm install --production</span></span><br><span class="line"><span class="string">          pm2 reload pm2.config.json</span></span><br><span class="line"><span class="string"></span></span><br></pre></td></tr></table></figure>
+<p>注意有几个配置项需要修改:<br>TOKEN_REALWORLD、HOST、USERNAME、PASSWORD、PORT 对应修改为 2.3.2 中的键名；<br>cd 到的目录是项目部署到服务器的目录，得提前保证创建好，这里可以改为自己定义的目录；<br>wget 后改为 <a href="https://github.com/SeaChan0117/realworld-nuxtjs">https://github.com/SeaChan0117/realworld-nuxtjs</a> 改为自己的仓库地址；其他不用修改，可完全复用。   </p>
+<p>文件地址：<br><a href="https://raw.githubusercontent.com/SeaChan0117/realworld-nuxtjs/main/.github/workflows/main.yml">https://raw.githubusercontent.com/SeaChan0117/realworld-nuxtjs/main/.github/workflows/main.yml</a>， Ctrl + S 保存为 .yml 文件即可。  </p>
+<p>3）将新增的文件提交待远端代码库；<br>4）给项目打上标签，此处举例为 v0.1.0，推送标签到远端服务;</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">$ git tag v0.1.0</span><br><span class="line"></span><br><span class="line">$ git push origin v0.1.0</span><br></pre></td></tr></table></figure>
+<p>5）此时再到远程仓库刷新后查看，Code 分支下拉选项点开，Branches 旁边的 Tag 打开后发现多了 v1.0.1 的标签；<br>6）打开仓库的 Actions，发现有名为 Publish And Deploy Demo 的工作流，右侧正在构建，进入可查看构建过程及一系列 Actions 的结果。<br>7）部署任务完全成功后，根据 HOST 和 PORT 访问项目，浏览器直接访问 <a href="http://117.50.1.138:8080/">117.50.1.138:8080</a>，Bingo！</p>
+<p>以上就是通过提交 GitHub Actions 进行自动化构建部署的过程。</p>
+<h1 id="相关链接"><a href="#相关链接" class="headerlink" title="相关链接"></a>相关链接</h1><p>GitHub 官方的 action：<a href="https://github.com/actions">https://github.com/actions</a><br>GitHub 官方市场中的 action：<a href="https://github.com/marketplace?type=actions">https://github.com/marketplace?type=actions</a><br>第三方收集的有用的 action：<a href="https://github.com/sdras/awesome-actions">https://github.com/sdras/awesome-actions</a>  </p>
+<h1 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h1><p>好玩！强大！</p>
+]]></content>
+      <categories>
+        <category>大前端</category>
+        <category>自动化部署</category>
+      </categories>
+      <tags>
+        <tag>Github Actions</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>前端工程化之 Gulp</title>
+    <url>/2021/06/11/gulp-01/</url>
+    <content><![CDATA[<p>有时间会把之前的笔记搬进来的=。=</p>
+]]></content>
+      <categories>
+        <category>大前端</category>
+        <category>工程化</category>
+      </categories>
+      <tags>
+        <tag>gulp</tag>
       </tags>
   </entry>
   <entry>
