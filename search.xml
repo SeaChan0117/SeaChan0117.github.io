@@ -40,7 +40,8 @@
   <entry>
     <title>搭建自己的 SSR</title>
     <url>/2021/06/19/my-SSR/</url>
-    <content><![CDATA[<h1 id="SSR"><a href="#SSR" class="headerlink" title="SSR"></a>SSR</h1><p><a href="2021-06-19_171145.png">图片测试</a></p>
+    <content><![CDATA[<h1 id="SSR"><a href="#SSR" class="headerlink" title="SSR"></a>SSR</h1><p>图片测试</p>
+<img src="/.io//06/19/my-SSR/2021-06-19_185741.png" class>
 ]]></content>
       <categories>
         <category>大前端</category>
