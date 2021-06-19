@@ -38,6 +38,34 @@
       </tags>
   </entry>
   <entry>
+    <title>Hexo 图片插入插件的使用</title>
+    <url>/2021/06/19/hexo-asset-image-cs/</url>
+    <content><![CDATA[<p>都说 Hexo 是 markdown 语法，插入图片不也用语法插入就OK了么，但是我在插入图片时，遇到了问题。</p>
+<p>我使用过 github 路径，码云路径，都有问题；具体可自行尝试，本文主要简述插件的使用。<br>哦，对了，我还使用过把图片转为 base64 编码的数据用于插入的，问题是解决了，新的麻烦又来了，文章要插入大量图片时，真的很烦QAQ。</p>
+<h1 id="hexo-asset-image"><a href="#hexo-asset-image" class="headerlink" title="hexo-asset-image"></a>hexo-asset-image</h1><p>使用 hexo-asset-image 插件为 hexo 博客添加插入图片，步骤：</p>
+<ul>
+<li>hexo 项目安装该依赖，yarn add hexo-asset-image；</li>
+<li>修改配置文件 _config.yml<figure class="highlight yaml"><table><tr><td class="code"><pre><span class="line"><span class="attr">post_asset_folder:</span> <span class="literal">true</span></span><br><span class="line"></span><br><span class="line"><span class="attr">url:</span> <span class="string">https://xxxxxx.github.io</span>  <span class="comment"># 自己项目的 git 仓库</span></span><br></pre></td></tr></table></figure></li>
+<li>将需要引用的图片存放在与文章名同名的文件夹中<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">_posts</span><br><span class="line">    -image-test</span><br><span class="line">        -example.png</span><br><span class="line">    -image-test.md</span><br></pre></td></tr></table></figure></li>
+<li>在 markdown 文档中直接使用模板语法插入图片<figure class="highlight markdown"><table><tr><td class="code"><pre><span class="line">&#123;% asset<span class="emphasis">_img example.png This is pic title %&#125;</span></span><br></pre></td></tr></table></figure></li>
+<li>使用 markdown 语法插入图片<figure class="highlight markdown"><table><tr><td class="code"><pre><span class="line">![<span class="string">图片</span>](<span class="link">example.png</span>)</span><br></pre></td></tr></table></figure></li>
+</ul>
+<p>以上方法启动项目后，发现图片并没有加载成功，查看元素后发现路径中有 .io/ ，是路径处理问题，在 hexo-asset-image 源码中打印日志，找到了出错的地方。</p>
+<p>解决方法就是自己重新搞一个 npm 仓库，把 hexo-asset-image 的问题修改后发布上 npm，用于拉取使用，目前已修改发布，包名是 hexo-asset-image-cs；使用步骤和上边一致，<br>只需要在第一步中把依赖拉取改为 hexo-asset-image-cs 即可。</p>
+<p><strong>模板语法插入测试</strong></p>
+<img src="/2021/06/19/hexo-asset-image-cs/2021-06-19_210650.png" class title="This is pic title">
+
+<p><strong>markdown 语法插入测试</strong><br><img src="/2021/06/19/hexo-asset-image-cs/2021-06-19_210650.png" alt="test"></p>
+<h1 id="声明"><a href="#声明" class="headerlink" title="声明"></a>声明</h1><p><a href="https://github.com/SeaChan0117/hexo-asset-image-cs">hexo-asset-image-cs</a> 不是自己开发，<br>只是针对 <a href="https://github.com/xcodebuild/hexo-asset-image">hexo-asset-image</a> 改了一下支持现在的 Hexo，自己只是搬运工。</p>
+]]></content>
+      <categories>
+        <category>Hexo</category>
+      </categories>
+      <tags>
+        <tag>Hexo</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>搭建自己的 SSR</title>
     <url>/2021/06/19/my-SSR/</url>
     <content><![CDATA[<h1 id="SSR"><a href="#SSR" class="headerlink" title="SSR"></a>SSR</h1><p>图片测试</p>
