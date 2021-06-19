@@ -38,6 +38,20 @@
       </tags>
   </entry>
   <entry>
+    <title>搭建自己的 SSR</title>
+    <url>/2021/06/19/my-SSR/</url>
+    <content><![CDATA[<h1 id="SSR"><a href="#SSR" class="headerlink" title="SSR"></a>SSR</h1><p>图片嵌入测试<br><img src="/.io//2021-06-19_171145.png"> </p>
+]]></content>
+      <categories>
+        <category>大前端</category>
+        <category>SSR</category>
+      </categories>
+      <tags>
+        <tag>SSR</tag>
+        <tag>服务端渲染</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>Github Actions 自动化构建服务</title>
     <url>/2021/06/18/github-action-deploy/</url>
     <content><![CDATA[<p><strong>CI/CD</strong> 已经是现代互联网项目的主流，它能帮助我们处理繁琐的打包构建工作，本博客是基于 <strong>Travis CI</strong> 构建的，最近在学习中遇到了 Github Actions，感觉很强大，很好玩，就此记录一下学习过程中的使用。</p>
