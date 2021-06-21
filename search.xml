@@ -2,7 +2,7 @@
 <search>
   <entry>
     <title>通过 Hexo 和 Travis 构建一个属于自己的博客</title>
-    <url>/2021/06/20/hexo-usage/</url>
+    <url>/2021/06/21/hexo-usage/</url>
     <content><![CDATA[<p>　　<strong>最近开启了大前端学习的道路，从事前端行业两年多了，想要一个自己的 Blog，不管是学习记录还是生活记录，都可以使用起来，而不是繁杂难选的三方平台，乘着学习过程中看到过的 Hexo＋Travis 的方式搭建自己的博客，我也兴致勃勃的想试试，此时你看到的就是搭建结果，这也是第一篇博客！</strong>  </p>
 <h1 id="前置准备"><a href="#前置准备" class="headerlink" title="前置准备"></a>前置准备</h1><p>　　流浪在大前端的今天怎么能没有 node 呢，node 是必备的，大家自行安装即可=。=；  </p>
 <span id="more"></span>
@@ -111,7 +111,105 @@
 <figure class="highlight html"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">head</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">meta</span> <span class="attr">charset</span>=<span class="string">&quot;UTF-8&quot;</span>&gt;</span></span><br><span class="line">    &#123;&#123;&#123; meta &#125;&#125;&#125;</span><br><span class="line">    <span class="tag">&lt;<span class="name">title</span>&gt;</span>&#123;&#123; title &#125;&#125;<span class="tag">&lt;/<span class="name">title</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">head</span>&gt;</span></span><br></pre></td></tr></table></figure>
 
 <p><img src="/2021/06/19/my-SSR/2021-06-20_225808.png" alt="模板中使用外部数据"></p>
-<h1 id="构建配置"><a href="#构建配置" class="headerlink" title="构建配置"></a>构建配置</h1><h2 id="基本思路"><a href="#基本思路" class="headerlink" title="基本思路"></a>基本思路</h2><h1 id="相关链接："><a href="#相关链接：" class="headerlink" title="相关链接："></a>相关链接：</h1><p><a href="https://ssr.vuejs.org/">https://ssr.vuejs.org/</a>;  </p>
+<h1 id="构建配置"><a href="#构建配置" class="headerlink" title="构建配置"></a>构建配置</h1><p>上边得到的只是一个静态的 HTML 模板页面，如果在渲染前加上客户端交互的功能（如 v-model 双向绑定、点击事件等），你会发现并不能生效，其实查看页面响应也能知道，它并没有包含客户端交互所需的 JS。官方为我们提供了一个基本的构建思路去处理这个问题</p>
+<h2 id="基本思路"><a href="#基本思路" class="headerlink" title="基本思路"></a>基本思路</h2><p>Vue SSR 官方这样给出解释，对于客户端应用程序和服务器应用程序，我们都要使用 webpack 打包 - 服务器需要「服务器 bundle」然后用于服务器端渲染(SSR)，而「客户端 bundle」会发送给浏览器，用于混合静态标记。</p>
+<p><img src="/2021/06/19/my-SSR/%E6%9E%84%E5%BB%BA%E6%AD%A5%E9%AA%A4.png" alt="构建思路"></p>
+<p>上边的图我们看出，针对构建结构，目前我们只有服务端入口和出口，即只有服务端渲染，所以只能拿到静态的 HTML 字符串，还需要一个用于客户端的入口和出口，生成一个客户端的 Bundle，用于接管服务端渲染的页面，并激活为一个动态页面。</p>
+<h2 id="代码结构"><a href="#代码结构" class="headerlink" title="代码结构"></a>代码结构</h2><p>针对上述图解，官方给出一个基本的代码结构，我们参考来实现。</p>
+<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line">src</span><br><span class="line">├── components</span><br><span class="line">│   ├── Foo.vue</span><br><span class="line">│   ├── Bar.vue</span><br><span class="line">│   └── Baz.vue</span><br><span class="line">├── App.vue</span><br><span class="line">├── app.js <span class="comment"># 通用 entry(universal entry)</span></span><br><span class="line">├── entry-client.js <span class="comment"># 仅运行于浏览器</span></span><br><span class="line">└── entry-server.js <span class="comment"># 仅运行于服务器</span></span><br></pre></td></tr></table></figure>
+
+<p>新建 src 目录；  </p>
+<h3 id="App-vue"><a href="#App-vue" class="headerlink" title="App.vue"></a>App.vue</h3><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">&lt;template&gt;</span><br><span class="line">    &lt;div id=&quot;app&quot;&gt;</span><br><span class="line">        &lt;h1&gt;&#123;&#123; message &#125;&#125;&lt;/h1&gt;</span><br><span class="line">        &lt;h2&gt; 客户端动态交互 &lt;/h2&gt;</span><br><span class="line">        &lt;div&gt;</span><br><span class="line">            &lt;input type=&quot;text&quot; v-mode=&quot;message&quot;&gt;</span><br><span class="line">        &lt;/div&gt;</span><br><span class="line">        &lt;div&gt;</span><br><span class="line">            &lt;button @click=&quot;onClick&quot;&gt;Click Test&lt;/button&gt;</span><br><span class="line">        &lt;/div&gt;</span><br><span class="line">    &lt;/div&gt;</span><br><span class="line">&lt;/template&gt;</span><br><span class="line">&lt;script&gt;</span><br><span class="line">    export default &#123;</span><br><span class="line">        name: &quot;App&quot;,</span><br><span class="line">        data() &#123;</span><br><span class="line">            return &#123;</span><br><span class="line">                message: &#x27;我是 Vue SSR&#x27;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;,</span><br><span class="line">        methods: &#123;</span><br><span class="line">            onClick() &#123;</span><br><span class="line">                console.log(&#x27;Vue SSR&#x27;)</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&lt;/script&gt;</span><br></pre></td></tr></table></figure>
+
+<h3 id="app-js"><a href="#app-js" class="headerlink" title="app.js"></a>app.js</h3><figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 通用的启动入口</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> * app.js 是我们应用程序的「通用 entry」。在纯客户端应用程序中，我们将在此文件中创建根 Vue 实例，</span></span><br><span class="line"><span class="comment"> * 并直接挂载到 DOM。但是，对于服务器端渲染(SSR)，责任转移到纯客户端 entry 文件。app.js 简单地使用 export 导出一个 createApp 函数：</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">import</span> Vue <span class="keyword">from</span> <span class="string">&#x27;vue&#x27;</span></span><br><span class="line"><span class="keyword">import</span> App <span class="keyword">from</span> <span class="string">&#x27;./App.vue&#x27;</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 导出一个工厂函数，用于创建新的</span></span><br><span class="line"><span class="comment">// 应用程序、router 和 store 实例</span></span><br><span class="line"><span class="keyword">export</span> <span class="function"><span class="keyword">function</span> <span class="title">createApp</span> (<span class="params"></span>) </span>&#123;</span><br><span class="line">    <span class="keyword">const</span> app = <span class="keyword">new</span> Vue(&#123;</span><br><span class="line">        <span class="comment">// 根实例简单的渲染应用程序组件。</span></span><br><span class="line">        <span class="attr">render</span>: <span class="function"><span class="params">h</span> =&gt;</span> h(App)</span><br><span class="line">    &#125;)</span><br><span class="line">    <span class="keyword">return</span> &#123; app &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="entry-client-js"><a href="#entry-client-js" class="headerlink" title="entry-client.js"></a>entry-client.js</h3><figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 客户端 entry 只需创建应用程序，并且将其挂载到 DOM 中</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">import</span> &#123; createApp &#125; <span class="keyword">from</span> <span class="string">&#x27;./app&#x27;</span></span><br><span class="line"><span class="comment">// 客户端特定引导逻辑……</span></span><br><span class="line"><span class="keyword">const</span> &#123; app &#125; = createApp()</span><br><span class="line"><span class="comment">// 这里假定 App.vue 模板中根元素具有 `id=&quot;app&quot;`</span></span><br><span class="line">app.$mount(<span class="string">&#x27;#app&#x27;</span>)</span><br></pre></td></tr></table></figure>
+
+<h3 id="entry-server-js"><a href="#entry-server-js" class="headerlink" title="entry-server.js"></a>entry-server.js</h3><figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 服务器 entry 使用 default export 导出函数，并在每次渲染中重复调用此函数。</span></span><br><span class="line"><span class="comment"> * 此时，除了创建和返回应用程序实例之外，它不会做太多事情 - 但是稍后我们将在此执行服务器端路由匹配 (server-side route matching) 和数据预取逻辑 (data pre-fetching logic)。</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">import</span> &#123; createApp &#125; <span class="keyword">from</span> <span class="string">&#x27;./app&#x27;</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">export</span> <span class="keyword">default</span> context =&gt; &#123;</span><br><span class="line">    <span class="keyword">const</span> &#123; app &#125; = createApp()</span><br><span class="line">    <span class="comment">// TODO：服务端路由处理，数据预取...</span></span><br><span class="line">    <span class="keyword">return</span> app</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>以上完成了最基础的代码结构，但目前还不能运行测试， 这只是源代码结构，还需要通过 webpack 打包。</p>
+<h1 id="webpack-打包构建"><a href="#webpack-打包构建" class="headerlink" title="webpack 打包构建"></a>webpack 打包构建</h1><h2 id="安装依赖"><a href="#安装依赖" class="headerlink" title="安装依赖"></a>安装依赖</h2><h3 id="生产依赖"><a href="#生产依赖" class="headerlink" title="生产依赖"></a>生产依赖</h3><figure class="highlight sh"><table><tr><td class="code"><pre><span class="line">yarn add vue vue-server-renderer express cross-env</span><br></pre></td></tr></table></figure>
+
+<table>
+<thead>
+<tr>
+<th>包</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>vue</td>
+<td>Vue.js 核心库</td>
+</tr>
+<tr>
+<td>vue-server-renderer</td>
+<td>Vue 服务端渲染工具</td>
+</tr>
+<tr>
+<td>express</td>
+<td>基于 Node 的 Web 服务框架</td>
+</tr>
+<tr>
+<td>cross-env</td>
+<td>通过 npm scripts 设置跨平台环境变量</td>
+</tr>
+</tbody></table>
+<h3 id="开发依赖"><a href="#开发依赖" class="headerlink" title="开发依赖"></a>开发依赖</h3><figure class="highlight sh"><table><tr><td class="code"><pre><span class="line">yarn add -D webpack webpack-cli webpack-merge webpack-node-externals @babel/core @babel/plugin-transform-runtime @babel/preset-env babel-loader css-loader url-loader file-loader rimraf vue-loader vue-template-compiler friendly-errors-webpack-plugin</span><br></pre></td></tr></table></figure>
+
+<table>
+<thead>
+<tr>
+<th>包</th>
+<th align="left">说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>webpack</td>
+<td align="left">webpack 核心包</td>
+</tr>
+<tr>
+<td>webpack-cli</td>
+<td align="left">webpack 的命令行工具</td>
+</tr>
+<tr>
+<td>webpack-merge</td>
+<td align="left">webpack 配置信息合并工具</td>
+</tr>
+<tr>
+<td>webpack-node-externals</td>
+<td align="left">排除 webpack 中的 Node 模块</td>
+</tr>
+<tr>
+<td>rimraf</td>
+<td align="left">基于 Node 封装的一个跨平台 <strong>rm -rf</strong> 工具</td>
+</tr>
+<tr>
+<td>friendly-errors-webpack-plugin</td>
+<td align="left">友好的 webpack 错误提示</td>
+</tr>
+<tr>
+<td>@babel/core<br>@babel/plugin-transform-runtime<br>@babel/preset-env<br>babel-loader</td>
+<td align="left"><br>Babel 相关工具</td>
+</tr>
+<tr>
+<td>vue-loader<br>vue-template-compiler</td>
+<td align="left">处理 .vue 资源</td>
+</tr>
+<tr>
+<td>file-loader</td>
+<td align="left">处理字体资源</td>
+</tr>
+<tr>
+<td>css-loader</td>
+<td align="left">处理 CSS 资源</td>
+</tr>
+<tr>
+<td>url-loader</td>
+<td align="left">处理图片资源</td>
+</tr>
+</tbody></table>
+<h2 id="webpack-配置文件"><a href="#webpack-配置文件" class="headerlink" title="webpack 配置文件"></a>webpack 配置文件</h2><p>未完待续。。。</p>
+<h1 id="相关链接："><a href="#相关链接：" class="headerlink" title="相关链接："></a>相关链接：</h1><p><a href="https://ssr.vuejs.org/">https://ssr.vuejs.org/</a>;  </p>
 ]]></content>
       <categories>
         <category>大前端</category>
