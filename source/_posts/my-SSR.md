@@ -196,7 +196,164 @@ renderer.renderToString(app, {
 
 # 构建配置
 
+上边得到的只是一个静态的 HTML 模板页面，如果在渲染前加上客户端交互的功能（如 v-model 双向绑定、点击事件等），你会发现并不能生效，其实查看页面响应也能知道，它并没有包含客户端交互所需的 JS。官方为我们提供了一个基本的构建思路去处理这个问题
+
 ## 基本思路
+
+Vue SSR 官方这样给出解释，对于客户端应用程序和服务器应用程序，我们都要使用 webpack 打包 - 服务器需要「服务器 bundle」然后用于服务器端渲染(SSR)，而「客户端 bundle」会发送给浏览器，用于混合静态标记。
+
+![构建思路](构建步骤.png)
+
+上边的图我们看出，针对构建结构，目前我们只有服务端入口和出口，即只有服务端渲染，所以只能拿到静态的 HTML 字符串，还需要一个用于客户端的入口和出口，生成一个客户端的 Bundle，用于接管服务端渲染的页面，并激活为一个动态页面。
+
+## 代码结构
+
+针对上述图解，官方给出一个基本的代码结构，我们参考来实现。
+
+```sh
+src
+├── components
+│   ├── Foo.vue
+│   ├── Bar.vue
+│   └── Baz.vue
+├── App.vue
+├── app.js # 通用 entry(universal entry)
+├── entry-client.js # 仅运行于浏览器
+└── entry-server.js # 仅运行于服务器
+```
+
+新建 src 目录；  
+
+### App.vue
+
+```vue
+<template>
+    <div id="app">
+        <h1>{{ message }}</h1>
+        <h2> 客户端动态交互 </h2>
+        <div>
+            <input type="text" v-mode="message">
+        </div>
+        <div>
+            <button @click="onClick">Click Test</button>
+        </div>
+    </div>
+</template>
+<script>
+    export default {
+        name: "App",
+        data() {
+            return {
+                message: '我是 Vue SSR'
+            }
+        },
+        methods: {
+            onClick() {
+                console.log('Vue SSR')
+            }
+        }
+    }
+</script>
+```
+
+### app.js
+
+```javascript
+/**
+ * 通用的启动入口
+ *
+ * app.js 是我们应用程序的「通用 entry」。在纯客户端应用程序中，我们将在此文件中创建根 Vue 实例，
+ * 并直接挂载到 DOM。但是，对于服务器端渲染(SSR)，责任转移到纯客户端 entry 文件。app.js 简单地使用 export 导出一个 createApp 函数：
+ */
+import Vue from 'vue'
+import App from './App.vue'
+
+// 导出一个工厂函数，用于创建新的
+// 应用程序、router 和 store 实例
+export function createApp () {
+    const app = new Vue({
+        // 根实例简单的渲染应用程序组件。
+        render: h => h(App)
+    })
+    return { app }
+}
+```
+
+### entry-client.js
+
+```javascript
+/**
+ * 客户端 entry 只需创建应用程序，并且将其挂载到 DOM 中
+ */
+import { createApp } from './app'
+// 客户端特定引导逻辑……
+const { app } = createApp()
+// 这里假定 App.vue 模板中根元素具有 `id="app"`
+app.$mount('#app')
+```
+
+### entry-server.js
+
+```javascript
+/**
+ * 服务器 entry 使用 default export 导出函数，并在每次渲染中重复调用此函数。
+ * 此时，除了创建和返回应用程序实例之外，它不会做太多事情 - 但是稍后我们将在此执行服务器端路由匹配 (server-side route matching) 和数据预取逻辑 (data pre-fetching logic)。
+ */
+import { createApp } from './app'
+
+export default context => {
+    const { app } = createApp()
+    // TODO：服务端路由处理，数据预取...
+    return app
+}
+```
+
+以上完成了最基础的代码结构，但目前还不能运行测试， 这只是源代码结构，还需要通过 webpack 打包。
+
+# webpack 打包构建
+
+## 安装依赖
+
+### 生产依赖
+
+```sh
+yarn add vue vue-server-renderer express cross-env
+```
+
+| 包                  | 说明                                |
+| ------------------- | ----------------------------------- |
+| vue                 | Vue.js 核心库                       |
+| vue-server-renderer | Vue 服务端渲染工具                  |
+| express             | 基于 Node 的 Web 服务框架           |
+| cross-env           | 通过 npm scripts 设置跨平台环境变量 |
+
+###  开发依赖
+
+```sh
+yarn add -D webpack webpack-cli webpack-merge webpack-node-externals @babel/core @babel/plugin-transform-runtime @babel/preset-env babel-loader css-loader url-loader file-loader rimraf vue-loader vue-template-compiler friendly-errors-webpack-plugin
+```
+
+| 包                                                           | 说明                                       |
+| ------------------------------------------------------------ | :----------------------------------------- |
+| webpack                                                      | webpack 核心包                             |
+| webpack-cli                                                  | webpack 的命令行工具                       |
+| webpack-merge                                                | webpack 配置信息合并工具                   |
+| webpack-node-externals                                       | 排除 webpack 中的 Node 模块                |
+| rimraf                                                       | 基于 Node 封装的一个跨平台 **rm -rf** 工具 |
+| friendly-errors-webpack-plugin                               | 友好的 webpack 错误提示                    |
+| @babel/core<br/>@babel/plugin-transform-runtime<br/>@babel/preset-env<br/>babel-loader | <br/>Babel 相关工具                        |
+| vue-loader<br/>vue-template-compiler                         | 处理 .vue 资源                             |
+| file-loader                                                  | 处理字体资源                               |
+| css-loader                                                   | 处理 CSS 资源                              |
+| url-loader                                                   | 处理图片资源                               |
+
+## webpack 配置文件
+
+
+
+未完待续。。。
+
+
 
 # 相关链接：
 
