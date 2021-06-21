@@ -113,7 +113,7 @@
 <p><img src="/2021/06/19/my-SSR/2021-06-20_225808.png" alt="模板中使用外部数据"></p>
 <h1 id="构建配置"><a href="#构建配置" class="headerlink" title="构建配置"></a>构建配置</h1><p>上边得到的只是一个静态的 HTML 模板页面，如果在渲染前加上客户端交互的功能（如 v-model 双向绑定、点击事件等），你会发现并不能生效，其实查看页面响应也能知道，它并没有包含客户端交互所需的 JS。官方为我们提供了一个基本的构建思路去处理这个问题</p>
 <h2 id="基本思路"><a href="#基本思路" class="headerlink" title="基本思路"></a>基本思路</h2><p>Vue SSR 官方这样给出解释，对于客户端应用程序和服务器应用程序，我们都要使用 webpack 打包 - 服务器需要「服务器 bundle」然后用于服务器端渲染(SSR)，而「客户端 bundle」会发送给浏览器，用于混合静态标记。</p>
-<p><img src="/2021/06/19/my-SSR/%E6%9E%84%E5%BB%BA%E6%AD%A5%E9%AA%A4.png" alt="构建思路"></p>
+<p><img src="/2021/06/19/my-SSR/pack-steps.png" alt="构建思路"></p>
 <p>上边的图我们看出，针对构建结构，目前我们只有服务端入口和出口，即只有服务端渲染，所以只能拿到静态的 HTML 字符串，还需要一个用于客户端的入口和出口，生成一个客户端的 Bundle，用于接管服务端渲染的页面，并激活为一个动态页面。</p>
 <h2 id="代码结构"><a href="#代码结构" class="headerlink" title="代码结构"></a>代码结构</h2><p>针对上述图解，官方给出一个基本的代码结构，我们参考来实现。</p>
 <figure class="highlight sh"><table><tr><td class="code"><pre><span class="line">src</span><br><span class="line">├── components</span><br><span class="line">│   ├── Foo.vue</span><br><span class="line">│   ├── Bar.vue</span><br><span class="line">│   └── Baz.vue</span><br><span class="line">├── App.vue</span><br><span class="line">├── app.js <span class="comment"># 通用 entry(universal entry)</span></span><br><span class="line">├── entry-client.js <span class="comment"># 仅运行于浏览器</span></span><br><span class="line">└── entry-server.js <span class="comment"># 仅运行于服务器</span></span><br></pre></td></tr></table></figure>
