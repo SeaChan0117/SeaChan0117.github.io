@@ -10,15 +10,17 @@ tags:
 ---
 # SSR（Server Side Render）
 
-## SSR
+## 什么是 SSR
 
-即服务端渲染，现在一些基于模板的框架编写应用，展示在浏览器界面之前要先渲染为浏览器所知的 HTML 文档，顾名思义，SSR 就是把这个渲染过程搬到了服务端，服务端渲染为 HTML 后再返回给浏览器，浏览器就能直接展示。简单来看，模板在浏览器解析或者一些初始化数据的展示，都需要涉及解析处理等，这一定离不开 JS，浏览器初始化就需要先加载 JS，但是在服务端渲染，这一步基本就少，所以这是可以减少初始化渲染时间的，即所谓的首屏渲染。简单来看，这确实是能减少首屏渲染时间，但实际首屏渲染可不止这么简单。
+SSR 是 Server Side Render 简称，就是在服务端进行渲染生成 HTML 文件，浏览器显示生成的 HTML 文件， 补充：我们传统使用的属于 CSR 是 Client Side Render ，页面上的内容是我们加载的 JS 文件渲染出来的，文件运行在浏览器上面。
 
 <!--more-->
 
 ## [Vue 官方对 SSR 的解释](https://ssr.vuejs.org/zh)
 
 Vue.js 是构建客户端应用程序的框架。默认情况下，可以在浏览器中输出 Vue 组件，进行生成 DOM 和操作 DOM。然而，也可以将同一个组件渲染为服务器端的 HTML 字符串，将它们直接发送到浏览器，最后将这些静态标记"激活"为客户端上完全可交互的应用程序。
+
+服务器渲染的 Vue.js 应用程序也可以被认为是"同构"或"通用"，因为应用程序的大部分代码都可以在**服务器**和**客户端**上运行。
 
 ## [为什么使用服务器端渲染](https://ssr.vuejs.org/zh)
 
@@ -341,13 +343,836 @@ yarn add -D webpack webpack-cli webpack-merge webpack-node-externals @babel/core
 | webpack-node-externals                                       | 排除 webpack 中的 Node 模块                |
 | rimraf                                                       | 基于 Node 封装的一个跨平台 **rm -rf** 工具 |
 | friendly-errors-webpack-plugin                               | 友好的 webpack 错误提示                    |
-| @babel/core<br/>@babel/plugin-transform-runtime<br/>@babel/preset-env<br/>babel-loader | <br/>Babel 相关工具                        |
+| @babel/core<br/>@babel/plugin-transform-runtime<br/>@babel/preset-env<br/>babel-loader | Babel 相关工具                             |
 | vue-loader<br/>vue-template-compiler                         | 处理 .vue 资源                             |
 | file-loader                                                  | 处理字体资源                               |
 | css-loader                                                   | 处理 CSS 资源                              |
 | url-loader                                                   | 处理图片资源                               |
 
-## webpack 配置文件
+## webpack  配置文件
+
+### 初始化 webpack 打包配置文件
+
+服务器端渲染 (SSR) 项目的配置大体上与纯客户端项目类似，建议将配置分为三个文件：*base*, *client* 和 *server*。基本配置 (base config) 包含在两个环境共享的配置，例如，输出路径 (output path)，别名 (alias) 和 loader。服务器配置 (server config) 和客户端配置 (client config)，可以通过使用 [webpack-merge](https://github.com/survivejs/webpack-merge) 来简单地扩展基本配置。
+
+```sh
+build
+├── webpack.base.config.js # 公共配置
+├── webpack.client.config.js # 客户端打包配置文件
+└── webpack.server.config.js # 服务端打包配置文件
+```
+
+### webpack.base.config.js
+
+```javascript
+/**
+ * 公共配置
+ */
+const VueLoaderPlugin = require('vue-loader/lib/plugin')
+const path = require('path')
+const FriendlyErrorsWebpackPlugin = require('friendly-errors-webpack-plugin')
+const resolve = file => path.resolve(__dirname, file)
+const isProd = process.env.NODE_ENV === 'production'
+module.exports = {
+    mode: isProd ? 'production' : 'development',
+    output: {
+        path: resolve('../dist/'),
+        publicPath: '/dist/',
+        filename: '[name].[chunkhash].js'
+    },
+    resolve: {
+        alias: {
+            // 路径别名，@ 指向 src
+            '@': resolve('../src/')
+        },
+        // 可以省略的扩展名
+        // 当省略扩展名的时候，按照从前往后的顺序依次解析
+        extensions: ['.js', '.vue', '.json']
+    },
+    devtool: isProd ? 'source-map' : 'eval-cheap-module-source-map',
+    module: {
+        rules: [
+            // 处理图片资源
+            {
+                test: /\.(png|jpg|gif)$/i,
+                use: [
+                    {
+                        loader: 'url-loader',
+                        options: {
+                            limit: 8192,
+                        },
+                    },
+                ],
+            },
+            // 处理字体资源
+            {
+                test: /\.(woff|woff2|eot|ttf|otf)$/,
+                use: [
+                    'file-loader',
+                ],
+            },
+            // 处理 .vue 资源
+            {
+                test: /\.vue$/,
+                loader: 'vue-loader'
+            },
+            // 处理 CSS 资源
+            // 它会应用到普通的 `.css` 文件
+            // 以及 `.vue` 文件中的 `<style>` 块
+            {
+                test: /\.css$/,
+                use: [
+                    'vue-style-loader',
+                    'css-loader'
+                ]
+            },
+        // CSS 预处理器，参考：https://vue-loader.vuejs.org/zh/guide/preprocessors.html
+        // 例如处理 Less 资源
+        // {
+        // test: /\.less$/,
+        // use: [
+        // 'vue-style-loader',
+        // 'css-loader',
+        // 'less-loader'
+        // ]
+        // },
+        ]
+    },
+    plugins: [
+        new VueLoaderPlugin(),
+        new FriendlyErrorsWebpackPlugin()
+    ]
+}
+
+```
+
+### webpack.client.config.js
+
+```javascript
+/**
+ * 客户端打包配置
+ */
+const {merge} = require('webpack-merge')
+const baseConfig = require('./webpack.base.config.js')
+const VueSSRClientPlugin = require('vue-server-renderer/client-plugin')
+module.exports = merge(baseConfig, {
+    entry: {
+        app: './src/entry-client.js'
+    },
+    module: {
+        rules: [
+            // ES6 转 ES5
+            {
+                test: /\.m?js$/,
+                exclude: /(node_modules|bower_components)/,
+                use: {
+                    loader: 'babel-loader',
+                    options: {
+                        presets: ['@babel/preset-env'],
+                        cacheDirectory: true,
+                        plugins: ['@babel/plugin-transform-runtime']
+                    }
+                }
+            },
+        ]
+    },
+    // 重要信息：这将 webpack 运行时分离到一个引导 chunk 中，
+    // 以便可以在之后正确注入异步 chunk。
+    optimization: {
+        splitChunks: {
+            name: "manifest",
+            minChunks: Infinity
+        }
+    },
+    plugins: [
+        // 此插件在输出目录中生成 `vue-ssr-client-manifest.json`。
+        new VueSSRClientPlugin()
+    ]
+})
+```
+
+### webpack.server.config.js
+
+```javascript
+/**
+ * 服务端打包配置
+ */
+const {merge} = require('webpack-merge')
+const nodeExternals = require('webpack-node-externals')
+const baseConfig = require('./webpack.base.config.js')
+const VueSSRServerPlugin = require('vue-server-renderer/server-plugin')
+module.exports = merge(baseConfig, {
+    // 将 entry 指向应用程序的 server entry 文件
+    entry: './src/entry-server.js',
+    // 这允许 webpack 以 Node 适用方式处理模块加载
+    // 并且还会在编译 Vue 组件时，
+    // 告知 `vue-loader` 输送面向服务器代码(server-oriented code)。
+    target: 'node',
+    output: {
+        filename: 'server-bundle.js',
+    // 此处告知 server bundle 使用 Node 风格导出模块(Node-style exports)
+        libraryTarget: 'commonjs2'
+    },
+    // 不打包 node_modules 第三方包，而是保留 require 方式直接加载
+    externals: [nodeExternals({
+    // 白名单中的资源依然正常打包
+        allowlist: [/\.css$/]
+    })],
+    plugins: [
+    // 这是将服务器的整个输出构建为单个 JSON 文件的插件。
+    // 默认文件名为 `vue-ssr-server-bundle.json`
+        new VueSSRServerPlugin()
+    ]
+})
+```
+
+
+
+### 配置 **npm scripts**
+
+```json
+"scripts": {
+"build:client": "cross-env NODE_ENV=production webpack --config build/webpack.client.config.js",
+"build:server": "cross-env NODE_ENV=production webpack --config build/webpack.server.config.js",
+"build": "rimraf dist && npm run build:client && npm run build:server"
+}
+```
+
+执行上述命令测试构建是否能正确进行。
+
+## 启动应用
+
+参考 [https://ssr.vuejs.org/zh/guide/bundle-renderer.html](https://ssr.vuejs.org/zh/guide/bundle-renderer.html) 我们需要将 server.js 中的 *createRenderer* 方法替换为 *createBundleRenderer* ，它接收第一个参数 serverBundle，就是上述打包生成的 vue-ssr-server-bundle.json，第二个参数中加一个参数 manifest，即打包生成的客户端文件 vue-ssr-client-manifest.json。此时这个 renderer 会自动去配置 entry-server.js 中创建的 app，所以此处删除模板配置。
+
+```javascript
+/**
+* server.js
+*/
+const Vue = require('vue')
+const express = require('express')
+const fs = require('fs')
+
+const serverBundle = require('./dist/vue-ssr-server-bundle.json')
+const template = fs.readFileSync('./index.template.html', 'utf-8')
+const clientManifest  = require('./dist/vue-ssr-client-manifest.json')
+
+const renderer = require('vue-server-renderer').createBundleRenderer(serverBundle, {
+    runInNewContext: false,
+    template,
+    clientManifest
+})
+
+const server = express()
+server.use('/dist', express.static('./dist')) // 开发 dist 目录下的资源，否则找不到
+
+server.get('*', (req, res) => {
+    renderer.renderToString({
+        title: "vue-ssr",
+        meta: `<meta name="description" content="我是 vue ssr">`
+    }, (err, html) => {
+        if (err) {
+            res.status(500).end('Internal Server Error.')
+        }
+        res.end(html)
+    })
+})
+
+server.listen(3000, () => {
+    console.log('server is running at port 3000')
+})
+```
+
+此时就可以启动服务( ```nodemon server.js``` )查看，文件加载 OK，测试数据双向绑定 OK。
+
+![启动应用-数据双向绑定测试](2021-06-30_140618.png)
+
+以上我们已经实现了 Vue-SSR 的基本功能，但是还有**数据预取**和**状态管理**等功能还未实现，在实现之前需要做一些处理帮助我们提高开发效率，即创建一个开发模式，当文件改动后，能即时编译后自动刷新到页面，保证我们开发过程中不用重新服务和手动刷新浏览器等。
+
+# 搭建开发模式
+
+思路：监视打包构建 --> 重新生成 Renderer 渲染器
+
+## package.json
+
+新增启动命令，区分生产模式启动（start）和开发模式启动（dev），生产模式传递了环境变量 NODE_ENV=production；
+
+```json
+"scripts": {
+    "build:client": "cross-env NODE_ENV=production webpack --config build/webpack.client.config.js",
+    "build:server": "cross-env NODE_ENV=production webpack --config build/webpack.server.config.js",
+    "build": "rimraf dist && npm run build:client && npm run build:server",
+    "start": "cross-env NODE_ENV=production node server.js",
+    "dev": "node server.js"
+  },
+```
+
+## server.js
+
+server.js 改造将思路初始化。
+
+```javascript
+const express = require('express')
+const fs = require('fs')
+
+const isProd = process.env.NODE_ENV === 'production'
+let renderer
+
+if (isProd) {
+    const serverBundle = require('./dist/vue-ssr-server-bundle.json')
+    const template = fs.readFileSync('./index.template.html', 'utf-8')
+    const clientManifest  = require('./dist/vue-ssr-client-manifest.json')
+    renderer = require('vue-server-renderer').createBundleRenderer(serverBundle, {
+        runInNewContext: false,
+        template,
+        clientManifest
+    })
+} else {
+    // 开发模式 --> 监视打包构建 --> 重新生成 Renderer 渲染器
+}
+
+const server = express()
+server.use('/dist', express.static('./dist')) // 开发 dist 目录下的资源，否则找不到
+
+const render = (req, res) => {
+    renderer.renderToString({
+        title: "vue-ssr",
+        meta: `<meta name="description" content="我是 vue ssr">`
+    }, (err, html) => {
+        if (err) {
+            res.status(500).end('Internal Server Error.')
+        }
+        res.end(html)
+    })
+}
+
+server.get('*', isProd
+    ? render
+    : (req, res) => {
+        // TODO：等待有了 Renderer 渲染器后，调用 render 进行渲染
+        render()
+    }
+
+)
+
+server.listen(3000, () => {
+    console.log('server is running at port 3000')
+})
+
+```
+
+## 提取处理模块
+
+开发模式的思路主要实现，监听源码变化；
+
+build 目录下新增 setup-dev-server.js 用于处理监听构建，更新 Renderer；注意此处使用了 chokidar 作为监听文件变化的第三方包，记得安装相关依赖 ```yarn add chokidar```
+
+```javascript
+/**
+* setup-dev-server.js
+*/
+const fs = require('fs')
+const path = require('path')
+const chokidar = require('chokidar')
+
+module.exports = (server, callback) => {
+    let ready
+    const onReady = new Promise(r => ready = r)
+
+    // 监视构建 ==> 更新 Renderer，即调用 callback
+    let template, serverBundle, clientManifest
+
+    const update = () => {
+        if (template && serverBundle && clientManifest) {
+            ready()
+            callback(serverBundle, template, clientManifest)
+        }
+    }
+
+    update()
+    // 监视构建 template --> 调用 update --> 更新 Renderer 渲染器
+    const templatePath = path.resolve(__dirname, '../index.template.html')
+    template = fs.readFileSync(templatePath, 'utf-8')
+    // 监听文件变化的方法，此处使用第三方的 chokidar fs.watch  fa.watchFile chokidar
+    chokidar.watch(templatePath).on('change', () => {
+        update()
+    })
+    
+    // 监视构建 serverBundle --> 调用 update --> 更新 Renderer 渲染器
+    // 监视构建 clientManifest --> 调用 update --> 更新 Renderer 渲染器
+
+    return onReady
+}
+```
+
+导入到 server.js 并使用
+
+```javascript
+const setUpDevServer = require('./build/setup-dev-server')
+...
+} else {
+    // 开发模式 --> 监视打包构建 --> 重新生成 Renderer 渲染器
+    onReady = setUpDevServer(server, (serverBundle, template, clientManifest) => {
+        renderer = createBundleRenderer(serverBundle, {
+            template,
+            clientManifest
+        })
+    })
+}
+...
+```
+
+## 服务端监视打包
+
+webpack 编译器监视打包文件发生变化后，执行 update 方法；
+
+```javascript
+/**
+* setup-dev-server.js
+*/
+const fs = require('fs')
+const path = require('path')
+const chokidar = require('chokidar')
+const webpack = require('webpack')
+
+const resolve = filePath => path.resolve(__dirname, filePath)
+
+module.exports = (server, callback) => {
+    let ready
+    const onReady = new Promise(r => ready = r)
+
+    // 监视构建 ==> 更新 Renderer，即调用 callback
+    let template, serverBundle, clientManifest
+
+    const update = () => {
+        if (template && serverBundle && clientManifest) {
+            ready()
+            callback(serverBundle, template, clientManifest)
+        }
+    }
+
+    update()
+    // 监视构建 template --> 调用 update --> 更新 Renderer 渲染器
+    const templatePath = resolve('../index.template.html')
+    template = fs.readFileSync(templatePath, 'utf-8')
+    // 监听文件变化的方法，此处使用第三方的 chokidar fs.watch  fa.watchFile chokidar
+    chokidar.watch(templatePath).on('change', () => {
+        update()
+    })
+
+    // 监视构建 serverBundle --> 调用 update --> 更新 Renderer 渲染器
+    const serverConfig = require('./webpack.server.config')
+    const serverCompiler = webpack(serverConfig)
+    serverCompiler.watch({}, (err, stats) => {
+        if (err) throw err
+        if (stats.hasErrors()) return
+        serverBundle = JSON.parse(
+            fs.readFileSync(resolve('../dist/vue-ssr-server-bundle.json'), 'utf-8')
+        )
+        update()
+    })
+
+    // 监视构建 clientManifest --> 调用 update --> 更新 Renderer 渲染器
+
+    return onReady
+}
+```
+
+## 把数据写入内存
+
+以上处理中我们会发现涉及到文件读写，在开发模式下，频繁改动文件，会造成频繁读写磁盘，效率是很低的，此处把构建的数据放到内存中用于读写，提高构建速度。参考 [webpack 方案](https://webpack.js.org/api/node/#custom-file-systems) ，可以使用 三方的 memfs 来处理，也可以使用 webpack 提供的 webpack-dev-middleware ，此处使用后者，```yarn add  webpack-dev-middleware -D``` 。
+
+```javascript
+/**
+* setup-dev-server.js
+*/
+const fs = require('fs')
+const path = require('path')
+const chokidar = require('chokidar')
+const webpack = require('webpack')
+const devMiddleware = require('webpack-dev-middleware')
+
+const resolve = filePath => path.resolve(__dirname, filePath)
+
+module.exports = (server, callback) => {
+    let ready
+    const onReady = new Promise(r => ready = r)
+
+    // 监视构建 ==> 更新 Renderer，即调用 callback
+    let template, serverBundle, clientManifest
+
+    const update = () => {
+        if (template && serverBundle && clientManifest) {
+            ready()
+            callback(serverBundle, template, clientManifest)
+        }
+    }
+
+    update()
+    // 监视构建 template --> 调用 update --> 更新 Renderer 渲染器
+    const templatePath = resolve('../index.template.html')
+    template = fs.readFileSync(templatePath, 'utf-8')
+    // 监听文件变化的方法，此处使用第三方的 chokidar fs.watch  fa.watchFile chokidar
+    chokidar.watch(templatePath).on('change', () => {
+        update()
+    })
+
+    // 监视构建 serverBundle --> 调用 update --> 更新 Renderer 渲染器
+    const serverConfig = require('./webpack.server.config')
+    const serverCompiler = webpack(serverConfig)
+    const serverDevMiddleware = devMiddleware(serverCompiler, {
+        logLevel: 'silent' // 关闭日志输出
+    })
+
+    serverCompiler.hooks.done.tap('server', () => {
+        serverBundle = JSON.parse(
+            serverDevMiddleware.fileSystem.readFileSync(resolve('../dist/vue-ssr-server-bundle.json'), 'utf-8')
+        )
+        update()
+    })
+
+    // 监视构建 clientManifest --> 调用 update --> 更新 Renderer 渲染器
+
+    return onReady
+}
+```
+
+## 客户端构建
+
+按照上述将处理，对客户端生成 manifest 进行监听，变化后执行 update 方法。
+
+```javascript
+/**
+* setup-dev-server.js
+*/
+const fs = require('fs')
+const path = require('path')
+const chokidar = require('chokidar')
+const webpack = require('webpack')
+const devMiddleware = require('webpack-dev-middleware')
+
+const resolve = filePath => path.resolve(__dirname, filePath)
+
+module.exports = (server, callback) => {
+    let ready
+    const onReady = new Promise(r => ready = r)
+
+    // 监视构建 ==> 更新 Renderer，即调用 callback
+    let template, serverBundle, clientManifest
+
+    const update = () => {
+        if (template && serverBundle && clientManifest) {
+            ready()
+            callback(serverBundle, template, clientManifest)
+        }
+    }
+
+    update()
+    // 监视构建 template --> 调用 update --> 更新 Renderer 渲染器
+    const templatePath = resolve('../index.template.html')
+    template = fs.readFileSync(templatePath, 'utf-8')
+    // 监听文件变化的方法，此处使用第三方的 chokidar fs.watch  fa.watchFile chokidar
+    chokidar.watch(templatePath).on('change', () => {
+        update()
+    })
+
+    // 监视构建 serverBundle --> 调用 update --> 更新 Renderer 渲染器
+    const serverConfig = require('./webpack.server.config')
+    const serverCompiler = webpack(serverConfig)
+    const serverDevMiddleware = devMiddleware(serverCompiler, {
+        logLevel: 'silent' // 关闭日志输出
+    })
+
+    serverCompiler.hooks.done.tap('server', () => {
+        serverBundle = JSON.parse(
+            serverDevMiddleware.fileSystem.readFileSync(resolve('../dist/vue-ssr-server-bundle.json'), 'utf-8')
+        )
+        update()
+    })
+
+    // 监视构建 clientManifest --> 调用 update --> 更新 Renderer 渲染器
+    const clientConfig = require('./webpack.client.config')
+    const clientCompiler = webpack(clientConfig)
+    const clientDevMiddleware = devMiddleware(clientCompiler, {
+        publicPath: clientConfig.output.publicPath,
+        logLevel: 'silent' // 关闭日志输出
+    })
+
+    clientCompiler.hooks.done.tap('client', () => {
+        clientManifest = JSON.parse(
+            clientDevMiddleware.fileSystem.readFileSync(resolve('../dist/vue-ssr-client-manifest.json'), 'utf-8')
+        )
+        update()
+    })
+
+    // 将 clientDevMiddleware 挂载到 Express 服务中，提供对其内部内存中数据的访问
+    server.use(clientDevMiddleware)
+
+    return onReady
+}
+```
+
+render 需要传参，将回函数的 req 和 res 传入；
+
+```javascript
+...
+server.get('*', isProd
+    ? render
+    : async (req, res) => {
+        // 等待有了 Renderer 渲染器后，调用 render 进行渲染
+        await onReady
+        render(req, res)
+    }
+)
+...
+```
+
+代码到达以上后，执行 ```yarn dev``` 启动开发模式，浏览器测试双向绑定的功能OK。
+
+到目前为止，我们在开发模式下，修改代码已经能完成重新打包，但是还需要手动刷新浏览器，下边将介绍怎么自动刷新浏览器。
+
+## 热更新
+
+使用 webpack-hot-middleware 实现。```yarn add  webpack-hot-middleware -D``` 
+
+```javascript
+/**
+* setup-dev-server.js
+*/
+const fs = require('fs')
+const path = require('path')
+const chokidar = require('chokidar')
+const webpack = require('webpack')
+const devMiddleware = require('webpack-dev-middleware')
+const hotMiddleWare = require('webpack-hot-middleware')
+
+const resolve = filePath => path.resolve(__dirname, filePath)
+
+module.exports = (server, callback) => {
+    let ready
+    const onReady = new Promise(r => ready = r)
+
+    // 监视构建 ==> 更新 Renderer，即调用 callback
+    let template, serverBundle, clientManifest
+
+    const update = () => {
+        if (template && serverBundle && clientManifest) {
+            ready()
+            callback(serverBundle, template, clientManifest)
+        }
+    }
+
+    update()
+    // 监视构建 template --> 调用 update --> 更新 Renderer 渲染器
+    const templatePath = resolve('../index.template.html')
+    template = fs.readFileSync(templatePath, 'utf-8')
+    // 监听文件变化的方法，此处使用第三方的 chokidar fs.watch  fa.watchFile chokidar
+    chokidar.watch(templatePath).on('change', () => {
+        update()
+    })
+
+    // 监视构建 serverBundle --> 调用 update --> 更新 Renderer 渲染器
+    const serverConfig = require('./webpack.server.config')
+    const serverCompiler = webpack(serverConfig)
+    const serverDevMiddleware = devMiddleware(serverCompiler, {
+        logLevel: 'silent' // 关闭日志输出
+    })
+
+    serverCompiler.hooks.done.tap('server', () => {
+        serverBundle = JSON.parse(
+            serverDevMiddleware.fileSystem.readFileSync(resolve('../dist/vue-ssr-server-bundle.json'), 'utf-8')
+        )
+        update()
+    })
+
+    // 监视构建 clientManifest --> 调用 update --> 更新 Renderer 渲染器
+    const clientConfig = require('./webpack.client.config')
+    clientConfig.plugins.push(new webpack.HotModuleReplacementPlugin())
+    clientConfig.entry = [
+        'webpack-hot-middleware/client?quiet=true&reload=true', // 和服务端交互处理热更新的一个脚本
+        clientConfig.entry.app
+    ]
+    const clientCompiler = webpack(clientConfig)
+    const clientDevMiddleware = devMiddleware(clientCompiler, {
+        publicPath: clientConfig.output.publicPath,
+        logLevel: 'silent' // 关闭日志输出
+    })
+
+    clientCompiler.hooks.done.tap('client', () => {
+        clientManifest = JSON.parse(
+            clientDevMiddleware.fileSystem.readFileSync(resolve('../dist/vue-ssr-client-manifest.json'), 'utf-8')
+        )
+        update()
+    })
+
+    server.use(hotMiddleWare(clientCompiler, {
+        log: false // 关闭日志输出
+    }))
+
+    // 将 clientDevMiddleware 挂载到 Express 服务中，提供对其内部内存中数据的访问
+    server.use(clientDevMiddleware)
+
+    return onReady
+}
+```
+
+# 编写通用应用注意事项
+
+[https://ssr.vuejs.org/zh/guide/universal.html#%E6%9C%8D%E5%8A%A1%E5%99%A8%E4%B8%8A%E7%9A%84%E6%95%B0%E6%8D%AE%E5%93%8D%E5%BA%94](https://ssr.vuejs.org/zh/guide/universal.html#%E6%9C%8D%E5%8A%A1%E5%99%A8%E4%B8%8A%E7%9A%84%E6%95%B0%E6%8D%AE%E5%93%8D%E5%BA%94)
+
+# 路由处理
+
+## 配置 VueRouter
+
+安装 ```yarn add vue-router```;
+
+src 目录下创建 pages 目录用于存放页面组件，创建几个页面用于路由测试；
+
+src 目录下创建 router 目录，下边创建 index.js 配置路由；
+
+```javascript
+import Vue from 'vue'
+import VueRouter from 'vue-router'
+import Home from "../pages/Home"
+
+Vue.use(VueRouter)
+
+export const createRouter = () => {
+    const router = new VueRouter({
+        mode: 'history', // 兼容前后端
+        routes: [
+            {
+                path: '/',
+                name: 'home',
+                component: Home
+            },
+            {
+                path: '/about',
+                name: 'about',
+                component: () => import('@/pages/about')
+            },
+            {
+                path: '*',
+                name: 'error404',
+                component: () => import('@/pages/404')
+            }
+        ]
+    })
+    return router
+}
+```
+
+将路由注册到根实例
+
+```javascript
+/**
+ * app.js
+ * 通用的启动入口
+ *
+ * app.js 是我们应用程序的「通用 entry」。在纯客户端应用程序中，我们将在此文件中创建根 Vue 实例，
+ * 并直接挂载到 DOM。但是，对于服务器端渲染(SSR)，责任转移到纯客户端 entry 文件。app.js 简单地使用 export 导出一个 createApp 函数：
+ */
+import Vue from 'vue'
+import App from './App.vue'
+import { createRouter } from "@/router"
+
+// 导出一个工厂函数，用于创建新的
+// 应用程序、router 和 store 实例
+export function createApp () {
+    const router = createRouter()
+    const app = new Vue({
+        router, // 把路由挂载待 Vue 根实例
+        render: h => h(App) // 根实例简单的渲染应用程序组件。
+    })
+    return { app, router }
+}
+
+```
+
+## 适配服务端入口
+
+官方文档的 [路由和代码分割](https://ssr.vuejs.org/zh/guide/routing.html#%E4%BD%BF%E7%94%A8-vue-router-%E7%9A%84%E8%B7%AF%E7%94%B1) 提供了将路由适配到服务端入口中的方法。参考官方文档，本地将其内容改为使用 async 和 await 方式。
+
+```javascript
+/**
+ * entry-server.js
+ * 服务器 entry 使用 default export 导出函数，并在每次渲染中重复调用此函数。
+ * 此时，除了创建和返回应用程序实例之外，它不会做太多事情 - 但是稍后我们将在此执行服务器端路由匹配 (server-side route    	matching) 和数据预取逻辑 (data pre-fetching logic)。
+ */
+import { createApp } from './app'
+
+export default async context => {
+    // 因为有可能会是异步路由钩子函数或组件，所以我们将返回一个 Promise，
+    // 以便服务器能够等待所有的内容在渲染前，
+    // 就已经准备就绪。
+    const { app, router } = createApp()
+
+    // 设置服务器端 router 的位置
+    router.push(context.url)
+
+    // 等到 router 将可能的异步组件和钩子函数解析完
+    new Promise(router.onReady.bind(router))
+    return app
+}
+```
+
+## 服务端 server 适配
+
+```javascript
+// server.js
+...
+const render = async (req, res) => {
+    try {
+        const html = await renderer.renderToString({
+            title: "vue-ssr",
+            meta: `<meta name="description" content="我是 vue ssr">`,
+            url: req.url
+        })
+
+        // res.setHeader('Content-Type', 'text/html; charset=utf8')
+        res.end(html)
+    } catch (e) {
+        res.status(500).end('Internal Server Error.')
+    }
+}
+...
+```
+
+## 适配客户端入口
+
+官方文档的 [路由和代码分割](https://ssr.vuejs.org/zh/guide/routing.html#%E4%BD%BF%E7%94%A8-vue-router-%E7%9A%84%E8%B7%AF%E7%94%B1) 提供了将路由适配到客户端入口中的方法。
+
+需要在挂载 app 之前调用 `router.onReady`，因为路由器必须要提前解析路由配置中的异步组件，才能正确地调用组件中可能存在的路由钩子。
+
+```javascript
+/**
+ * 客户端 entry 只需创建应用程序，并且将其挂载到 DOM 中
+ */
+import { createApp } from './app'
+
+// 客户端特定引导逻辑……
+
+const { app, router } = createApp()
+
+router.onReady(() => {
+    app.$mount('#app')
+})
+```
+
+执行 ```yarn dev``` 启动服务，打开浏览器 [http://localhost:3000](http://localhost:3000) ，测试路由跳转 OK；
+
+![路由测试-Home页](2021-07-01_144325.png)
+
+![路由测试-About页](2021-07-01_144429.png)
+
+![路由测试-404页](2021-07-01_144524.png)
+
+
+
+
+
+
+
+
 
 
 
