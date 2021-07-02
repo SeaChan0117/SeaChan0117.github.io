@@ -1166,21 +1166,305 @@ router.onReady(() => {
 
 ![路由测试-404页](2021-07-01_144524.png)
 
+# 管理页面的 Head 内容
 
+目前项目中的 index.template.html 作为页面模板，其中的 Head 内容是共享的，即只有一份，不管访问哪个页面，内容都一样。
 
+我们希望各页面能自己设置自己的标题 Title 和 原数据 Meta 等信息，可以参考 [https://ssr.vuejs.org/zh/guide/head.html](https://ssr.vuejs.org/zh/guide/head.html) ，也可以使用其他的三方解决方案，比如下面我们就使用 [**vue-meta**](https://vue-meta.nuxtjs.org/) 来管理各个页面的头部信息。
 
+```yarn add vue-meta```
 
+## 配置 vue-meta
 
+app.js 通用入口文件中，使用 Vue 配置 vue-meta，并 mixmin 一个 title 的模板；
 
+```javascript
+...
+import VueMeta from 'vue-meta'
+Vue.use(VueMeta)
+Vue.mixin({
+    metaInfo: {
+        titleTemplate: '%s - Vue-SSR'
+    }
+})
+...
+```
 
+entry-server.js 中在上下文上挂载 meta 属性，保证页面模板中能动态获取。
 
+```javascript
+...
+    const meta = app.$meta()
+    // 设置服务器端 router 的位置
+    router.push(context.url)
+    context.meta = meta
+...
+```
 
+index.template.html 模板中获取 meta 配置。
 
-未完待续。。。
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    {{{ meta.inject().title.text() }}}
+    {{{ meta.inject().meta.text() }}}
+</head>
+<body>
+<!--vue-ssr-outlet-->
+</body>
+</html>
+```
 
+## vue-meta 具体使用
 
+此处示例给 Home 页和 About 页设置自己的 Title。
+
+```vue
+<!--Home.vue-->
+...
+<script>
+    export default {
+        name: "Home",
+        metaInfo: {
+            title: '首页'
+        }
+    }
+</script>
+...
+<!--About.vue-->
+...
+<script>
+    export default {
+        name: "About",
+        metaInfo: {
+            title: '关于'
+        }
+    }
+</script>
+...
+```
+
+.vue 对应页面设置的 metaInfo.title 就会替换到 app.js 中 mixin 的 titleTemplate 中的 "%s" 位置，并解析为 title 插入到模板的 meta.inject().title.text() 位置。
+
+![vue-meta-pic1](2021-07-02_100217.png)
+
+![vue-meta-pic2](2021-07-02_100330.png)
+
+# 数据预取和状态管理
+
+在服务器端渲染(SSR)期间，我们本质上是在渲染我们应用程序的"快照"，所以如果应用程序依赖于一些异步数据，**那么在开始渲染过程之前，需要先预取和解析好这些数据**。
+
+在客户端，在挂载 (mount) 到客户端应用程序之前，需要获取到与服务器端应用程序完全相同的数据 - 否则，客户端应用程序会因为使用与服务器端应用程序不同的状态，然后导致混合失败。
+
+为了解决这个问题，获取的数据需要位于视图组件之外，即放置在专门的数据预取存储容器(data store)或"状态容器(state container)"中。首先，在服务器端，我们可以在渲染之前预取数据，并将数据填充到 store 中。此外，我们将在 HTML 中序列化(serialize)和内联预置(inline)状态。这样，在挂载(mount)到客户端应用程序之前，可以直接从 store 获取到内联预置(inline)状态。
+
+即我们可以使用官方的状态管理库 Vuex。
+
+[https://ssr.vuejs.org/zh/guide/data.html](https://ssr.vuejs.org/zh/guide/data.html) 
+
+## 基于 Vuex 创建容器
+
+> ```yarn add vuex``` 
+>
+> src 下创建 store 目录，store 下创建 index.js
+>
+> 配置 index.js
+
+```javascript
+// store/index.js
+import Vuex from 'vuex'
+import Vue from 'vue'
+import axios from "axios"
+
+Vue.use(Vuex)
+
+export const createStore = () => {
+    return new Vuex.Store({
+        state: () => {
+            return {
+                posts: []
+            }
+        },
+        mutations: {
+            setPosts: (state, payload) => {
+                state.posts = payload
+            }
+        },
+        actions: {
+            // 在服务端渲染期间务必让 action 返回一个 Promise
+            async getPosts({ commit }) {
+                const { data } = await axios.get('https://cnodejs.org/api/v1/topics')
+                commit('setPosts', data.data)
+            }
+        }
+    })
+}
+```
+
+## app.js 中将 store 挂载到 Vue 根实例
+
+```javascript
+/**
+ * 通用的启动入口
+ *
+ * app.js 是我们应用程序的「通用 entry」。在纯客户端应用程序中，我们将在此文件中创建根 Vue 实例，
+ * 并直接挂载到 DOM。但是，对于服务器端渲染(SSR)，责任转移到纯客户端 entry 文件。app.js 简单地使用 export 导出一个 createApp 函数：
+ */
+import Vue from 'vue'
+import App from './App.vue'
+import { createRouter } from "@/router"
+import VueMeta from 'vue-meta'
+import { createStore } from "@/store"
+
+Vue.use(VueMeta)
+Vue.mixin({
+    metaInfo: {
+        titleTemplate: '%s - Vue-SSR'
+    }
+})
+
+// 导出一个工厂函数，用于创建新的
+// 应用程序、router 和 store 实例
+export function createApp () {
+    const router = createRouter()
+    const store = createStore()
+    const app = new Vue({
+        router, // 把路由挂载待 Vue 根实例
+        store, // 把容器挂载到 Vue 根实例
+        render: h => h(App) // 根实例简单的渲染应用程序组件。
+    })
+    return { app, router, store }
+}
+```
+
+## 数据预取处理页面
+
+```vue
+<template>
+    <div>
+        <h1>Posts List</h1>
+        <ul>
+            <li v-for="post in posts" :key="post.id">
+                {{ post.title }}
+            </li>
+        </ul>
+    </div>
+</template>
+<script>
+    import axios from 'axios'
+    import { mapState, mapActions } from 'vuex'
+    export default {
+        name: "Posts",
+        data() {
+            return {
+                // posts: []
+            }
+        },
+        computed: {
+            ...mapState(['posts'])
+        },
+        // Vue SSR 特殊的为服务端渲染提供的生命周期钩子函数
+        serverPrefetch() {
+            // 发起 action 返回 promise
+            return this.getPosts()
+        },
+        methods: {
+          ...mapActions(['getPosts'])
+        },
+        // 服务端渲染只支持 beforeCreate 和 created 钩子函数
+        // 且服务端渲染不会等待它们中的异步操作
+        // 不支持响应式数据
+        // 以下方法在服务端渲染中不会工作，实际是在客户端渲染出来的
+        // async created() {
+        //     const { data } = await axios({
+        //         method: 'GET',
+        //         url: 'https://cnodejs.org/api/v1/topics'
+        //     })
+        //
+        //     this.posts = data.data
+        // }
+    }
+</script>
+<style scoped>
+</style>
+```
+
+## entry-server.js
+
+```javascript
+/**
+ * 服务器 entry 使用 default export 导出函数，并在每次渲染中重复调用此函数。
+ * 此时，除了创建和返回应用程序实例之外，它不会做太多事情 - 但是稍后我们将在此执行服务器端路由匹配 (server-side route matching) 和数据预取逻辑 (data pre-fetching logic)。
+ */
+import { createApp } from './app'
+
+export default async context => {
+    // 因为有可能会是异步路由钩子函数或组件，所以我们将返回一个 Promise，
+    // 以便服务器能够等待所有的内容在渲染前，
+    // 就已经准备就绪。
+    const { app, router, store } = createApp()
+
+    const meta = app.$meta()
+
+    // 设置服务器端 router 的位置
+    router.push(context.url)
+
+    context.meta = meta
+
+    // 等到 router 将可能的异步组件和钩子函数解析完
+    await new Promise(router.onReady.bind(router))
+
+    // 当服务端渲染结束后调用
+    context.rendered = () => {
+        // Renderer 会把 context.state 数据对象内联到页面模板中
+        // 最终发送给客户端的页面中会包含一段脚本：window.__INITIAL_STATE__ = context.state
+        // 客户端就要把页面中的 window.__INITIAL_STATE__ 拿出来填充到客户端 store 容器中
+        context.state = store.state // 将服务端状态挂载到客户端状态上，保持一致，才能在客户端渲染
+    }
+    return app
+}
+```
+
+## entry-client.js
+
+```javascript
+/**
+ * 客户端 entry 只需创建应用程序，并且将其挂载到 DOM 中
+ */
+import { createApp } from './app'
+
+// 客户端特定引导逻辑……
+
+const { app, router, store } = createApp()
+// 客户端将服务端设置到 widow 的状态配置到客户端
+if (window.__INITIAL_STATE__) {
+    store.replaceState(window.__INITIAL_STATE__)
+}
+
+router.onReady(() => {
+    app.$mount('#app')
+})
+```
+
+重启应用后，点击 Posts 路由，即可得到 posts 服务端直接渲染的页面；
+
+![数据预取和状态管理](2021-07-02_140837.png)
 
 # 相关链接：
 
 [https://ssr.vuejs.org/](https://ssr.vuejs.org/);  
+
+[https://vue-meta.nuxtjs.org/](https://vue-meta.nuxtjs.org/);
+
+[https://github.com/paulmillr/chokidar](https://github.com/paulmillr/chokidar);
+
+[https://github.com/webpack/webpack-dev-middleware](https://github.com/webpack/webpack-dev-middleware);
+
+
+
+本文完整 Demo 地址：[https://github.com/SeaChan0117/vue-SSR](https://github.com/SeaChan0117/vue-SSR) ；
+
+
 
