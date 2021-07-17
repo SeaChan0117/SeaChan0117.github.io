@@ -38,6 +38,94 @@
       </tags>
   </entry>
   <entry>
+    <title>Vue3 介绍</title>
+    <url>/2021/07/17/vue3-introduce/</url>
+    <content><![CDATA[<h1 id="Vue-js-3-0-源码组织方式"><a href="#Vue-js-3-0-源码组织方式" class="headerlink" title="Vue.js 3.0 源码组织方式"></a>Vue.js 3.0 源码组织方式</h1><p>1.源码采用 TypeScript 重写，语言类型化提升代码的可维护性；</p>
+<p>2.使用 Monorepo 管理项目结构，把不同功能的代码放在不同的 package 中管理，功能模块划分明确，依赖关系明确，功能模块也可单独使用；</p>
+<h1 id="Vue-js-3-0-不同构建版本"><a href="#Vue-js-3-0-不同构建版本" class="headerlink" title="Vue.js 3.0 不同构建版本"></a>Vue.js 3.0 不同构建版本</h1><h2 id="cjs"><a href="#cjs" class="headerlink" title="cjs"></a>cjs</h2><p>完整版的 vue ，包含运行时和编译器；</p>
+<h3 id="vue-cjs-js"><a href="#vue-cjs-js" class="headerlink" title="vue.cjs.js"></a>vue.cjs.js</h3><p>开发版本，代码未没有被压缩；</p>
+<h3 id="vue-cjs-prod-js"><a href="#vue-cjs-prod-js" class="headerlink" title="vue.cjs.prod.js"></a>vue.cjs.prod.js</h3><p>生产版本，代码被压缩；</p>
+<h2 id="global"><a href="#global" class="headerlink" title="global"></a>global</h2><p>以下都可以在浏览器中使用 script 标签进行导入，导入后会有一个全局的 Vue 对象；</p>
+<h3 id="vue-global-js"><a href="#vue-global-js" class="headerlink" title="vue.global.js"></a>vue.global.js</h3><p>完整版的 vue，包含编译器和运行时，开发版本，代码没有压缩；</p>
+<h3 id="vue-global-prod-js"><a href="#vue-global-prod-js" class="headerlink" title="vue.global.prod.js"></a>vue.global.prod.js</h3><p>完整版的 vue，包含编译器和运行时，生产版本，代码被压缩；</p>
+<h3 id="vue-runtime-global-js"><a href="#vue-runtime-global-js" class="headerlink" title="vue.runtime.global.js"></a>vue.runtime.global.js</h3><p>只包含运行时的构建版本，开发版本，代码没有压缩；</p>
+<h3 id="vue-runtime-global-prod-js"><a href="#vue-runtime-global-prod-js" class="headerlink" title="vue.runtime.global.prod.js"></a>vue.runtime.global.prod.js</h3><p>只包含运行时的构建版本，生产版本，代码被压缩；</p>
+<h2 id="browser"><a href="#browser" class="headerlink" title="browser"></a>browser</h2><p>ESModule，浏览器原生模块化方式，在浏览器中使用 script 标签，标签设置 type 为 module 导入以下模块；</p>
+<h3 id="vue-esm-browser-js"><a href="#vue-esm-browser-js" class="headerlink" title="vue.esm-browser.js"></a>vue.esm-browser.js</h3><p>完整版的 vue，包含编译器和运行时，开发版本，代码没有压缩；</p>
+<h3 id="vue-esm-browser-prod-js"><a href="#vue-esm-browser-prod-js" class="headerlink" title="vue.esm-browser.prod.js"></a>vue.esm-browser.prod.js</h3><p>完整版的 vue，包含编译器和运行时，生产版本，代码被压缩；</p>
+<h3 id="vue-runtime-esm-browser-js"><a href="#vue-runtime-esm-browser-js" class="headerlink" title="vue.runtime.esm-browser.js"></a>vue.runtime.esm-browser.js</h3><p>只包含运行时的构建版本，开发版本，代码没有压缩；</p>
+<h3 id="vue-runtime-esm-browser-prod-js"><a href="#vue-runtime-esm-browser-prod-js" class="headerlink" title="vue.runtime.esm-browser.prod.js"></a>vue.runtime.esm-browser.prod.js</h3><p>只包含运行时的构建版本，生产版本，代码被压缩；</p>
+<h2 id="bundler"><a href="#bundler" class="headerlink" title="bundler"></a>bundler</h2><p>没有打包所有的代码，需要配合打包工具使用；</p>
+<h3 id="vue-esm-bundler-js"><a href="#vue-esm-bundler-js" class="headerlink" title="vue.esm-bundler.js"></a>vue.esm-bundler.js</h3><p>包含运行时编译器；</p>
+<p>vue.runtime.esm-bundler.js</p>
+<p> 仅运行时，并要求所有模板都要预先编译；</p>
+<h1 id="Composition-API"><a href="#Composition-API" class="headerlink" title="Composition API"></a>Composition API</h1><ul>
+<li>FRC（Request For Comments）<ul>
+<li><a href="https://github.com/vuejs/rfcs">https://github.com/vuejs/rfcs</a></li>
+</ul>
+</li>
+<li>Composition API RFC<ul>
+<li><a href="https://composition-api.vuejs.org/">https://composition-api.vuejs.org</a></li>
+</ul>
+</li>
+</ul>
+<h2 id="options-API"><a href="#options-API" class="headerlink" title="options API"></a>options API</h2><p>1.包含一个描述组件选项（data、methods、props 等）的对象；</p>
+<p>2.Options API 开发复杂组件，同一个功能逻辑的代码被拆分到不同选项；</p>
+<p>composition API</p>
+<p>1.基于函数的 API ，更灵活地组织组件的逻辑；</p>
+<p>2.更利于公共逻辑的提取和重用；</p>
+<h1 id="性能提升"><a href="#性能提升" class="headerlink" title="性能提升"></a>性能提升</h1><h2 id="响应式系统升级"><a href="#响应式系统升级" class="headerlink" title="响应式系统升级"></a>响应式系统升级</h2><ul>
+<li>Vue.js 2.x 中响应式系统的核心是 defineProperty；</li>
+<li>Vue.js 3.0 中使用 Proxy 对象重写响应式系统，性能本身比 defineProperty 好；<ul>
+<li>可以监听动态新增的属性；</li>
+<li>可以监听删除的属性；</li>
+<li>可以监听数组的索引和 length 属性；</li>
+</ul>
+</li>
+</ul>
+<h2 id="编译优化"><a href="#编译优化" class="headerlink" title="编译优化"></a>编译优化</h2><ul>
+<li>Vue.js 2.x 中通过标记静态根节点，优化 diff 的过程（静态节点还会 diff）；</li>
+<li>Vue.js 3.0 中标记和提升所有的静态根节点，diff 的时候只需要对比动态节点内容；<ul>
+<li>Fragments (升级 vetur 插件)；</li>
+<li>静态提升；</li>
+<li>Patch flag；</li>
+<li>缓存事件处理函数；</li>
+</ul>
+</li>
+</ul>
+<h2 id="优化打包体积"><a href="#优化打包体积" class="headerlink" title="优化打包体积"></a>优化打包体积</h2><ul>
+<li>Vue.js 3.0 中移除了一些不常用的 API；<ul>
+<li>eg：inline-template、filter 等</li>
+</ul>
+</li>
+<li>Tree-shaking；</li>
+</ul>
+<h1 id="Vite"><a href="#Vite" class="headerlink" title="Vite"></a>Vite</h1><h2 id="vite-和-vue-cli-区别"><a href="#vite-和-vue-cli-区别" class="headerlink" title="vite 和 vue-cli 区别"></a>vite 和 vue-cli 区别</h2><ul>
+<li>Vite 在开发模式下不需要打包可以直接运行（ESModule 的加载特性）；</li>
+<li>Vue-cli 开发模式下必须对项目打包才可以运行；</li>
+<li>Vite 在生产环境下使用 Rollup 打包；<ul>
+<li>基于 ES Module 的方式打包；</li>
+</ul>
+</li>
+<li>Vue-cli 使用 webpack 打包；</li>
+</ul>
+<h2 id="Vite-特点"><a href="#Vite-特点" class="headerlink" title="Vite 特点"></a>Vite 特点</h2><ul>
+<li>快速冷启动；</li>
+<li>按需编译；</li>
+<li>模块热更新；</li>
+</ul>
+<h2 id="Vite-创建项目"><a href="#Vite-创建项目" class="headerlink" title="Vite 创建项目"></a>Vite 创建项目</h2><ul>
+<li><p>一般方式：</p>
+<p>​    <code>npm init vite-app &lt;project-name&gt;</code></p>
+</li>
+<li><p>基于模板创建项目：</p>
+<p>​    <code>npm init vite-app --template react</code></p>
+<p>​    <code>npm init vite-app --template preact</code></p>
+</li>
+</ul>
+]]></content>
+  </entry>
+  <entry>
     <title>gridsome 安裝</title>
     <url>/2021/07/17/init-gridsome/</url>
     <content><![CDATA[<p>Gridsome 初始化安装，参照<a href="https://www.gridsome.cn/docs/#how-to-install">官网</a> </p>
