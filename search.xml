@@ -38,6 +38,40 @@
       </tags>
   </entry>
   <entry>
+    <title>Vue3 响应式原理</title>
+    <url>/2021/07/18/vue3-reactive/</url>
+    <content><![CDATA[<h1 id="Vue3-响应式原理回顾"><a href="#Vue3-响应式原理回顾" class="headerlink" title="Vue3 响应式原理回顾"></a>Vue3 响应式原理回顾</h1><ul>
+<li>Proxy 对象实现属性监听</li>
+<li>多层属性嵌套时，在访问属性过程中处理下一级属性</li>
+<li>默认监听动态添加的属性</li>
+<li>默认监听属性的删除操作</li>
+<li>默认监听数组索引和 length 属性</li>
+<li>可以作为单独的模块使用<span id="more"></span>
+<h1 id="Proxy-对象"><a href="#Proxy-对象" class="headerlink" title="Proxy 对象"></a>Proxy 对象</h1></li>
+</ul>
+<p><strong>Proxy</strong> 对象用于创建一个对象的代理，从而实现基本操作的拦截和自定义（如属性查找、赋值、枚举、函数调用等）。</p>
+<h2 id="严格模式"><a href="#严格模式" class="headerlink" title="严格模式"></a>严格模式</h2><p>set 和 deleteProperty 中需要返回布尔类型的值，在严格模式下，如果返回 false 的话会出现 Type Error 的异常；</p>
+<figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line"><span class="keyword">const</span> target = &#123;</span><br><span class="line">    <span class="attr">foo</span>: <span class="string">&#x27;foo&#x27;</span>,</span><br><span class="line">    <span class="attr">bar</span>: <span class="string">&#x27;bar&#x27;</span></span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// Reflect.getPrototypeOf()</span></span><br><span class="line"><span class="comment">// Object.getPrototypeOf()</span></span><br><span class="line"><span class="keyword">const</span> proxy = <span class="keyword">new</span> <span class="built_in">Proxy</span>(target, &#123;</span><br><span class="line">    get (target, key, receiver) &#123;</span><br><span class="line">        <span class="comment">// return target[key]</span></span><br><span class="line">        <span class="keyword">return</span> <span class="built_in">Reflect</span>.get(target, key, receiver)</span><br><span class="line">    &#125;,</span><br><span class="line">    set (target, key, value, receiver) &#123;</span><br><span class="line">        <span class="comment">// target[key] = value</span></span><br><span class="line">        <span class="keyword">return</span> <span class="built_in">Reflect</span>.set(target, key, value, receiver)</span><br><span class="line">    &#125;,</span><br><span class="line">    deleteProperty (target, key) &#123;</span><br><span class="line">        <span class="comment">// delete target[key]</span></span><br><span class="line">        <span class="keyword">return</span> <span class="built_in">Reflect</span>.deleteProperty(target, key)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;)</span><br><span class="line"></span><br><span class="line">proxy.foo = <span class="string">&#x27;foo123&#x27;</span></span><br><span class="line"><span class="keyword">delete</span> proxy.foo</span><br></pre></td></tr></table></figure>
+
+<h2 id="receiver"><a href="#receiver" class="headerlink" title="receiver"></a>receiver</h2><ul>
+<li>Proxy 中 receiver：Proxy 或者继承 Proxy 的对象</li>
+<li>Reflect 中 receiver： 如果 target 对象中设置了 getter，getter 中的 this 指向 receiver</li>
+</ul>
+<figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line"><span class="keyword">const</span> obj = &#123;</span><br><span class="line">    <span class="keyword">get</span> <span class="title">foo</span>() &#123;</span><br><span class="line">        <span class="built_in">console</span>.log(<span class="built_in">this</span>)</span><br><span class="line">        <span class="keyword">return</span> <span class="built_in">this</span>.bar</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">const</span> proxy = <span class="keyword">new</span> <span class="built_in">Proxy</span>(obj, &#123;</span><br><span class="line">    get (target, key) &#123;</span><br><span class="line">        <span class="keyword">if</span> (key === <span class="string">&#x27;bar&#x27;</span>) &#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="string">&#x27;value - bar&#x27;</span></span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> <span class="built_in">Reflect</span>.get(target, key)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;)</span><br><span class="line"><span class="built_in">console</span>.log(proxy.foo)</span><br></pre></td></tr></table></figure>
+
+<p><img src="/2021/07/18/vue3-reactive/2021-07-18_174107.png" alt="不设置receiver"></p>
+<figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line"><span class="keyword">const</span> obj = &#123;</span><br><span class="line">    <span class="keyword">get</span> <span class="title">foo</span>() &#123;</span><br><span class="line">        <span class="built_in">console</span>.log(<span class="built_in">this</span>)</span><br><span class="line">        <span class="keyword">return</span> <span class="built_in">this</span>.bar</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">const</span> proxy = <span class="keyword">new</span> <span class="built_in">Proxy</span>(obj, &#123;</span><br><span class="line">    get (target, key, receiver) &#123;</span><br><span class="line">        <span class="keyword">if</span> (key === <span class="string">&#x27;bar&#x27;</span>) &#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="string">&#x27;value - bar&#x27;</span></span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> <span class="built_in">Reflect</span>.get(target, key, receiver)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;)</span><br><span class="line"><span class="built_in">console</span>.log(proxy.foo)</span><br></pre></td></tr></table></figure>
+
+<p><img src="/2021/07/18/vue3-reactive/2021-07-18_174344.png" alt="设置receiver"></p>
+]]></content>
+      <categories>
+        <category>Vue3</category>
+      </categories>
+      <tags>
+        <tag>Vue3</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>gridsome 安裝</title>
     <url>/2021/07/18/init-gridsome/</url>
     <content><![CDATA[<p>Gridsome 初始化安装，参照<a href="https://www.gridsome.cn/docs/#how-to-install">官网</a> </p>
@@ -62,6 +96,43 @@
       </categories>
       <tags>
         <tag>gridsome</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Composition API</title>
+    <url>/2021/07/17/compositionAPI/</url>
+    <content><![CDATA[<h1 id="Composition-API"><a href="#Composition-API" class="headerlink" title="Composition API"></a>Composition API</h1><h2 id="Composition-API-1"><a href="#Composition-API-1" class="headerlink" title="Composition API"></a>Composition API</h2><p>Composition API 是 vue3 中新增的 API，使用传统的option配置方法写组件的时候问题，随着业务复杂度越来越高，代码量会不断的加大；由于相关业务的代码需要遵循option的配置写到特定的区域，导致后续维护非常的复杂，同时代码可复用性不高，而composition-api就是为了解决这个问题而生的。</p>
+<p>Composition API 提供了几个函数：</p>
+<span id="more"></span>
+<ul>
+<li><p>reactive</p>
+<p>相当于当前的 Vue.observable () API，经过reactive处理后的函数能变成响应式的数据，类似于option api里面的data属性的值</p>
+</li>
+<li><p>watchEffect</p>
+<ul>
+<li>watch 函数的简化版本，也用来监视数据的变化</li>
+<li>接收一个函数作为参数，监听函数内响应式数据的变化</li>
+</ul>
+</li>
+<li><p>computed</p>
+<p>计算属性 API </p>
+</li>
+<li><p>ref</p>
+<p>接受一个内部值并返回一个响应式且可变的 ref 对象。ref 对象具有指向内部值的单个 property <code>.value</code>，可以把基本类型的数据包装成响应式对象</p>
+</li>
+<li><p>toRefs</p>
+<p>把对象的每个属性都转化为响应式数据，就可以解构 toRefs 返回的对象，解构的属性也是响应式的，这个属性的值也是一个对象，存在一个 value 属性，在模板中取值可以省略 value，代码中不能省略</p>
+</li>
+<li><p>生命周期 hooks</p>
+<p>方法与option api基本一致，在对应的方法前加上 <code>on</code></p>
+</li>
+</ul>
+]]></content>
+      <categories>
+        <category>Vue3</category>
+      </categories>
+      <tags>
+        <tag>Vue3</tag>
       </tags>
   </entry>
   <entry>
