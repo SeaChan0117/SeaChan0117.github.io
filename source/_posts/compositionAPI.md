@@ -2,7 +2,7 @@
 title: Composition API
 date: 2021-07-17 17:36:18
 categories: Vue3
-tags:Vue3
+tags: Vue3
 ---
 
 # Composition API
@@ -12,7 +12,7 @@ tags:Vue3
 Composition API 是 vue3 中新增的 API，使用传统的option配置方法写组件的时候问题，随着业务复杂度越来越高，代码量会不断的加大；由于相关业务的代码需要遵循option的配置写到特定的区域，导致后续维护非常的复杂，同时代码可复用性不高，而composition-api就是为了解决这个问题而生的。
 
 Composition API 提供了几个函数：
-
+<!--more-->
 * reactive
 
   相当于当前的 Vue.observable () API，经过reactive处理后的函数能变成响应式的数据，类似于option api里面的data属性的值
