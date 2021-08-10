@@ -38,6 +38,118 @@
       </tags>
   </entry>
   <entry>
+    <title>vue-virtual-dom</title>
+    <url>/2021/08/10/vue-virtual-dom/</url>
+    <content><![CDATA[<p>学习 <strong>vue</strong> 源码前，需对 <strong>虚拟Dom</strong> 有一定的了解，本文将通过 <strong>snabbdom</strong> 库，对 <strong>虚拟Dom</strong> 进行学习，原因是 <strong>Vue</strong> 的 <strong>虚拟Dom</strong> 实现就是基于 <strong>snabbdom</strong> 改造的。</p>
+<h1 id="什么是虚拟Dom"><a href="#什么是虚拟Dom" class="headerlink" title="什么是虚拟Dom"></a>什么是虚拟Dom</h1><p><strong>Virtual Dom</strong>（虚拟Dom），是由普通的 <strong>JS对象</strong> 来描述 <strong>Dom</strong> 对象，个人理解就是 <strong>真实Dom</strong> 抽象成 <strong>JS对象</strong> 的最小化属性集，后续可根据它的相关属性生成一个对应的 <strong>真实Dom</strong>。由于 <strong>真实Dom</strong> 的属性繁多，而实际使用时大多是不需要的，所以 <strong>虚拟Dom</strong> 的从基础就决定了它有所占内存较小的优势。</p>
+<span id="more"></span>
+<p><img src="/2021/08/10/vue-virtual-dom/01.jpg" alt="打印一个真实Dom的所有属性"></p>
+<p><img src="/2021/08/10/vue-virtual-dom/02.jpg" alt="虚拟Dom示例，其就是一个JS对象"></p>
+<p><strong>snabbdom</strong> 等库对 <strong>虚拟Dom</strong> 的实现以及相关方法（重点是 <strong>diff</strong> 算法）能将 <strong>虚拟Dom</strong> 和 <strong>真实Dom</strong> 进行映射，并将更改后的状态同步到 <strong>真实Dom</strong>，避免了开发者手动操作 <strong>Dom</strong>。<strong>虚拟Dom</strong> 中存在多次操作，只会最终和 <strong>真实Dom</strong> 做对比，把修改的节点更新到 <strong>真实Dom</strong>，节省了操作次数，提高性能。</p>
+<h1 id="虚拟Dom的作用"><a href="#虚拟Dom的作用" class="headerlink" title="虚拟Dom的作用"></a>虚拟Dom的作用</h1><ul>
+<li>维护视图和状态的关系</li>
+<li>复杂视图情况下提升渲染性能</li>
+<li>最大的好处是<strong>跨平台</strong></li>
+</ul>
+<blockquote>
+<p><strong>浏览器平台渲染Dom</strong><br><strong>服务端渲染SSR（Nuxt.js/Next.js）</strong><br><strong>原生应用（Weex/React Native）</strong><br><strong>小程序（mpvue/uni-app）</strong></p>
+</blockquote>
+<h1 id="snabbdom（虚拟Dom库）"><a href="#snabbdom（虚拟Dom库）" class="headerlink" title="snabbdom（虚拟Dom库）"></a><strong>snabbdom（虚拟Dom库）</strong></h1><p><strong>Vue 2.x</strong> 内部使用的 <strong>虚拟Dom</strong> 是基于 <strong>snabbdom</strong> 改造实现的，所以此处对 <strong>snabbdom</strong> 进行简单的学习，以便后续学习 <strong>Vue</strong> 时对 <strong>虚拟Dom</strong> 有一定了解。</p>
+<ul>
+<li>通过模块可扩展</li>
+<li>源码通过TS开发</li>
+<li>最快的虚拟Dom之一</li>
+</ul>
+<h1 id="snabbdom-简单示例上手"><a href="#snabbdom-简单示例上手" class="headerlink" title="snabbdom 简单示例上手"></a>snabbdom 简单示例上手</h1><p>此处使用 <strong>parcel</strong> 进行打包，原因是代码结构简单，<strong>parcel</strong> 零配置，使用起来效率更高；</p>
+<p>初始化项目后安装 <strong>snabbdom</strong> ；</p>
+<p>创建 <strong>js</strong> 文件如下：</p>
+<figure class="highlight js"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> &#123;init&#125; <span class="keyword">from</span> <span class="string">&#x27;snabbdom/build/package/init&#x27;</span></span><br><span class="line"><span class="keyword">import</span> &#123;h&#125; <span class="keyword">from</span> <span class="string">&#x27;snabbdom/build/package/h&#x27;</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> patch = init([])</span><br><span class="line"></span><br><span class="line"><span class="comment">// 第一个参数：标签+选择器</span></span><br><span class="line"><span class="comment">// 第二个参数：如果是字符串就是标签中的文本内容</span></span><br><span class="line"><span class="keyword">let</span> vNode = h(<span class="string">&#x27;div#container.cls&#x27;</span>, <span class="string">&#x27;Hello World&#x27;</span>)</span><br><span class="line"><span class="keyword">let</span> app = <span class="built_in">document</span>.querySelector(<span class="string">&#x27;#app&#x27;</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment">// 第一个参数：旧的 vNode ，可以是 dom 元素</span></span><br><span class="line"><span class="comment">// 第二个参数：新的 vNode</span></span><br><span class="line"><span class="comment">// 返回新的 vNode</span></span><br><span class="line"><span class="keyword">let</span> oldVnode = patch(app, vNode)</span><br><span class="line"></span><br><span class="line">vNode = h(<span class="string">&#x27;div#id.class-test&#x27;</span>, <span class="string">&#x27;Snabbdom&#x27;</span>)</span><br><span class="line">patch(oldVnode, vNode)</span><br></pre></td></tr></table></figure>
+
+<p>在 <strong>index.html</strong> 中引入该 <strong>js</strong>，<strong>parcel</strong> 启动项目，<code>yarn parcel index.html --open</code>;</p>
+<p><img src="/2021/08/10/vue-virtual-dom/03.jpg" alt="虚拟Dom渲染到页面"></p>
+<h1 id="模块的使用"><a href="#模块的使用" class="headerlink" title="模块的使用"></a>模块的使用</h1><p><strong>snabbdom</strong> 中的模块是用来扩展 <strong>snabbdom</strong> 的功能，类似于插件的机制；</p>
+<ul>
+<li><strong>snabbdom</strong> 的核心库并不能处理 <strong>Dom</strong> 元素的属性、样式、事件等，可以通过注册 <strong>snabbdom</strong> 默认提供的模块（styleModule、eventListenersModule等）来实现；</li>
+<li><strong>snabbdom</strong> 中的模块可以扩展 <strong>snabbdom</strong> 的功能；</li>
+<li><strong>snabbdom</strong> 中模块的实现是通过注册全局的钩子函数来实现的；</li>
+</ul>
+<h1 id="官方提供的模块："><a href="#官方提供的模块：" class="headerlink" title="官方提供的模块："></a>官方提供的模块：</h1><ul>
+<li><strong>attributes</strong>：设置 <strong>vnode</strong> 对应 <strong>Dom</strong> 属性（使用 <strong>Dom</strong> 的 <strong>setAttribute</strong> 实现）；</li>
+<li><strong>props</strong>：设置 <strong>vnode</strong> 对应 <strong>Dom</strong> 属性（对象设置值的方式设置，a.b = ‘xx’不会处理布尔类型的属性）；</li>
+<li><strong>dataset</strong>：处理 H5 中 data-xxx 属性；</li>
+<li><strong>class</strong>：切换类样式；</li>
+<li><strong>style</strong>：设置行内样式；</li>
+<li><strong>eventlisteners</strong>：注册和移除事件；</li>
+</ul>
+<h1 id="模块的使用步骤："><a href="#模块的使用步骤：" class="headerlink" title="模块的使用步骤："></a>模块的使用步骤：</h1><ul>
+<li>导入模块；</li>
+<li><strong>init()</strong> 中注册模块；</li>
+<li><strong>h()</strong> 函数的第二个参数处使用模块；</li>
+</ul>
+<p><img src="/2021/08/10/vue-virtual-dom/04.jpg"></p>
+<p><img src="/2021/08/10/vue-virtual-dom/05.jpg" alt="模块使用示例"></p>
+<h1 id="diff-算法重点-updateChildren："><a href="#diff-算法重点-updateChildren：" class="headerlink" title="diff 算法重点 updateChildren："></a>diff 算法重点 updateChildren：</h1><p><strong>snabbdom</strong> 的核心方法入口 <strong>patch</strong>，意思为打补丁，即通过diff算法找到差异后打补丁，只针对差异去更新 <strong>dom</strong>，不是所有节点的删除重建。<strong>diff</strong> 方法作为核心是怎样查找差异节点的呢？</p>
+<p><strong>snabbdom</strong> 的 <strong>diff</strong> 算法只会在同层级节点进行比较，不会跨级比较。</p>
+<p>如果同级别不相同，直接删除重新创建，同级节点只需要比较一次，较传统的比较大大减少了比较次数，性能也更优。</p>
+<p><img src="/2021/08/10/vue-virtual-dom/06.jpg" alt="diff算法同层级比较"></p>
+<p>同级别节点比较时，会对新旧节点数组的开始和结束节点设置索引，遍历的过程中移动相应的索引，在对开始和结束节点的比较中有以下四种情况。</p>
+<p>oldStartVnode/newStartVnode（旧开始节点/新开始节点）</p>
+<blockquote>
+<p>新旧开始节点是sameVnode（key和sel相同），调用patchVnode()对比和更新节点；<br>把新旧节点开始索引往后移动 oldStartIdx++/newStartIdx++；</p>
+</blockquote>
+<p><img src="/2021/08/10/vue-virtual-dom/07.jpg"></p>
+<p>oldEndVnode/newEndVnode（旧结束节点/新结束节点）</p>
+<blockquote>
+<p>如果新旧开始节点不是sameVnode，就会从最后往前开始比较是否是sameVnode；<br>如果是sameVnode，就调用patchVnode()；<br>比较完成后会移动索至倒数第二个节点，比较判断是否是sameVnode，重复以上执行；</p>
+</blockquote>
+<p>oldStartVnode/newEndVnode（旧开始节点/新结束节点）</p>
+<blockquote>
+<p>首先通过sameVnode比较是否是相同节点；<br>是相同节点则调用patchVnode()对比和更新节点；<br>把oldStartVnode对应的Dom元素移动到右边，更新索引oldStartIdx++/newEndIdx–；</p>
+</blockquote>
+<p><img src="/2021/08/10/vue-virtual-dom/08.jpg"></p>
+<p>oldEndVnode/newStartVnode（旧结束节点/新开始节点）</p>
+<blockquote>
+<p>首先通过sameVnode比较是否是相同节点；<br>是相同节点则调用patchVnode()对比和更新节点；<br>把oldEndVnode对应的Dom元素移动到左边，更新索引oldEndIdx–/newStartIdx++；</p>
+</blockquote>
+<p><img src="/2021/08/10/vue-virtual-dom/09.jpg"></p>
+<p>如果对比过程中都不是以上四种情况，开始和结束节点都不相同，就会去旧节点数组中依次查找是否有相同的新节点，首先遍历新的开始节点，在旧节点数组中查找是否有相同 <strong>key</strong> 值的节点，如果没有找到，说明此时的开始节点是一个新节点，要创建新的 <strong>Dom</strong> 元素，并把它插入到最前边的位置；如果新开始节点在旧节点数组中找到了具有相同 <strong>key</strong> 值的节点，并且判断新旧节点的sel属性是否相同，如果sel不相同，创建新的 <strong>Dom</strong> 元素，把它插入到最前边的位置，如果 <strong>sel</strong> 相同，说明是相同节点，此时这个旧节点会被赋值给 <strong>elmToMove</strong> 变量，再调用 <strong>patchVnode</strong> 对比和更新差异，再把 <strong>elmToMove</strong> 对应的 <strong>Dom</strong> 元素移动到最前边。</p>
+<p><strong>注：是sameVnode时，会重用旧节点对应的dom元素，在patchVnode中对比新旧节点的差异，把差异更新到重用的dom元素上；</strong></p>
+]]></content>
+      <categories>
+        <category>Vue</category>
+      </categories>
+      <tags>
+        <tag>虚拟DOM</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>gridsome 安裝</title>
+    <url>/2021/08/10/init-gridsome/</url>
+    <content><![CDATA[<p>Gridsome 初始化安装，参照<a href="https://www.gridsome.cn/docs/#how-to-install">官网</a> </p>
+<h1 id="安装"><a href="#安装" class="headerlink" title="安装"></a>安装</h1><p>全局安装 gridsome 的脚手架工具，<code>yarn global add @gridsome/cli</code></p>
+<h1 id="创建项目"><a href="#创建项目" class="headerlink" title="创建项目"></a>创建项目</h1><h2 id="sharp"><a href="#sharp" class="headerlink" title="sharp"></a>sharp</h2><p>官方给出在上一步安装脚手架后，可直接使用脚手架命令 <code>gridsome create my-gridsome-site</code> 创建一个名为 my-gridsome-site 的初始化项目，但是这样创建很难成功，因为 gridsome 依赖第三方的包 sharp，用于处理图片，它包含很多 C++ 文件，安装时需要编译，即需要 C++ 编译环境；sharp 还依赖一个 libvips 包，该包文件较大，在国内下载容易失败，即导致 sharp 难以安装成功；<a href="https://sharp.pixelplumbing.com/install#chinese-mirror">sharp官网</a> 提供了一个中国镜像解决该问题；</p>
+<span id="more"></span>
+<p>执行命令配置 sharp 镜像：</p>
+<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line">npm config <span class="built_in">set</span> sharp_binary_host <span class="string">&quot;https://npm.taobao.org/mirrors/sharp&quot;</span></span><br><span class="line">npm config <span class="built_in">set</span> sharp_libvips_binary_host <span class="string">&quot;https://npm.taobao.org/mirrors/sharp-libvips&quot;</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="C-编译环境"><a href="#C-编译环境" class="headerlink" title="C++ 编译环境"></a>C++ 编译环境</h2><p>以上配置完之后，在执行初始化项目时会安装 sharp，我们还差一个 C++ 编译环境；</p>
+<p>安装 node-gyp</p>
+<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line">yarn global add node-gyp</span><br></pre></td></tr></table></figure>
+
+<p>node-gyp 安装后，还需要安装 node-gyp 相关的使用套件，参考<a href="https://github.com/nodejs/node-gyp#on-windows">官方库文档</a> ，此处我本地以 Windows 为例；</p>
+<h3 id="安装-Python"><a href="#安装-Python" class="headerlink" title="安装 Python"></a><a href="https://docs.python.org/3/using/windows.html#the-microsoft-store-package">安装 Python</a></h3><h3 id="安装-windows-build-tools"><a href="#安装-windows-build-tools" class="headerlink" title="安装 windows-build-tools"></a>安装 windows-build-tools</h3><figure class="highlight sh"><table><tr><td class="code"><pre><span class="line">npm install --global --production windows-build-tools</span><br></pre></td></tr></table></figure>
+
+<p>安装 windows-build-tools 过程安装失败，查了资料，要使用 32 位的 node.js，故重新安装 node，再执行上边命令安装 windows-build-tools 即可；</p>
+<h2 id="创建"><a href="#创建" class="headerlink" title="创建"></a>创建</h2><p>执行 <code>gridsome create my-gridsome-site</code> 创建即可；</p>
+]]></content>
+      <categories>
+        <category>Tools</category>
+      </categories>
+      <tags>
+        <tag>gridsome</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>Webpack开发体验问题</title>
     <url>/2021/08/10/webpack-02/</url>
     <content><![CDATA[<p><img src="/2021/08/10/webpack-02/bg.jpg" alt="gulp"></p>
@@ -422,33 +534,6 @@
       </categories>
       <tags>
         <tag>gulp</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>gridsome 安裝</title>
-    <url>/2021/08/10/init-gridsome/</url>
-    <content><![CDATA[<p>Gridsome 初始化安装，参照<a href="https://www.gridsome.cn/docs/#how-to-install">官网</a> </p>
-<h1 id="安装"><a href="#安装" class="headerlink" title="安装"></a>安装</h1><p>全局安装 gridsome 的脚手架工具，<code>yarn global add @gridsome/cli</code></p>
-<h1 id="创建项目"><a href="#创建项目" class="headerlink" title="创建项目"></a>创建项目</h1><h2 id="sharp"><a href="#sharp" class="headerlink" title="sharp"></a>sharp</h2><p>官方给出在上一步安装脚手架后，可直接使用脚手架命令 <code>gridsome create my-gridsome-site</code> 创建一个名为 my-gridsome-site 的初始化项目，但是这样创建很难成功，因为 gridsome 依赖第三方的包 sharp，用于处理图片，它包含很多 C++ 文件，安装时需要编译，即需要 C++ 编译环境；sharp 还依赖一个 libvips 包，该包文件较大，在国内下载容易失败，即导致 sharp 难以安装成功；<a href="https://sharp.pixelplumbing.com/install#chinese-mirror">sharp官网</a> 提供了一个中国镜像解决该问题；</p>
-<span id="more"></span>
-<p>执行命令配置 sharp 镜像：</p>
-<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line">npm config <span class="built_in">set</span> sharp_binary_host <span class="string">&quot;https://npm.taobao.org/mirrors/sharp&quot;</span></span><br><span class="line">npm config <span class="built_in">set</span> sharp_libvips_binary_host <span class="string">&quot;https://npm.taobao.org/mirrors/sharp-libvips&quot;</span></span><br></pre></td></tr></table></figure>
-
-<h2 id="C-编译环境"><a href="#C-编译环境" class="headerlink" title="C++ 编译环境"></a>C++ 编译环境</h2><p>以上配置完之后，在执行初始化项目时会安装 sharp，我们还差一个 C++ 编译环境；</p>
-<p>安装 node-gyp</p>
-<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line">yarn global add node-gyp</span><br></pre></td></tr></table></figure>
-
-<p>node-gyp 安装后，还需要安装 node-gyp 相关的使用套件，参考<a href="https://github.com/nodejs/node-gyp#on-windows">官方库文档</a> ，此处我本地以 Windows 为例；</p>
-<h3 id="安装-Python"><a href="#安装-Python" class="headerlink" title="安装 Python"></a><a href="https://docs.python.org/3/using/windows.html#the-microsoft-store-package">安装 Python</a></h3><h3 id="安装-windows-build-tools"><a href="#安装-windows-build-tools" class="headerlink" title="安装 windows-build-tools"></a>安装 windows-build-tools</h3><figure class="highlight sh"><table><tr><td class="code"><pre><span class="line">npm install --global --production windows-build-tools</span><br></pre></td></tr></table></figure>
-
-<p>安装 windows-build-tools 过程安装失败，查了资料，要使用 32 位的 node.js，故重新安装 node，再执行上边命令安装 windows-build-tools 即可；</p>
-<h2 id="创建"><a href="#创建" class="headerlink" title="创建"></a>创建</h2><p>执行 <code>gridsome create my-gridsome-site</code> 创建即可；</p>
-]]></content>
-      <categories>
-        <category>Tools</category>
-      </categories>
-      <tags>
-        <tag>gridsome</tag>
       </tags>
   </entry>
   <entry>
