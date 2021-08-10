@@ -2,7 +2,7 @@
 <search>
   <entry>
     <title>通过 Hexo 和 Travis 构建一个属于自己的博客</title>
-    <url>/2021/07/18/hexo-usage/</url>
+    <url>/2021/08/10/hexo-usage/</url>
     <content><![CDATA[<p>　　<strong>最近开启了大前端学习的道路，从事前端行业两年多了，想要一个自己的 Blog，不管是学习记录还是生活记录，都可以使用起来，而不是繁杂难选的三方平台，乘着学习过程中看到过的 Hexo＋Travis 的方式搭建自己的博客，我也兴致勃勃的想试试，此时你看到的就是搭建结果，这也是第一篇博客！</strong>  </p>
 <h1 id="前置准备"><a href="#前置准备" class="headerlink" title="前置准备"></a>前置准备</h1><p>　　流浪在大前端的今天怎么能没有 node 呢，node 是必备的，大家自行安装即可=。=；  </p>
 <span id="more"></span>
@@ -35,6 +35,33 @@
       </categories>
       <tags>
         <tag>hexo</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>gridsome 安裝</title>
+    <url>/2021/08/10/init-gridsome/</url>
+    <content><![CDATA[<p>Gridsome 初始化安装，参照<a href="https://www.gridsome.cn/docs/#how-to-install">官网</a> </p>
+<h1 id="安装"><a href="#安装" class="headerlink" title="安装"></a>安装</h1><p>全局安装 gridsome 的脚手架工具，<code>yarn global add @gridsome/cli</code></p>
+<h1 id="创建项目"><a href="#创建项目" class="headerlink" title="创建项目"></a>创建项目</h1><h2 id="sharp"><a href="#sharp" class="headerlink" title="sharp"></a>sharp</h2><p>官方给出在上一步安装脚手架后，可直接使用脚手架命令 <code>gridsome create my-gridsome-site</code> 创建一个名为 my-gridsome-site 的初始化项目，但是这样创建很难成功，因为 gridsome 依赖第三方的包 sharp，用于处理图片，它包含很多 C++ 文件，安装时需要编译，即需要 C++ 编译环境；sharp 还依赖一个 libvips 包，该包文件较大，在国内下载容易失败，即导致 sharp 难以安装成功；<a href="https://sharp.pixelplumbing.com/install#chinese-mirror">sharp官网</a> 提供了一个中国镜像解决该问题；</p>
+<span id="more"></span>
+<p>执行命令配置 sharp 镜像：</p>
+<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line">npm config <span class="built_in">set</span> sharp_binary_host <span class="string">&quot;https://npm.taobao.org/mirrors/sharp&quot;</span></span><br><span class="line">npm config <span class="built_in">set</span> sharp_libvips_binary_host <span class="string">&quot;https://npm.taobao.org/mirrors/sharp-libvips&quot;</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="C-编译环境"><a href="#C-编译环境" class="headerlink" title="C++ 编译环境"></a>C++ 编译环境</h2><p>以上配置完之后，在执行初始化项目时会安装 sharp，我们还差一个 C++ 编译环境；</p>
+<p>安装 node-gyp</p>
+<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line">yarn global add node-gyp</span><br></pre></td></tr></table></figure>
+
+<p>node-gyp 安装后，还需要安装 node-gyp 相关的使用套件，参考<a href="https://github.com/nodejs/node-gyp#on-windows">官方库文档</a> ，此处我本地以 Windows 为例；</p>
+<h3 id="安装-Python"><a href="#安装-Python" class="headerlink" title="安装 Python"></a><a href="https://docs.python.org/3/using/windows.html#the-microsoft-store-package">安装 Python</a></h3><h3 id="安装-windows-build-tools"><a href="#安装-windows-build-tools" class="headerlink" title="安装 windows-build-tools"></a>安装 windows-build-tools</h3><figure class="highlight sh"><table><tr><td class="code"><pre><span class="line">npm install --global --production windows-build-tools</span><br></pre></td></tr></table></figure>
+
+<p>安装 windows-build-tools 过程安装失败，查了资料，要使用 32 位的 node.js，故重新安装 node，再执行上边命令安装 windows-build-tools 即可；</p>
+<h2 id="创建"><a href="#创建" class="headerlink" title="创建"></a>创建</h2><p>执行 <code>gridsome create my-gridsome-site</code> 创建即可；</p>
+]]></content>
+      <categories>
+        <category>Tools</category>
+      </categories>
+      <tags>
+        <tag>gridsome</tag>
       </tags>
   </entry>
   <entry>
@@ -102,33 +129,6 @@
       </categories>
       <tags>
         <tag>Vue3</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>gridsome 安裝</title>
-    <url>/2021/07/18/init-gridsome/</url>
-    <content><![CDATA[<p>Gridsome 初始化安装，参照<a href="https://www.gridsome.cn/docs/#how-to-install">官网</a> </p>
-<h1 id="安装"><a href="#安装" class="headerlink" title="安装"></a>安装</h1><p>全局安装 gridsome 的脚手架工具，<code>yarn global add @gridsome/cli</code></p>
-<h1 id="创建项目"><a href="#创建项目" class="headerlink" title="创建项目"></a>创建项目</h1><h2 id="sharp"><a href="#sharp" class="headerlink" title="sharp"></a>sharp</h2><p>官方给出在上一步安装脚手架后，可直接使用脚手架命令 <code>gridsome create my-gridsome-site</code> 创建一个名为 my-gridsome-site 的初始化项目，但是这样创建很难成功，因为 gridsome 依赖第三方的包 sharp，用于处理图片，它包含很多 C++ 文件，安装时需要编译，即需要 C++ 编译环境；sharp 还依赖一个 libvips 包，该包文件较大，在国内下载容易失败，即导致 sharp 难以安装成功；<a href="https://sharp.pixelplumbing.com/install#chinese-mirror">sharp官网</a> 提供了一个中国镜像解决该问题；</p>
-<span id="more"></span>
-<p>执行命令配置 sharp 镜像：</p>
-<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line">npm config <span class="built_in">set</span> sharp_binary_host <span class="string">&quot;https://npm.taobao.org/mirrors/sharp&quot;</span></span><br><span class="line">npm config <span class="built_in">set</span> sharp_libvips_binary_host <span class="string">&quot;https://npm.taobao.org/mirrors/sharp-libvips&quot;</span></span><br></pre></td></tr></table></figure>
-
-<h2 id="C-编译环境"><a href="#C-编译环境" class="headerlink" title="C++ 编译环境"></a>C++ 编译环境</h2><p>以上配置完之后，在执行初始化项目时会安装 sharp，我们还差一个 C++ 编译环境；</p>
-<p>安装 node-gyp</p>
-<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line">yarn global add node-gyp</span><br></pre></td></tr></table></figure>
-
-<p>node-gyp 安装后，还需要安装 node-gyp 相关的使用套件，参考<a href="https://github.com/nodejs/node-gyp#on-windows">官方库文档</a> ，此处我本地以 Windows 为例；</p>
-<h3 id="安装-Python"><a href="#安装-Python" class="headerlink" title="安装 Python"></a><a href="https://docs.python.org/3/using/windows.html#the-microsoft-store-package">安装 Python</a></h3><h3 id="安装-windows-build-tools"><a href="#安装-windows-build-tools" class="headerlink" title="安装 windows-build-tools"></a>安装 windows-build-tools</h3><figure class="highlight sh"><table><tr><td class="code"><pre><span class="line">npm install --global --production windows-build-tools</span><br></pre></td></tr></table></figure>
-
-<p>安装 windows-build-tools 过程安装失败，查了资料，要使用 32 位的 node.js，故重新安装 node，再执行上边命令安装 windows-build-tools 即可；</p>
-<h2 id="创建"><a href="#创建" class="headerlink" title="创建"></a>创建</h2><p>执行 <code>gridsome create my-gridsome-site</code> 创建即可；</p>
-]]></content>
-      <categories>
-        <category>Tools</category>
-      </categories>
-      <tags>
-        <tag>gridsome</tag>
       </tags>
   </entry>
   <entry>
@@ -616,7 +616,50 @@
   <entry>
     <title>前端工程化之 Gulp</title>
     <url>/2021/06/11/gulp-01/</url>
-    <content><![CDATA[<p>有时间会把之前的笔记搬进来的=。=</p>
+    <content><![CDATA[<p><img src="/2021/06/11/gulp-01/bg.jpg" alt="gulp"></p>
+<p>在前端项目日益复杂的今天，开发效率的提升显得尤为重要，大前端大势所趋，项目工程化也成为一个合格前端开发者必不可缺的技能之一。</p>
+<p>前端项目工程化能解决一系列开发时遇到的问题，包括：</p>
+<span id="more"></span>
+<p>传统语言或语法带来的弊端；<br>无法使用模块化或组件化的编程方式去组织代码；<br>大量重复的机械工作；<br>很难的代码风格统一、质量保证；<br>开发过程中依赖后端服务接口支持；<br>整体依赖后端，需要服务运行起整个项目；<br>作为一个没接触过Gulp的小白，现在开始学习最流行的前端工程化工具Gulp，干巴得！</p>
+<h1 id="Gulp基本使用"><a href="#Gulp基本使用" class="headerlink" title="Gulp基本使用"></a>Gulp基本使用</h1><p>特点：高效易用；</p>
+<p>使用 <code>Gulp</code> 过程简单，先在项目中安装一个 <code>Gulp</code> 的开发依赖，然后在项目根目录 <code>package.json</code> 文件中添加一个 <code>gulpfile.js</code> 的文件，用于编写一些需要 <code>Gulp</code> 自动执行的任务，完成后可以使用 <code>Gulp</code> 提供的 <code>cli</code> 去运行这些任务。</p>
+<p>初始化项目文件 <code>package.json</code> ，执行 <code>yarn add gulp --dev</code>，将 <code>gulp</code> 作为开发依赖安装，这个过程会同时安装一个叫 <code>gulp-cli</code> 的模块，此时在 <code>node_modules</code> 下会有一个 <code>gulp</code> 的命令，用于后续去构建我们定义的任务；</p>
+<p><img src="/2021/06/11/gulp-01/%E5%9F%BA%E6%9C%AC%E4%BD%BF%E7%94%A8.jpg" alt="基本使用"></p>
+<p>在项目根目录创建一个 <code>gulpfile.js</code> 文件，接下来我们在这个文件中去定义一些用于构建的任务；该文件就是 <code>gulp</code> 入口文件，由于是运行在 <code>nodeJS</code> 环境当中，所以可以使用 <code>commonJS</code> 规范，通过导出函数成员的方式去定义构建任务；</p>
+<figure class="highlight js"><table><tr><td class="code"><pre><span class="line"><span class="built_in">exports</span>.foo = <span class="function"><span class="params">done</span> =&gt;</span> &#123;</span><br><span class="line">    <span class="built_in">console</span>.log(<span class="string">&#x27;foo task working&#x27;</span>);</span><br><span class="line">    done()    <span class="comment">// 最新的规范中，任务都是异步的，需要手动标识任务完成</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>然后执行 <code>yarn gulp foo</code> 执行任务，如果任务名是 <code>default</code> 则不用加任务名，直接 <code>yarn gulp</code> 执行；</p>
+<p><img src="/2021/06/11/gulp-01/01.jpg"></p>
+<p><img src="/2021/06/11/gulp-01/02.jpg"></p>
+<p>在 <code>gulp4.0</code> 以前，需要引入 <code>gulp</code> 模块来创建任务：</p>
+<figure class="highlight js"><table><tr><td class="code"><pre><span class="line"><span class="keyword">const</span> gulp = <span class="built_in">require</span>(<span class="string">&#x27;gulp&#x27;</span>)</span><br><span class="line">gulp.task(<span class="string">&#x27;bar&#x27;</span>, <span class="function"><span class="params">done</span> =&gt;</span> &#123;       <span class="comment">// bar 任务名，task方法注册任务</span></span><br><span class="line">    <span class="built_in">console</span>.log(<span class="string">&#x27;bar task working&#x27;</span>);</span><br><span class="line">    done()</span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure>
+
+<h1 id="Gulp组合任务"><a href="#Gulp组合任务" class="headerlink" title="Gulp组合任务"></a>Gulp组合任务</h1><p><code>Gulp</code> 提供了 <code>series</code> 和 <code>parallel</code> 两个 API 用于创建<strong>串行任务</strong>和<strong>并行任务</strong>；</p>
+<p>当两个任务之间互不依赖时，就可使用并行任务提高构建效率，比如 <code>CSS</code> 和 <code>JS</code> 文件的构建是互不相关的。</p>
+<figure class="highlight js"><table><tr><td class="code"><pre><span class="line"><span class="comment">// 组合任务</span></span><br><span class="line"><span class="keyword">const</span> &#123;series, parallel&#125; = <span class="built_in">require</span>(<span class="string">&#x27;gulp&#x27;</span>)</span><br><span class="line"><span class="keyword">const</span> task1 = <span class="function"><span class="params">done</span> =&gt;</span> &#123;</span><br><span class="line">    <span class="built_in">setTimeout</span>(<span class="function">() =&gt;</span> &#123;</span><br><span class="line">        <span class="built_in">console</span>.log(<span class="string">&#x27;task1 working&#x27;</span>);</span><br><span class="line">        done()</span><br><span class="line">    &#125;, <span class="number">1000</span>)</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">const</span> task2 = <span class="function"><span class="params">done</span> =&gt;</span> &#123;</span><br><span class="line">    <span class="built_in">setTimeout</span>(<span class="function">() =&gt;</span> &#123;</span><br><span class="line">        <span class="built_in">console</span>.log(<span class="string">&#x27;task2 working&#x27;</span>);</span><br><span class="line">        done()</span><br><span class="line">    &#125;, <span class="number">1000</span>)</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">const</span> task3 = <span class="function"><span class="params">done</span> =&gt;</span> &#123;</span><br><span class="line">    <span class="built_in">setTimeout</span>(<span class="function">() =&gt;</span> &#123;</span><br><span class="line">        <span class="built_in">console</span>.log(<span class="string">&#x27;task3 working&#x27;</span>);</span><br><span class="line">        done()</span><br><span class="line">    &#125;, <span class="number">1000</span>)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="built_in">exports</span>.seriesTask = series(task1, task2, task3)</span><br><span class="line"><span class="built_in">exports</span>.parallelTask = parallel(task1, task2, task3)</span><br></pre></td></tr></table></figure>
+
+<p><img src="/2021/06/11/gulp-01/%E7%BB%84%E5%90%88%E4%BB%BB%E5%8A%A1.jpg" alt="组合任务"></p>
+<h1 id="gulp异步任务"><a href="#gulp异步任务" class="headerlink" title="gulp异步任务"></a>gulp异步任务</h1><p>当执行异步任务时，需要通知gulp任务结束，其中有以下几种最常用的方法：</p>
+<h2 id="1-通过回调的方式解决；"><a href="#1-通过回调的方式解决；" class="headerlink" title="1 通过回调的方式解决；"></a>1 通过回调的方式解决；</h2><figure class="highlight js"><table><tr><td class="code"><pre><span class="line"><span class="comment">// 回调函数</span></span><br><span class="line"><span class="built_in">exports</span>.callback = <span class="function"><span class="params">done</span> =&gt;</span> &#123;</span><br><span class="line">    <span class="built_in">console</span>.log(<span class="string">&#x27;callback task&#x27;</span>);</span><br><span class="line">    done()</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="built_in">exports</span>.callback_error = <span class="function"><span class="params">done</span> =&gt;</span> &#123;</span><br><span class="line">    <span class="built_in">console</span>.log(<span class="string">&#x27;callback error task&#x27;</span>);</span><br><span class="line">    done(<span class="keyword">new</span> <span class="built_in">Error</span>(<span class="string">&#x27;task error!&#x27;</span>))      <span class="comment">// 执行错误，多个任务同时执行时，后续将不再执行</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="2-promise-方法；"><a href="#2-promise-方法；" class="headerlink" title="2 promise 方法；"></a>2 promise 方法；</h2><figure class="highlight js"><table><tr><td class="code"><pre><span class="line"><span class="comment">// promise方法</span></span><br><span class="line"><span class="built_in">exports</span>.promise = <span class="function">() =&gt;</span> &#123;</span><br><span class="line">    <span class="built_in">console</span>.log(<span class="string">&#x27;promise task&#x27;</span>);</span><br><span class="line">    <span class="keyword">return</span> <span class="built_in">Promise</span>.resolve()    <span class="comment">// resolve不用传参，gulp忽略</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="built_in">exports</span>.promise_error = <span class="function">() =&gt;</span> &#123;</span><br><span class="line">    <span class="built_in">console</span>.log(<span class="string">&#x27;promise task&#x27;</span>);</span><br><span class="line">    <span class="keyword">return</span> <span class="built_in">Promise</span>.reject()    <span class="comment">// 不用传参，gulp忽略</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="3-Async-和-Await-方法；"><a href="#3-Async-和-Await-方法；" class="headerlink" title="3 Async 和 Await 方法；"></a>3 Async 和 Await 方法；</h2><figure class="highlight js"><table><tr><td class="code"><pre><span class="line"><span class="comment">// Async/Await  =============== promise语法糖</span></span><br><span class="line"><span class="keyword">const</span> timeout = <span class="function"><span class="params">time</span> =&gt;</span> &#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">new</span> <span class="built_in">Promise</span>(<span class="function"><span class="params">resolve</span> =&gt;</span> &#123;</span><br><span class="line">        <span class="built_in">setTimeout</span>(resolve, time)</span><br><span class="line">    &#125;)</span><br><span class="line">&#125;</span><br><span class="line"><span class="built_in">exports</span>.async = <span class="keyword">async</span> () =&gt; &#123;</span><br><span class="line">    <span class="keyword">await</span> timeout(<span class="number">1000</span>)</span><br><span class="line">    <span class="built_in">console</span>.log(<span class="string">&#x27;async task&#x27;</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="4-stream-方式，最常见，因为构建过程大多是在处理文件；"><a href="#4-stream-方式，最常见，因为构建过程大多是在处理文件；" class="headerlink" title="4 stream 方式，最常见，因为构建过程大多是在处理文件；"></a>4 stream 方式，最常见，因为构建过程大多是在处理文件；</h2><figure class="highlight js"><table><tr><td class="code"><pre><span class="line"><span class="comment">// stream方式</span></span><br><span class="line"><span class="keyword">const</span> fs = <span class="built_in">require</span>(<span class="string">&#x27;fs&#x27;</span>)</span><br><span class="line"><span class="built_in">exports</span>.stream = <span class="function">() =&gt;</span> &#123;</span><br><span class="line">    <span class="keyword">const</span> readStream = fs.createReadStream(<span class="string">&#x27;package.json&#x27;</span>)</span><br><span class="line">    <span class="keyword">const</span> writeStream = fs.createWriteStream(<span class="string">&#x27;temp.txt&#x27;</span>)</span><br><span class="line">    readStream.pipe(writeStream)</span><br><span class="line">    <span class="keyword">return</span> readStream</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// 下边写法结果相同</span></span><br><span class="line"><span class="built_in">exports</span>.stream = <span class="function"><span class="params">done</span> =&gt;</span> &#123;</span><br><span class="line">    <span class="keyword">const</span> readStream = fs.createReadStream(<span class="string">&#x27;package.json&#x27;</span>)</span><br><span class="line">    <span class="keyword">const</span> writeStream = fs.createWriteStream(<span class="string">&#x27;temp.txt&#x27;</span>)</span><br><span class="line">    readStream.pipe(writeStream)</span><br><span class="line">    readStream.on(<span class="string">&#x27;end&#x27;</span>, <span class="function">() =&gt;</span> &#123;</span><br><span class="line">        done()</span><br><span class="line">    &#125;)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>执行 <code>yarn gulp stream</code> 后，在根目录下生成拷贝了 <code>package.json</code> 内容的 <code>temp.txt</code> 文件。</p>
+<h1 id="Gulp构建过程核心工作原理"><a href="#Gulp构建过程核心工作原理" class="headerlink" title="Gulp构建过程核心工作原理"></a>Gulp构建过程核心工作原理</h1><p><img src="/2021/06/11/gulp-01/%E6%89%8B%E5%8A%A8%E6%89%93%E5%8C%85%E8%BF%87%E7%A8%8B.jpg" alt="手动打包过程"></p>
+<p><img src="/2021/06/11/gulp-01/gulp%E6%A8%A1%E6%8B%9F%E6%89%8B%E5%8A%A8%E6%89%93%E5%8C%85%E8%BF%87%E7%A8%8B%EF%BC%88%E6%B5%81%E6%93%8D%E4%BD%9C%EF%BC%89.jpg" alt="gulp模拟手动打包过程（流操作）"></p>
+<p>实际操作演示，一个简单的 <code>css</code> 文件打包过程：</p>
+<figure class="highlight js"><table><tr><td class="code"><pre><span class="line"><span class="keyword">const</span> fs = <span class="built_in">require</span>(<span class="string">&#x27;fs&#x27;</span>)</span><br><span class="line"><span class="keyword">const</span> &#123;Transform&#125; = <span class="built_in">require</span>(<span class="string">&#x27;stream&#x27;</span>)</span><br><span class="line"><span class="built_in">exports</span>.default = <span class="function">() =&gt;</span> &#123;</span><br><span class="line">    <span class="comment">// 文件读取流</span></span><br><span class="line">    <span class="keyword">const</span> read = fs.createReadStream(<span class="string">&#x27;normalize.css&#x27;</span>)</span><br><span class="line">    <span class="comment">// 文件写入流</span></span><br><span class="line">    <span class="keyword">const</span> write = fs.createWriteStream(<span class="string">&#x27;normalize.min.css&#x27;</span>)</span><br><span class="line">    <span class="comment">// 文件转换流对象</span></span><br><span class="line">    <span class="keyword">const</span> transform = <span class="keyword">new</span> Transform(&#123;</span><br><span class="line">        <span class="function"><span class="title">transform</span>(<span class="params">chunk, encoding, callback</span>)</span> &#123;</span><br><span class="line">            <span class="comment">// 核心转换过程</span></span><br><span class="line">            <span class="comment">// chunk ==&gt; 读取流中读取的内容（Buffer），toString转为字符串</span></span><br><span class="line">            <span class="keyword">const</span> input = chunk.toString()</span><br><span class="line">            <span class="comment">// 清除字符串中的空格和注释</span></span><br><span class="line">            <span class="keyword">const</span> output = input.replace(<span class="regexp">/\s+/g</span>, <span class="string">&#x27;&#x27;</span>).replace(<span class="regexp">/\/\*.+?\*\//g</span>, <span class="string">&#x27;&#x27;</span>)</span><br><span class="line">            callback(<span class="literal">null</span>, output) <span class="comment">// 键转换后的字符串返回出去，错误优先，没有错误第一个参数为null</span></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;)</span><br><span class="line">    <span class="comment">// 把读取出来的文件流导入到写入流当中</span></span><br><span class="line">    read</span><br><span class="line">        .pipe(transform)    <span class="comment">// 转换</span></span><br><span class="line">        .pipe(write)        <span class="comment">// 写入</span></span><br><span class="line">    <span class="keyword">return</span> read</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h1 id="Gulp-文件操作-API-插件的使用"><a href="#Gulp-文件操作-API-插件的使用" class="headerlink" title="Gulp 文件操作 API + 插件的使用"></a>Gulp 文件操作 API + 插件的使用</h1><p><code>gulp</code> 提供了专门读取和写入文件流的 <code>API</code> ，针对文件加工的转换流绝大多数可以使用独立的插件，实际通过 <code>gulp</code> 去创建构建任务的流程是通过 <code>src</code> 方法创建一个读取流，然后借助插件提供的转换流来实现文件加工，最后通过 <code>gulp</code> 提供的 <code>dest</code> 方法创建写入流写入到目标文件；</p>
+<p>安装 <code>gulp-clean-css</code> 和 <code>gulp-rename</code> 插件来实现一个 <code>css</code> 文件打包过程：</p>
+<figure class="highlight js"><table><tr><td class="code"><pre><span class="line"><span class="keyword">const</span> &#123;src, dest&#125; = <span class="built_in">require</span>(<span class="string">&#x27;gulp&#x27;</span>)</span><br><span class="line"><span class="keyword">const</span> cleanCSS = <span class="built_in">require</span>(<span class="string">&#x27;gulp-clean-css&#x27;</span>)</span><br><span class="line"><span class="keyword">const</span> rename = <span class="built_in">require</span>(<span class="string">&#x27;gulp-rename&#x27;</span>)</span><br><span class="line"><span class="built_in">exports</span>.default = <span class="function">() =&gt;</span> &#123;</span><br><span class="line">    <span class="keyword">return</span> src(<span class="string">&#x27;src/*.css&#x27;</span>) <span class="comment">// 读取</span></span><br><span class="line">        .pipe(cleanCSS())   <span class="comment">// 转换压缩</span></span><br><span class="line">        .pipe(rename(&#123;<span class="attr">extname</span>: <span class="string">&#x27;.min.css&#x27;</span>&#125;))        <span class="comment">// 重命名扩展名</span></span><br><span class="line">        .pipe(dest(<span class="string">&#x27;dist&#x27;</span>))         <span class="comment">// 写入</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><img src="/2021/06/11/gulp-01/03.jpg"></p>
+<h1 id="总结："><a href="#总结：" class="headerlink" title="总结："></a>总结：</h1><p>第一次系统性的开始学习构建工具，深感强大，自己用过 <code>webpack</code> 仅是用于开发方法，按照流程起个项目只顾业务，最后打个包扔给后台，完全没有学习的过程。本次 <code>gulp</code> 学习开始，使用的东西要知其然知其所以然，当然 <code>gulp</code> 只是初探，还有很多要学的，下一篇咱开始一个实际自动化构建过程去了解更多关于 <code>gulp</code> 的东西。console.log(‘gulp，加油！’)</p>
 ]]></content>
       <categories>
         <category>大前端</category>
