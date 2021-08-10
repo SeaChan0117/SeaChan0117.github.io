@@ -42,6 +42,7 @@
     <url>/2021/08/10/webpack-02/</url>
     <content><![CDATA[<p><img src="/2021/08/10/webpack-02/bg.jpg" alt="gulp"></p>
 <p>在上一篇中讲了 <strong>Webpack</strong> 的基础学习使用，但实际开发过程中我们需要一个更灵活的开发环境，或某些问题可以通过 <strong>Webpack</strong> 来解决，本文将列举一些常见的问题或示例去介绍怎样增强 <strong>Webpack</strong> 的开发体验。</p>
+<span id="more"></span>
 <h1 id="自动编译"><a href="#自动编译" class="headerlink" title="自动编译"></a>自动编译</h1><p>使用 <strong>webpack-cli</strong> 的 <strong>watch</strong> 模式，该模式能监听文件变化，完成自动重新打包，使用比较简单，只需要在启动时添加 <strong>watch</strong> 参数即可，<code>yarn webpack --watch</code>，此时会启动监听模式，并且不会立即退出命令窗口，会等待文件变化，并再次完成打包工作，直到我们手动结束该模式；</p>
 <h1 id="自动刷新浏览器"><a href="#自动刷新浏览器" class="headerlink" title="自动刷新浏览器"></a>自动刷新浏览器</h1><p>我们在开发时已经完成了自动编译，如果能自动刷新浏览器，我们的工作将更加顺滑，不用每次修改代码后手动刷新浏览器，<strong>webpack dev server</strong> 集成了自动编译和自动刷新浏览器的功能，使用它可以方便解决自动编译和自定刷新的问题，<code>yarn add webpack-dev-server --dev</code>；安装完成执行 <code>yarn webpack serve</code>（<strong>webpack4+</strong> 使用 <code>yarn webpack-dev-server</code>，也可定义到 <strong>npm scripts</strong> 中减少操作），就能自动打包并启动一个服务去运行打包结果，访问启动的本地服务即可（也可添加–open参数自动打开浏览器），且修改代码后，能自动编译并刷新浏览器，这个过程的编译不会生成dist目录，它是在内存当中完成的，减少了磁盘操作，提高了构建的效率；</p>
 <p><img src="/2021/08/10/webpack-02/01.jpg"></p>
