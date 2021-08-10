@@ -40,7 +40,103 @@
   <entry>
     <title>webpack-01</title>
     <url>/2021/08/10/webpack-01/</url>
-    <content><![CDATA[]]></content>
+    <content><![CDATA[<p><img src="/2021/08/10/webpack-01/bg.jpg" alt="gulp"></p>
+<p>随着 ES6 新特性模块化在语言层面的实现，模块化的一些问题需要被解决：</p>
+<ul>
+<li>ES Modules 存在环境兼容问题；</li>
+<li>模块文件过多，网络请求频繁；</li>
+<li>所有的前端资源都需要模块化；</li>
+</ul>
+<p>所以为了解决以上问题，就需要有一个能编译、打包的工具，处理相关兼容性，能将多文件打包到一起，减少文件请求，还要支持其他一些静态资源处理，是针对整个前端项目来讲的工具。所以市面上应运而生了几个主流的打包工具，<strong>Webpack</strong>，<strong>Rollup</strong>，<strong>Parcel</strong>，本文重点学习记录最受欢迎的 <strong>Webpack</strong>。</p>
+<span id="more"></span>
+
+<h1 id="Webpack-快速上手"><a href="#Webpack-快速上手" class="headerlink" title="Webpack 快速上手"></a>Webpack 快速上手</h1><p>初始化项目 <strong>package.json</strong>，<code>yarn init --yes</code>；</p>
+<p>安装 **Webpack **以及它的 **cli **模块，<code>yarn add webpack webpack-cli --dev</code>；</p>
+<p><img src="/2021/08/10/webpack-01/01.jpg"></p>
+<p>执行 <code>yarn webpack</code> 后，会自动根据 <strong>src</strong> 下的 <strong>index.js</strong> 作为入口文件进行打包，并生成打包文件夹dist，其中打包文件为 <strong>main.js</strong>；</p>
+<p><img src="/2021/08/10/webpack-01/02.jpg"></p>
+<p>也可以将命令定义为 <strong>npm scripts</strong> 命令中，减少命令输入操作，执行 <code>yarn build</code> 即可；</p>
+<p><img src="/2021/08/10/webpack-01/03.jpg"></p>
+<p>以上是 <strong>webpack4</strong> 之后支持的零配置打包，打包回默认从 <strong>‘src/index.js’</strong> 文件作为入口，打包到 <strong>‘dist/main.js’</strong>。</p>
+<h1 id="Webpack-配置文件"><a href="#Webpack-配置文件" class="headerlink" title="Webpack 配置文件"></a>Webpack 配置文件</h1><p>大多时候我们需要自定义入口文件或添加一些其他的配置参数，这时我们就需要一个配置 <strong>webpack</strong> 配置文件，在项目根目录创建其配置文件 <strong>webpack.config.js</strong> ；</p>
+<figure class="highlight js"><table><tr><td class="code"><pre><span class="line"><span class="keyword">const</span> path = <span class="built_in">require</span>(<span class="string">&#x27;path&#x27;</span>)</span><br><span class="line"></span><br><span class="line"><span class="built_in">module</span>.exports = &#123;</span><br><span class="line">    <span class="attr">entry</span>: <span class="string">&#x27;./src/main.js&#x27;</span>,     <span class="comment">// 入口文件，相对路径时，&#x27;./&#x27;不能省略</span></span><br><span class="line">    <span class="attr">output</span>: &#123;                   <span class="comment">// 指定输入文件路径</span></span><br><span class="line">        <span class="attr">filename</span>: <span class="string">&#x27;bundle.js&#x27;</span>,  <span class="comment">// 输入文件名称</span></span><br><span class="line">        <span class="attr">path</span>: path.join(__dirname, <span class="string">&#x27;output&#x27;</span>)          <span class="comment">// 输出文件路径，必须是绝对路径</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><img src="/2021/08/10/webpack-01/04.jpg"></p>
+<h1 id="Webpack-工作模式"><a href="#Webpack-工作模式" class="headerlink" title="Webpack 工作模式"></a>Webpack 工作模式</h1><p><strong>webpack</strong> 有针对工作模式的用法，相当于是么针对几组工作环境预设的配置，大大简化了配置的复杂程度，有 <strong>production</strong>，<strong>development</strong> 和 <strong>none</strong> 模式，默认是 <strong>production</strong> 模式，</p>
+<ul>
+<li>生产模式 <code>yarn webpack --mode production</code>；</li>
+<li>开发模式 <code>yarn webpack --mode development</code>；</li>
+<li>none模式 <code>yarn webpack --mode none</code>；</li>
+</ul>
+<p>关于各个模式的差异可以<a href="https://link.zhihu.com/?target=https://webpack.js.org/configuration/mode/">参考官方文档</a>进行查看；</p>
+<p><a href="https://link.zhihu.com/?target=https://webpack.js.org/configuration/mode/">Mode | webpack</a></p>
+<p>也可以通过配置文件配置 <strong>mode</strong> 属性指定对应的工作模式；</p>
+<figure class="highlight js"><table><tr><td class="code"><pre><span class="line"><span class="keyword">const</span> path = <span class="built_in">require</span>(<span class="string">&#x27;path&#x27;</span>)</span><br><span class="line"></span><br><span class="line"><span class="built_in">module</span>.exports = &#123;</span><br><span class="line">    <span class="attr">mode</span>: <span class="string">&#x27;development&#x27;</span>,        <span class="comment">// 工作模式 production | development | none</span></span><br><span class="line">    <span class="attr">entry</span>: <span class="string">&#x27;./src/main.js&#x27;</span>,     <span class="comment">// 入口文件，相对路径时，&#x27;./&#x27;不能省略</span></span><br><span class="line">    <span class="attr">output</span>: &#123;                   <span class="comment">// 指定输入文件路径</span></span><br><span class="line">        <span class="attr">filename</span>: <span class="string">&#x27;bundle.js&#x27;</span>,  <span class="comment">// 输入文件名称</span></span><br><span class="line">        <span class="attr">path</span>: path.join(__dirname, <span class="string">&#x27;output&#x27;</span>)          <span class="comment">// 输出文件路径，必须是绝对路径</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h1 id="Webpack-资源模块加载"><a href="#Webpack-资源模块加载" class="headerlink" title="Webpack 资源模块加载"></a>Webpack 资源模块加载</h1><p><strong>src</strong> 下添加 <strong>main.css</strong> 文件，修改 <strong>webpack</strong> 打包入口为 <strong>main.css</strong> ，打包报错，原因是 <strong>webpack</strong> 打包默认是找 <strong>js</strong> 文件，其他文件需要对应的加载器 <strong>loader</strong> ；</p>
+<p>安装 <strong>css-loader</strong>：<code>yarn add css-loader style-loader --dev</code>；</p>
+<figure class="highlight js"><table><tr><td class="code"><pre><span class="line"><span class="keyword">const</span> path = <span class="built_in">require</span>(<span class="string">&#x27;path&#x27;</span>)</span><br><span class="line"></span><br><span class="line"><span class="built_in">module</span>.exports = &#123;</span><br><span class="line">    <span class="attr">mode</span>: <span class="string">&#x27;none&#x27;</span>,        <span class="comment">// 工作模式 production | development | none</span></span><br><span class="line">    <span class="attr">entry</span>: <span class="string">&#x27;./src/main.css&#x27;</span>,     <span class="comment">// 入口文件，相对路径时，&#x27;./&#x27;不能省略</span></span><br><span class="line">    <span class="attr">output</span>: &#123;                   <span class="comment">// 指定输入文件路径</span></span><br><span class="line">        <span class="attr">filename</span>: <span class="string">&#x27;bundle.js&#x27;</span>,  <span class="comment">// 输入文件名称</span></span><br><span class="line">        <span class="attr">path</span>: path.join(__dirname, <span class="string">&#x27;dist&#x27;</span>)          <span class="comment">// 输出文件路径，必须是绝对路径</span></span><br><span class="line">    &#125;,</span><br><span class="line">    <span class="attr">module</span>: &#123;</span><br><span class="line">        <span class="attr">rules</span>: [                        <span class="comment">// rules 针对其他资源加载规则的配置项</span></span><br><span class="line">            &#123;</span><br><span class="line">                <span class="attr">test</span>: <span class="regexp">/.css$/</span>,          <span class="comment">// 匹配打包过程中遇到的文件路径</span></span><br><span class="line">                use: [                  <span class="comment">// 指定匹配到的文件要使用的loader</span></span><br><span class="line">                    <span class="string">&#x27;style-loader&#x27;</span>,</span><br><span class="line">                    <span class="string">&#x27;css-loader&#x27;</span></span><br><span class="line">                ]</span><br><span class="line">            &#125;</span><br><span class="line">        ]</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>Loader</strong> 是 <strong>Webpack</strong> 实现整个前端模块化的核心，通过不同的 <strong>loader</strong> 可以加载任何类型的资源。</p>
+<h1 id="Webpack-导入模块资源"><a href="#Webpack-导入模块资源" class="headerlink" title="Webpack 导入模块资源"></a>Webpack 导入模块资源</h1><p>因为前端是以 <strong>JavaScript</strong> 驱动的，所以一般都是以 <strong>JavaScript</strong> 作为打包入口，通过 <strong>import</strong> 的方式在 <strong>js</strong> 中引入 <strong>css</strong> 文件，不管何种资源，在编码的时候根据代码的需要动态导入资源；</p>
+<h1 id="Webpack-文件资源加载器"><a href="#Webpack-文件资源加载器" class="headerlink" title="Webpack 文件资源加载器"></a>Webpack 文件资源加载器</h1><p>加载图片等文件资源时要使用文件资源加载器，<code>yarn add file-loader --dev</code> ；</p>
+<p><img src="/2021/08/10/webpack-01/05.jpg"></p>
+<p>此时如果是 <strong>webpack4+</strong> 的版本，代码中使用引入的文件会报找不到图片引用，需要在 <strong>output</strong> 中配置 <strong>publicPath</strong> 属性为 <strong>‘dist/’</strong> ，<strong>webpack5+</strong> 会找服务器下打包文件的根路径，不会报错；</p>
+<p><img src="/2021/08/10/webpack-01/06.jpg" alt="webpack5+"></p>
+<p><img src="/2021/08/10/webpack-01/07.jpg"></p>
+<p><img src="/2021/08/10/webpack-01/08.jpg" alt="配置publicPath后"></p>
+<p>文件加载器打包过程，<strong>webpack</strong> 在打包时，遇到了图片文件，根据配置文件中的配置匹配到对应的文件加载器，文件加载器开始工作，先将导入的文件拷贝到输出目录，然后再将文件拷贝到输出目录的路径，作为当前这个模块的返回值返回，这样针对应用来说，所需要的资源就被发布出来了，同时也可以通过这个模块的导出成员拿到这个文件的导出路径。</p>
+<p><img src="/2021/08/10/webpack-01/09.jpg"></p>
+<h1 id="Webpack-Data-URLs-与-url-loader"><a href="#Webpack-Data-URLs-与-url-loader" class="headerlink" title="Webpack Data URLs 与 url-loader"></a>Webpack Data URLs 与 url-loader</h1><p>除了 <strong>file-loader</strong>，我们还可以使用 <strong>Data URLs</strong> 去表示一个文件，它的当前 <strong>url</strong> 文本就包含了文件内容，使用这种 <strong>url</strong> 时就不会再去发送<strong>http</strong> 请求。</p>
+<p>详见：<a href="https://link.zhihu.com/?target=https://developer.mozilla.org/zh-CN/docs/Web/HTTP/Basics_of_HTTP/Data_URIs">Data URLs - HTTP</a></p>
+<p>在 <strong>webpack</strong> 打包时也可以使用这种格式去表示任何格式的文件，使用专门的加载器 <strong>url-loader</strong>，<code>yarn add url-loader --dev</code>，然后将之前配置文件中的 <strong>file-loader</strong> 改为 <strong>url-loader</strong> ，重新打包查看页面上的图片路径。</p>
+<p><img src="/2021/08/10/webpack-01/10.jpg"></p>
+<figure class="highlight js"><table><tr><td class="code"><pre><span class="line">...</span><br><span class="line">&#123;</span><br><span class="line">    <span class="attr">test</span>: <span class="regexp">/.png$/</span>,</span><br><span class="line">    use: &#123;</span><br><span class="line">        <span class="attr">loader</span>: <span class="string">&#x27;url-loader&#x27;</span>,       <span class="comment">// 适合体积较小的资源，大小小于10KB？偏大的会交给使用file-loader，注意一定要同时安装file-loader</span></span><br><span class="line">        <span class="attr">options</span>: &#123;</span><br><span class="line">            <span class="attr">limit</span>: <span class="number">10</span> * <span class="number">1024</span></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line">...</span><br></pre></td></tr></table></figure>
+
+<h1 id="Webpack-常用加载器分类"><a href="#Webpack-常用加载器分类" class="headerlink" title="Webpack 常用加载器分类"></a>Webpack 常用加载器分类</h1><p>资源加载器主要是用于处理在打包过程中遇到的资源文件，常用的 <strong>loader</strong> 分为以下几类；</p>
+<ul>
+<li>编译转换类，把编译模块转换为 <strong>JavaScript</strong> 代码；</li>
+<li>文件操作类，通常是把加载的资源模块拷贝到输出目录，并将文件的路径向外导出；</li>
+<li>代码检查类，加载的资源是代码时，可以通过其对代码进行校验，统一代码风格，维护代码质量；</li>
+</ul>
+<h1 id="Webpack-与-ES6"><a href="#Webpack-与-ES6" class="headerlink" title="Webpack 与 ES6"></a>Webpack 与 ES6</h1><p>由于 <strong>webpack</strong> 只是打包工具，并不会我们转换 <strong>ES6</strong> 新特性，所以打包编译过程需要安装配置对应的 <strong>loader</strong> 去对 <strong>ES6</strong> 代码进行转换，<code>yarn add babel-loader @babel/core @babel/preset-env --dev</code>；</p>
+<figure class="highlight js"><table><tr><td class="code"><pre><span class="line">&#123;</span><br><span class="line">    <span class="attr">test</span>: <span class="regexp">/.js$/</span>,</span><br><span class="line">    use: &#123;</span><br><span class="line">        <span class="attr">loader</span>: <span class="string">&#x27;babel-loader&#x27;</span>,         <span class="comment">// babel转换</span></span><br><span class="line">        <span class="attr">options</span>: &#123;</span><br><span class="line">            <span class="attr">presets</span>: [<span class="string">&#x27;@babel/preset-env&#x27;</span>]       <span class="comment">// 匹配新特性，全部转换</span></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h1 id="Webpack-加载资源的方式"><a href="#Webpack-加载资源的方式" class="headerlink" title="Webpack 加载资源的方式"></a>Webpack 加载资源的方式</h1><p><strong>webpack</strong> 加载 <strong>JavaScript</strong> 模块的方式有以下几种：</p>
+<ul>
+<li>ESM 中 import；</li>
+<li>commonJS 中的 require；</li>
+<li>还有 AMD 标准下的 define 和 require；</li>
+</ul>
+<p>其他的非 <strong>JavaScript</strong> 加载也能触发相应的资源加载，如 <strong>CSS</strong> 中使用的 **@import <strong>指令和 <strong>url</strong> 路径，</strong>HTML **代码中图片标签的 <strong>src</strong> 属性，也能触发相应的资源加载；</p>
+<p><strong>HTML</strong> 的加载需要配置对应的 <strong>loader</strong>，<code>yarn add html-loader --dev</code>；</p>
+<figure class="highlight js"><table><tr><td class="code"><pre><span class="line">&#123;</span><br><span class="line">    <span class="attr">test</span>: <span class="regexp">/.html$/</span>,</span><br><span class="line">    use: &#123;</span><br><span class="line">        <span class="attr">loader</span>: <span class="string">&#x27;html-loader&#x27;</span>,      <span class="comment">// html 打包对应的loader</span></span><br><span class="line">        <span class="attr">options</span>: &#123;</span><br><span class="line">            <span class="attr">attrs</span>: [<span class="string">&#x27;img:src&#x27;</span>, <span class="string">&#x27;a:href&#x27;</span>]        <span class="comment">// attrs 指定额外需要处理的属性，对这些属性也触发资源加载，默认已有 img:src</span></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h1 id="Webpack-核心工作原理"><a href="#Webpack-核心工作原理" class="headerlink" title="Webpack 核心工作原理"></a>Webpack 核心工作原理</h1><p>在项目中一般都是散落着各种各样的代码及资源文件，<strong>webpack</strong> 会根据我们的配置找到一个文件作为打包入口（一般是一个 .js 文件），然后顺着入口文件中的代码，其中的 <strong>import</strong>、<strong>require</strong> 之类的语句解析推断出所依赖的资源模块，然后分别去解析每一个模块对应的依赖，最后就形成了整个项目中用到文件之间的一个依赖关系的依赖树，然后 <strong>webpack</strong> 会递归遍历这个依赖树，找到每个节点所依赖的资源文件，再根据配置文件中的 <strong>rules</strong> 属性找到这个模块对应的资源加载器，然后交给对应的加载器去加载这个模块，最后将加载后的结果放到打包结果中，实现整个项目的打包。其中 <strong>Loader</strong> 机制是 <strong>Webpack</strong> 的核心。</p>
+<h1 id="Webpack-插件机制"><a href="#Webpack-插件机制" class="headerlink" title="Webpack 插件机制"></a>Webpack 插件机制</h1><p>为了增强 <strong>Webpack</strong> 在自动化方面的能力，引入了 <strong>Plugin</strong> 解决处理打包以外其他的自动化工作，例如，在打包前自动清除 <strong>dist</strong> 目录，拷贝不需要打包的静态资源到目标目录，或者压缩打包后的代码等。</p>
+<h1 id="Webpack-自动清除输出目录插件"><a href="#Webpack-自动清除输出目录插件" class="headerlink" title="Webpack 自动清除输出目录插件"></a>Webpack 自动清除输出目录插件</h1><p><code>yarn add clean-webpack-plugin --dev</code>；</p>
+<figure class="highlight js"><table><tr><td class="code"><pre><span class="line"><span class="keyword">const</span> &#123;CleanWebpackPlugin&#125; = <span class="built_in">require</span>(<span class="string">&#x27;clean-webpack-plugin&#x27;</span>)</span><br><span class="line">...</span><br><span class="line"><span class="attr">plugins</span>: [                          <span class="comment">// 插件集合</span></span><br><span class="line">    <span class="keyword">new</span> CleanWebpackPlugin()</span><br><span class="line">]</span><br><span class="line">...</span><br></pre></td></tr></table></figure>
+
+<h1 id="Webpackc自动生成HTML插件"><a href="#Webpackc自动生成HTML插件" class="headerlink" title="Webpackc自动生成HTML插件"></a>Webpackc自动生成HTML插件</h1><p>如果项目中默认有硬编码的 <strong>index.html</strong> 文件作为页面入口，就会存在问题：</p>
+<ul>
+<li>打包时如果依赖的 js 文件路径发生变化，需要手动修改 script 引入路径；</li>
+<li>打包部署时需要同时替换打包文件和 index.html 文件;</li>
+</ul>
+<p>我们可以通过 <strong>Webpack</strong> 自动生成 <strong>html</strong> 文件，<strong>html</strong> 文件也生成到 <strong>dist</strong> 目录，其中的依赖也是通过 <strong>webpack</strong> 打包依赖动态注入的，不需要手动修改，能确保路径引用的正确。</p>
+<p><code>yarn add html-webpack-plugin --dev</code>，并在配置文件的 <strong>plugins</strong> 集合添加相应的实例对象，删除 <strong>publicPath</strong> 属性，保证生成的 <strong>html</strong> 对 <strong>js</strong> 的引用正确；</p>
+<p><img src="/2021/08/10/webpack-01/11.jpg"></p>
+<p>再次打包，<strong>dist</strong> 下自动生成 <strong>html</strong> 文件并正确引入打包后的 <strong>js</strong> 文件，bingo！</p>
+<p>还可以对插件进行相关配置项传入，修改生成的 <strong>html</strong> 内容；</p>
+<p><img src="/2021/08/10/webpack-01/12.jpg"></p>
+<p>其他详细配置请参考 <strong><a href="https://link.zhihu.com/?target=https://www.npmjs.com/package/html-webpack-plugin">html-webpack-plugin</a></strong> 中的配置表。</p>
+<p>如果添加多个 <strong>HtmlWebpackPlugin</strong> 实例对象就可生成多个 <strong>html</strong> 文件；</p>
+<p><img src="/2021/08/10/webpack-01/13.jpg"></p>
+<h1 id="Webpack-静态文件资源拷贝插件"><a href="#Webpack-静态文件资源拷贝插件" class="headerlink" title="Webpack 静态文件资源拷贝插件"></a>Webpack 静态文件资源拷贝插件</h1><p>项目中一些文件在打包时只需要做拷贝处理，这是可以使用相应的插件处理，<code>yarn add copy-webpack-plugin --dev</code>；</p>
+<p><img src="/2021/08/10/webpack-01/14.jpg"></p>
+<p>相关配置请参考 <strong><a href="https://link.zhihu.com/?target=https://www.npmjs.com/package/copy-webpack-plugin">copy-webpack-plugin</a></strong></p>
+<p>以上，我们了解并尝试使用了 <strong>webpack</strong> 的一些基本插件，在实际应用中，我们可以根据自己的需要去查找对应的插件并使用即可。</p>
+<p>其中loader是打包的核心机制，<strong>webpack</strong> 将一切文件视为模块，但是 <strong>webpack</strong> 原生是只能解析 <strong>js</strong> 文件，如果想将其他文件也打包的话，就会用到 <strong>loader</strong>， 所以 <strong>Loader</strong> 的作用是让 <strong>webpack</strong> 拥有了解析非 <strong>JavaScript</strong> 文件的能力；<strong>plugin</strong> 可以扩展 <strong>webpack</strong> 的功能，让 <strong>webpack</strong> 更加灵活。 在 <strong>webpack</strong> 运行的生命周期中有很多的钩子函数，<strong>plugin</strong> 挂载到对应的钩子，通过 <strong>webpack</strong> 提供的 <strong>API</strong> 去修改输出结果，<strong>plugin</strong> 可以作用贯穿在整个编译阶段，功能更加丰富，完成 <strong>loader</strong> 不能做到的工作，比如代码优化，打包压缩，自定生成文件等，功能强大到可以用来处理各种各样的任务。</p>
+]]></content>
       <categories>
         <category>大前端</category>
         <category>工程化</category>
