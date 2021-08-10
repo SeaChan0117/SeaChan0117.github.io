@@ -41,6 +41,13 @@
     <title>webpack-01</title>
     <url>/2021/08/10/webpack-01/</url>
     <content><![CDATA[]]></content>
+      <categories>
+        <category>大前端</category>
+        <category>工程化</category>
+      </categories>
+      <tags>
+        <tag>webpack</tag>
+      </tags>
   </entry>
   <entry>
     <title>Gulp自动化构建工作流封装</title>
@@ -123,7 +130,7 @@
 <p>相关链接：</p>
 <p><a href="https://seachan0117.github.io/2021/06/11/gulp-01/">前端工程化之Gulp</a></p>
 <p><a href="https://seachan0117.github.io/2021/06/11/gulp-02/">Gulp案例</a></p>
-<p>整个过程中使用的基础项目来自zce大牛：</p>
+<p>整个过程中使用的基础项目来自 zce 大牛：</p>
 <p><a href="https://link.zhihu.com/?target=https://github.com/zce/zce-gulp-demo">zce/zce-gulp-demo</a></p>
 ]]></content>
       <categories>
