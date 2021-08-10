@@ -350,6 +350,6 @@ require('gulp/bin/gulp')        // 我们的cli中导入gulp-cli的执行，即�
 
 [Gulp案例](https://seachan0117.github.io/2021/06/11/gulp-02/)
 
-整个过程中使用的基础项目来自zce大牛：
+整个过程中使用的基础项目来自 zce 大牛：
 
 [zce/zce-gulp-demo](https://link.zhihu.com/?target=https%3A//github.com/zce/zce-gulp-demo)
