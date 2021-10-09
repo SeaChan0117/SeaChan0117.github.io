@@ -2,7 +2,7 @@
 <search>
   <entry>
     <title>通过 Hexo 和 Travis 构建一个属于自己的博客</title>
-    <url>/2021/08/13/hexo-usage/</url>
+    <url>/2021/10/09/hexo-usage/</url>
     <content><![CDATA[<p>　　<strong>最近开启了大前端学习的道路，从事前端行业两年多了，想要一个自己的 Blog，不管是学习记录还是生活记录，都可以使用起来，而不是繁杂难选的三方平台，乘着学习过程中看到过的 Hexo＋Travis 的方式搭建自己的博客，我也兴致勃勃的想试试，此时你看到的就是搭建结果，这也是第一篇博客！</strong>  </p>
 <h1 id="前置准备"><a href="#前置准备" class="headerlink" title="前置准备"></a>前置准备</h1><p>　　流浪在大前端的今天怎么能没有 node 呢，node 是必备的，大家自行安装即可=。=；  </p>
 <span id="more"></span>
@@ -35,6 +35,128 @@
       </categories>
       <tags>
         <tag>hexo</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>gridsome 安裝</title>
+    <url>/2021/10/09/init-gridsome/</url>
+    <content><![CDATA[<p>Gridsome 初始化安装，参照<a href="https://www.gridsome.cn/docs/#how-to-install">官网</a> </p>
+<h1 id="安装"><a href="#安装" class="headerlink" title="安装"></a>安装</h1><p>全局安装 gridsome 的脚手架工具，<code>yarn global add @gridsome/cli</code></p>
+<h1 id="创建项目"><a href="#创建项目" class="headerlink" title="创建项目"></a>创建项目</h1><h2 id="sharp"><a href="#sharp" class="headerlink" title="sharp"></a>sharp</h2><p>官方给出在上一步安装脚手架后，可直接使用脚手架命令 <code>gridsome create my-gridsome-site</code> 创建一个名为 my-gridsome-site 的初始化项目，但是这样创建很难成功，因为 gridsome 依赖第三方的包 sharp，用于处理图片，它包含很多 C++ 文件，安装时需要编译，即需要 C++ 编译环境；sharp 还依赖一个 libvips 包，该包文件较大，在国内下载容易失败，即导致 sharp 难以安装成功；<a href="https://sharp.pixelplumbing.com/install#chinese-mirror">sharp官网</a> 提供了一个中国镜像解决该问题；</p>
+<span id="more"></span>
+<p>执行命令配置 sharp 镜像：</p>
+<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line">npm config <span class="built_in">set</span> sharp_binary_host <span class="string">&quot;https://npm.taobao.org/mirrors/sharp&quot;</span></span><br><span class="line">npm config <span class="built_in">set</span> sharp_libvips_binary_host <span class="string">&quot;https://npm.taobao.org/mirrors/sharp-libvips&quot;</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="C-编译环境"><a href="#C-编译环境" class="headerlink" title="C++ 编译环境"></a>C++ 编译环境</h2><p>以上配置完之后，在执行初始化项目时会安装 sharp，我们还差一个 C++ 编译环境；</p>
+<p>安装 node-gyp</p>
+<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line">yarn global add node-gyp</span><br></pre></td></tr></table></figure>
+
+<p>node-gyp 安装后，还需要安装 node-gyp 相关的使用套件，参考<a href="https://github.com/nodejs/node-gyp#on-windows">官方库文档</a> ，此处我本地以 Windows 为例；</p>
+<h3 id="安装-Python"><a href="#安装-Python" class="headerlink" title="安装 Python"></a><a href="https://docs.python.org/3/using/windows.html#the-microsoft-store-package">安装 Python</a></h3><h3 id="安装-windows-build-tools"><a href="#安装-windows-build-tools" class="headerlink" title="安装 windows-build-tools"></a>安装 windows-build-tools</h3><figure class="highlight sh"><table><tr><td class="code"><pre><span class="line">npm install --global --production windows-build-tools</span><br></pre></td></tr></table></figure>
+
+<p>安装 windows-build-tools 过程安装失败，查了资料，要使用 32 位的 node.js，故重新安装 node，再执行上边命令安装 windows-build-tools 即可；</p>
+<h2 id="创建"><a href="#创建" class="headerlink" title="创建"></a>创建</h2><p>执行 <code>gridsome create my-gridsome-site</code> 创建即可；</p>
+]]></content>
+      <categories>
+        <category>Tools</category>
+      </categories>
+      <tags>
+        <tag>gridsome</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>拉钩学习 5-1 作业</title>
+    <url>/2021/10/04/lagou-edu-5-1/</url>
+    <content><![CDATA[<p>拉钩学习 5-1 作业</p>
+<span id="more"></span>
+
+<h1 id="简单题"><a href="#简单题" class="headerlink" title="简单题"></a>简单题</h1><h2 id="简述-Node-js-的特点以及适用的场景"><a href="#简述-Node-js-的特点以及适用的场景" class="headerlink" title="简述 Node.js 的特点以及适用的场景"></a>简述 Node.js 的特点以及适用的场景</h2><h3 id="Node-js-特点："><a href="#Node-js-特点：" class="headerlink" title="Node.js 特点："></a>Node.js 特点：</h3><ol>
+<li>I/O 异步：<blockquote>
+<p>在 Node.js 中，文件读写和网络请求等，大多操作都是异步方式进行调用，异步 I/O 即意味着在 I/O 操作时无需等待之前的操作结束，在编程模型上可以提升效率；</p>
+</blockquote>
+</li>
+<li>事件与回调：<blockquote>
+<p>在 Node.js 中，很多功能是继承自 events 模块实现的，所以事件得到了广泛的应用，而事件的处理基本都是依赖回调函数完成的，正因如此，Node 中的回调也就无处不在；<br>由于异步代码的广泛应用，其中又有一套完整的事件循环机制负责处理事件的循环和调度；</p>
+</blockquote>
+</li>
+<li>单线程：<blockquote>
+<p>Node.js 保持了JavaScript在浏览器中单线程的特点，而且在 Node 中，JavaScript 与其余线程是无法共享任何状态的；<br>所以 Node 无法体现多核 CPU 的优势，处理 CUP 密集型任务时会占用过多的CPU</p>
+</blockquote>
+</li>
+</ol>
+<h3 id="Node-js-适用场景："><a href="#Node-js-适用场景：" class="headerlink" title="Node.js 适用场景："></a>Node.js 适用场景：</h3><p>基于以上 Node.js 的特点得出，非阻塞的异步 I/O 操作让 Node.js 适用于 I/O 密集型的高并发请求应用，<br>比如大型应用中前后端之间再搭建一个 BFF 层，实时聊天程序等；</p>
+<h2 id="简述-Buffer-的使用-包括多种创建方式。实例方法，静态方法"><a href="#简述-Buffer-的使用-包括多种创建方式。实例方法，静态方法" class="headerlink" title="简述 Buffer 的使用.包括多种创建方式。实例方法，静态方法"></a>简述 Buffer 的使用.包括多种创建方式。实例方法，静态方法</h2><p>Buffer 是 Node.js 中的一个全局变量之一，意思是缓冲区，即一片内存空间（V8内存之外，Node 使用，V8 做 GC 回收），用于操作二进制数据；</p>
+<ol>
+<li>Buffer 创建方式：<ul>
+<li>alloc：创建指定大小字节的 buffer</li>
+<li>allocUnsafe：创建指定大小字节的 buffer（不安全）</li>
+<li>from：接收数据，创建 buffer</li>
+</ul>
+</li>
+<li>Buffer 实例方法：<ul>
+<li>fill：使用数据填充 buffer</li>
+<li>write：向 buffer 中写入数据</li>
+<li>toString：从 buffer 中提取数据，并按指定格式拿到数据</li>
+<li>slice：向数组一样截取 buffer</li>
+<li>indexOf：在 buffer 中查找数据</li>
+<li>copy：拷贝 buffer 中的数据</li>
+</ul>
+</li>
+<li>Buffer 静态方法<ul>
+<li>concat：将多个 buffer 拼接成一个新的 buffer</li>
+<li>isBuffer：判断当前数据是否为 buffer</li>
+</ul>
+</li>
+</ol>
+<h2 id="写出5个以上文件操作的API，并且用文字说明其功能"><a href="#写出5个以上文件操作的API，并且用文字说明其功能" class="headerlink" title="写出5个以上文件操作的API，并且用文字说明其功能"></a>写出5个以上文件操作的API，并且用文字说明其功能</h2><ol>
+<li>异步打开文件：fs.open(path[, flags[, mode]], callback)<figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> fs = <span class="string">&#x27;fs&#x27;</span></span><br><span class="line">fs.open(<span class="string">&#x27;test.txt&#x27;</span>, <span class="string">&#x27;r+&#x27;</span>, <span class="function">(<span class="params">err, fd</span>) =&gt;</span> &#123;</span><br><span class="line">    <span class="keyword">if</span> (err) <span class="keyword">throw</span> <span class="keyword">new</span> <span class="built_in">Error</span>(<span class="string">&#x27;文件打开失败&#x27;</span>)</span><br><span class="line">    <span class="built_in">console</span>.log(<span class="string">&#x27;文件打开成功&#x27;</span>)</span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure></li>
+<li>异步获取文件信息：fs.stat(path, callback)<figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> fs = <span class="string">&#x27;fs&#x27;</span></span><br><span class="line">fs.stat(<span class="string">&#x27;test.txt&#x27;</span>, <span class="string">&#x27;r+&#x27;</span>, <span class="function">(<span class="params">err, stats</span>) =&gt;</span> &#123;</span><br><span class="line">    <span class="keyword">if</span> (stats.isFile()) &#123;</span><br><span class="line">        <span class="built_in">console</span>.log(<span class="string">&#x27;文件&#x27;</span>)</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        <span class="built_in">console</span>.log(<span class="string">&#x27;文件夹&#x27;</span>)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure></li>
+<li>异步地读取文件的全部内容：fs.readFile(path[, options], callback)<figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> fs = <span class="string">&#x27;fs&#x27;</span></span><br><span class="line">fs.readFile(<span class="string">&#x27;test.txt&#x27;</span>, <span class="function">(<span class="params">err, data</span>) =&gt;</span> &#123;</span><br><span class="line">    <span class="keyword">if</span> (err) <span class="keyword">throw</span> err</span><br><span class="line">    <span class="built_in">console</span>.log(data)</span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure></li>
+<li>异步写入文件：fs.writeFile(file, data[, options], callback)<figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> fs = <span class="string">&#x27;fs&#x27;</span></span><br><span class="line">fs.writeFile(<span class="string">&#x27;test.txt&#x27;</span>, <span class="string">&#x27;我是写入的内容字符串&#x27;</span>,  <span class="function"><span class="params">err</span> =&gt;</span> &#123;</span><br><span class="line">    <span class="keyword">if</span> (err) <span class="keyword">throw</span> err</span><br><span class="line">    <span class="built_in">console</span>.log(<span class="string">&#x27;写入成功&#x27;</span>)</span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure></li>
+<li>异步地创建目录：fs.mkdir(path[, options], callback)<figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> fs = <span class="string">&#x27;fs&#x27;</span></span><br><span class="line">fs.mkdir(<span class="string">&#x27;/a/b/c&#x27;</span>, &#123; <span class="attr">recursive</span>: <span class="literal">true</span> &#125;, <span class="function"><span class="params">err</span> =&gt;</span> &#123;</span><br><span class="line">    <span class="keyword">if</span> (err) <span class="keyword">throw</span> err</span><br><span class="line">    <span class="built_in">console</span>.log(<span class="string">&#x27;创建成功&#x27;</span>)</span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure></li>
+</ol>
+<h2 id="简述使用流操作的优势，以及Node中流的分类"><a href="#简述使用流操作的优势，以及Node中流的分类" class="headerlink" title="简述使用流操作的优势，以及Node中流的分类"></a>简述使用流操作的优势，以及Node中流的分类</h2><p>流操作的优势：</p>
+<ul>
+<li>时间效率：流的分段处理可以同时操作多个数据 chunk</li>
+<li>空间效率：同一时间流无须占据大内存空间</li>
+<li>使用方便：流配合管道，扩展程序变得简单</li>
+</ul>
+<p>Node.js 中流的分类：</p>
+<ul>
+<li>Readable：可读流，能实现数据的读取</li>
+<li>Writeable：可写流，能实现数据的写操作</li>
+<li>Duplex：双工流，既可读又可写</li>
+<li>Transform：转换流，可读可写，还能实现数据转换</li>
+</ul>
+<h2 id="在数据封装与解封装过程中，针对应用层、传输层、网络层、数据链路层、物理层5层分别做了什么事情"><a href="#在数据封装与解封装过程中，针对应用层、传输层、网络层、数据链路层、物理层5层分别做了什么事情" class="headerlink" title="在数据封装与解封装过程中，针对应用层、传输层、网络层、数据链路层、物理层5层分别做了什么事情"></a>在数据封装与解封装过程中，针对应用层、传输层、网络层、数据链路层、物理层5层分别做了什么事情</h2><p>数据封装过程：</p>
+<ul>
+<li>应用层产出传输的数据；</li>
+<li>数据传向传输层，在这一层最常见的就是 TCP 和 UDP 协议，这两个协议都是基于端口的，端口作用就是在主机上确定应用进程，所以数据在这一层就会被包裹上目标应用端口和应用在当前的源端口；</li>
+<li>数据传向网络层，主机处于不同的网络里的，所以需要通过IP协议来确定目标主机在网络，因此数据在这一层会被包裹上目标 IP,端口，源主机 IP，端口，确定某一个网络；</li>
+<li>数据链路层，通过MAC地址来完成寻址操作，数据会被包裹上目标 Mac 和源 Mac ,到此一条完整的数据封装完成，递给网络；</li>
+<li>物理层，网线不能识别二进制数据，需要通过网卡调制之后，会形成高低电压，到达目标主机的网卡；</li>
+</ul>
+<p>数据的解封过程和封装过程经过的层级顺序刚好反过来：</p>
+<ul>
+<li>目标的物理层 首先做数据的解调，将电压变为二进制，向上层传递至链路层；</li>
+<li>链路层会进行分析目标的 Mac 地址是不是当前主机的 Mac 地址，是的话继续向上传递网络层；</li>
+<li>网络层解析目标 IP 是不是自己的 IP，如果是继续拆包，向上传输至传输层；</li>
+<li>传输层确定当前的目标端口是不是自己的，是再拆解数据，并传输至应用层；</li>
+<li>到达应用层，这时候主机接收到另外一台主题的数据；</li>
+</ul>
+<h1 id="代码题"><a href="#代码题" class="headerlink" title="代码题"></a>代码题</h1><h2 id="统计指定目录中文件总大小。要考虑目录中还有子目录的情况。可以同步编码-异步更好"><a href="#统计指定目录中文件总大小。要考虑目录中还有子目录的情况。可以同步编码-异步更好" class="headerlink" title="统计指定目录中文件总大小。要考虑目录中还有子目录的情况。可以同步编码,异步更好"></a>统计指定目录中文件总大小。要考虑目录中还有子目录的情况。可以同步编码,异步更好</h2><figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 统计文件或文件夹所占字节数</span></span><br><span class="line"><span class="comment"> * node 执行该文件，在命令询问文件或文件夹路径，输入后回车</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">const</span> fs = <span class="built_in">require</span>(<span class="string">&#x27;fs&#x27;</span>)</span><br><span class="line"><span class="keyword">const</span> path = <span class="built_in">require</span>(<span class="string">&#x27;path&#x27;</span>)</span><br><span class="line"><span class="keyword">const</span> readline = <span class="built_in">require</span>(<span class="string">&#x27;readline&#x27;</span>)</span><br><span class="line"><span class="keyword">const</span> &#123;promisify&#125; = <span class="built_in">require</span>(<span class="string">&#x27;util&#x27;</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> stat = promisify(fs.stat)</span><br><span class="line"><span class="keyword">const</span> readdir = promisify(fs.readdir)</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> rl = readline.createInterface(&#123;</span><br><span class="line">    <span class="attr">input</span>: process.stdin,</span><br><span class="line">    <span class="attr">output</span>: process.stdout</span><br><span class="line">&#125;)</span><br><span class="line"></span><br><span class="line">rl.question(<span class="string">`Please input file or dictionary path：`</span>, <span class="keyword">async</span> pathStr =&gt; &#123;</span><br><span class="line">    <span class="keyword">await</span> getSize(pathStr, <span class="function">(<span class="params">err, size</span>) =&gt;</span> &#123;</span><br><span class="line">        <span class="keyword">if</span> (err) &#123;</span><br><span class="line">            <span class="built_in">console</span>.log(err)</span><br><span class="line">            rl.close()</span><br><span class="line">            <span class="keyword">return</span></span><br><span class="line">        &#125;</span><br><span class="line">        <span class="built_in">console</span>.log(<span class="string">`Files size is <span class="subst">$&#123;size&#125;</span> bytes`</span>)</span><br><span class="line">        rl.close()</span><br><span class="line">    &#125;)</span><br><span class="line">&#125;)</span><br><span class="line"></span><br><span class="line"><span class="keyword">async</span> <span class="function"><span class="keyword">function</span> <span class="title">getSize</span>(<span class="params">dirPath, done</span>) </span>&#123;</span><br><span class="line">    <span class="keyword">let</span> size = <span class="number">0</span></span><br><span class="line">    <span class="keyword">let</span> err</span><br><span class="line"></span><br><span class="line">    <span class="keyword">async</span> <span class="function"><span class="keyword">function</span> <span class="title">calcSize</span>(<span class="params">dirPath</span>) </span>&#123;</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            <span class="keyword">const</span> statObj = <span class="keyword">await</span> stat(dirPath)</span><br><span class="line">            <span class="keyword">if</span> (statObj.isFile()) &#123;</span><br><span class="line">                size += statObj.size</span><br><span class="line">            &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                <span class="keyword">let</span> dirs = <span class="keyword">await</span> readdir(dirPath)</span><br><span class="line">                dirs = dirs.map(<span class="function"><span class="params">item</span> =&gt;</span> path.join(dirPath, item))</span><br><span class="line">                <span class="keyword">for</span> (<span class="keyword">let</span> i = <span class="number">0</span>; i &lt; dirs.length; i++) &#123;</span><br><span class="line">                    <span class="keyword">await</span> calcSize(dirs[i])</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125; <span class="keyword">catch</span> (e) &#123;</span><br><span class="line">            err = e</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">await</span> calcSize(dirPath)</span><br><span class="line">    done(err, size)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="编写单向链表类并且实现队列的入列出列操作"><a href="#编写单向链表类并且实现队列的入列出列操作" class="headerlink" title="编写单向链表类并且实现队列的入列出列操作"></a>编写单向链表类并且实现队列的入列出列操作</h2><figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 链表节点</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Node</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="title">constructor</span>(<span class="params">element, next</span>)</span> &#123;</span><br><span class="line">        <span class="built_in">this</span>.element = element</span><br><span class="line">        <span class="built_in">this</span>.next = next</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 单向链表</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">LinkedList</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="title">constructor</span>(<span class="params">head, size</span>)</span> &#123;</span><br><span class="line">        <span class="built_in">this</span>.head = <span class="literal">null</span></span><br><span class="line">        <span class="built_in">this</span>.size = <span class="number">0</span></span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// 添加节点</span></span><br><span class="line">    <span class="function"><span class="title">add</span>(<span class="params">index, element</span>)</span> &#123;</span><br><span class="line">        <span class="keyword">if</span> (<span class="built_in">arguments</span>.length === <span class="number">1</span>) &#123;</span><br><span class="line">            element = index</span><br><span class="line">            index = <span class="built_in">this</span>.size</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">if</span> (index &lt; <span class="number">0</span> || index &gt; <span class="built_in">this</span>.size) <span class="keyword">throw</span> <span class="keyword">new</span> <span class="built_in">Error</span>(<span class="string">&#x27;over size&#x27;</span>)</span><br><span class="line">        <span class="keyword">if</span> (index === <span class="number">0</span>) &#123;</span><br><span class="line">            <span class="keyword">let</span> head = <span class="built_in">this</span>.head</span><br><span class="line">            <span class="built_in">this</span>.head = <span class="keyword">new</span> Node(element, head)</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            <span class="keyword">let</span> prevNode = <span class="built_in">this</span>._getNode(index - <span class="number">1</span>)</span><br><span class="line">            prevNode.next = <span class="keyword">new</span> Node(element, prevNode.next)</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="built_in">this</span>.size++</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// 移除节点</span></span><br><span class="line">    <span class="function"><span class="title">remove</span>(<span class="params">index</span>)</span> &#123;</span><br><span class="line">        <span class="keyword">let</span> rmNode = <span class="literal">null</span></span><br><span class="line">        <span class="keyword">if</span> (index === <span class="number">0</span>) &#123;</span><br><span class="line">            rmNode = <span class="built_in">this</span>.head</span><br><span class="line">            <span class="keyword">if</span> (!rmNode) &#123;</span><br><span class="line">                <span class="keyword">return</span> <span class="literal">undefined</span></span><br><span class="line">            &#125;</span><br><span class="line">            <span class="built_in">this</span>.head = rmNode.next</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            <span class="keyword">const</span> preNode = <span class="built_in">this</span>._getNode(index - <span class="number">1</span>)</span><br><span class="line">            rmNode = preNode.next</span><br><span class="line">            preNode.next = rmNode.next</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="built_in">this</span>.size--</span><br><span class="line">        <span class="keyword">return</span> rmNode</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// 修改节点</span></span><br><span class="line">    <span class="function"><span class="title">setNode</span>(<span class="params">index, element</span>)</span> &#123;</span><br><span class="line">        <span class="keyword">const</span> node = <span class="built_in">this</span>._getNode(index)</span><br><span class="line">        node.element = element</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// 获取节点</span></span><br><span class="line">    <span class="function"><span class="title">getNode</span>(<span class="params">index</span>)</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="built_in">this</span>._getNode(index)</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="title">clear</span>(<span class="params"></span>)</span> &#123;</span><br><span class="line">        <span class="built_in">this</span>.head = <span class="literal">null</span></span><br><span class="line">        <span class="built_in">this</span>.size = <span class="number">0</span></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="title">_getNode</span>(<span class="params">index</span>)</span> &#123;</span><br><span class="line">        <span class="keyword">if</span> (index &lt; <span class="number">0</span> || index &gt;= <span class="built_in">this</span>.size) <span class="keyword">throw</span> <span class="keyword">new</span> <span class="built_in">Error</span>(<span class="string">&#x27;over size&#x27;</span>)</span><br><span class="line">        <span class="keyword">let</span> node = <span class="built_in">this</span>.head</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">let</span> i = <span class="number">0</span>; i &lt; index; i++) &#123;</span><br><span class="line">            node = node.next</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> node</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 队列</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Queue</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="title">constructor</span>(<span class="params"></span>)</span> &#123;</span><br><span class="line">        <span class="built_in">this</span>.likedList = <span class="keyword">new</span> LinkedList()</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// 进队列</span></span><br><span class="line">    <span class="function"><span class="title">enQueue</span>(<span class="params">data</span>)</span> &#123;</span><br><span class="line">        <span class="built_in">this</span>.likedList.add(data)</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// 出队列</span></span><br><span class="line">    <span class="function"><span class="title">deQueue</span>(<span class="params"></span>)</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="built_in">this</span>.likedList.remove(<span class="number">0</span>)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 队列实例</span></span><br><span class="line"><span class="keyword">const</span> q = <span class="keyword">new</span> Queue()</span><br><span class="line">q.enQueue(<span class="string">&#x27;node1&#x27;</span>)</span><br><span class="line">q.enQueue(<span class="string">&#x27;node2&#x27;</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> data = q.deQueue()</span><br><span class="line"><span class="built_in">console</span>.log(data) <span class="comment">// node1 对应的节点，先进先出</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="基于Node写出一静态服务器。接收请求并且响应特定目录-服务器目录-中的html、css、js、图片等资源"><a href="#基于Node写出一静态服务器。接收请求并且响应特定目录-服务器目录-中的html、css、js、图片等资源" class="headerlink" title="基于Node写出一静态服务器。接收请求并且响应特定目录(服务器目录)中的html、css、js、图片等资源"></a>基于Node写出一静态服务器。接收请求并且响应特定目录(服务器目录)中的html、css、js、图片等资源</h2><p><a href="https://github.com/SeaChan0117/node-static-server">https://github.com/SeaChan0117/node-static-server</a></p>
+]]></content>
+      <categories>
+        <category>大前端</category>
+        <category>node</category>
+      </categories>
+      <tags>
+        <tag>大前端</tag>
+        <tag>node</tag>
       </tags>
   </entry>
   <entry>
@@ -94,33 +216,6 @@
       <tags>
         <tag>React</tag>
         <tag>Redux</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>gridsome 安裝</title>
-    <url>/2021/08/13/init-gridsome/</url>
-    <content><![CDATA[<p>Gridsome 初始化安装，参照<a href="https://www.gridsome.cn/docs/#how-to-install">官网</a> </p>
-<h1 id="安装"><a href="#安装" class="headerlink" title="安装"></a>安装</h1><p>全局安装 gridsome 的脚手架工具，<code>yarn global add @gridsome/cli</code></p>
-<h1 id="创建项目"><a href="#创建项目" class="headerlink" title="创建项目"></a>创建项目</h1><h2 id="sharp"><a href="#sharp" class="headerlink" title="sharp"></a>sharp</h2><p>官方给出在上一步安装脚手架后，可直接使用脚手架命令 <code>gridsome create my-gridsome-site</code> 创建一个名为 my-gridsome-site 的初始化项目，但是这样创建很难成功，因为 gridsome 依赖第三方的包 sharp，用于处理图片，它包含很多 C++ 文件，安装时需要编译，即需要 C++ 编译环境；sharp 还依赖一个 libvips 包，该包文件较大，在国内下载容易失败，即导致 sharp 难以安装成功；<a href="https://sharp.pixelplumbing.com/install#chinese-mirror">sharp官网</a> 提供了一个中国镜像解决该问题；</p>
-<span id="more"></span>
-<p>执行命令配置 sharp 镜像：</p>
-<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line">npm config <span class="built_in">set</span> sharp_binary_host <span class="string">&quot;https://npm.taobao.org/mirrors/sharp&quot;</span></span><br><span class="line">npm config <span class="built_in">set</span> sharp_libvips_binary_host <span class="string">&quot;https://npm.taobao.org/mirrors/sharp-libvips&quot;</span></span><br></pre></td></tr></table></figure>
-
-<h2 id="C-编译环境"><a href="#C-编译环境" class="headerlink" title="C++ 编译环境"></a>C++ 编译环境</h2><p>以上配置完之后，在执行初始化项目时会安装 sharp，我们还差一个 C++ 编译环境；</p>
-<p>安装 node-gyp</p>
-<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line">yarn global add node-gyp</span><br></pre></td></tr></table></figure>
-
-<p>node-gyp 安装后，还需要安装 node-gyp 相关的使用套件，参考<a href="https://github.com/nodejs/node-gyp#on-windows">官方库文档</a> ，此处我本地以 Windows 为例；</p>
-<h3 id="安装-Python"><a href="#安装-Python" class="headerlink" title="安装 Python"></a><a href="https://docs.python.org/3/using/windows.html#the-microsoft-store-package">安装 Python</a></h3><h3 id="安装-windows-build-tools"><a href="#安装-windows-build-tools" class="headerlink" title="安装 windows-build-tools"></a>安装 windows-build-tools</h3><figure class="highlight sh"><table><tr><td class="code"><pre><span class="line">npm install --global --production windows-build-tools</span><br></pre></td></tr></table></figure>
-
-<p>安装 windows-build-tools 过程安装失败，查了资料，要使用 32 位的 node.js，故重新安装 node，再执行上边命令安装 windows-build-tools 即可；</p>
-<h2 id="创建"><a href="#创建" class="headerlink" title="创建"></a>创建</h2><p>执行 <code>gridsome create my-gridsome-site</code> 创建即可；</p>
-]]></content>
-      <categories>
-        <category>Tools</category>
-      </categories>
-      <tags>
-        <tag>gridsome</tag>
       </tags>
   </entry>
   <entry>
@@ -1499,8 +1594,8 @@
         <category>大前端</category>
       </categories>
       <tags>
-        <tag>TypeScript</tag>
         <tag>大前端</tag>
+        <tag>TypeScript</tag>
       </tags>
   </entry>
   <entry>
