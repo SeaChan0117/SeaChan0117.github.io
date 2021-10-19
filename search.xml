@@ -38,6 +38,32 @@
       </tags>
   </entry>
   <entry>
+    <title>拉钩学习 5-2 作业</title>
+    <url>/2021/10/19/lagou-edu-5-2/</url>
+    <content><![CDATA[<p>拉钩学习 5-2 作业</p>
+<span id="more"></span>
+
+<h2 id="界面：http-117-50-1-138"><a href="#界面：http-117-50-1-138" class="headerlink" title="界面：http://117.50.1.138/"></a>界面：<a href="http://117.50.1.138/">http://117.50.1.138/</a></h2><h2 id="api"><a href="#api" class="headerlink" title="api:"></a>api:</h2><h3 id="扔瓶子：post-http-117-50-1-138-3000"><a href="#扔瓶子：post-http-117-50-1-138-3000" class="headerlink" title="扔瓶子：post http://117.50.1.138:3000"></a>扔瓶子：post <a href="http://117.50.1.138:3000/">http://117.50.1.138:3000</a></h3><ul>
+<li>time：漂流瓶扔出的时间戳，默认时设置为 Date.now()，后台生成，前台不用传；</li>
+<li>owner：漂流瓶主人；</li>
+<li>type：漂流瓶类型，为 male 或 female 之一；</li>
+<li>content：漂流瓶内容；</li>
+</ul>
+<h3 id="捞瓶子：get-http-117-50-1-138-3000-user-xxx-amp-type-xxx"><a href="#捞瓶子：get-http-117-50-1-138-3000-user-xxx-amp-type-xxx" class="headerlink" title="捞瓶子：get  http://117.50.1.138:3000?user=xxx[&amp;type=xxx]"></a>捞瓶子：get  <a href="http://117.50.1.138:3000/?user=xxx%5B&amp;type=xxx%5D">http://117.50.1.138:3000?user=xxx[&amp;type=xxx]</a></h3><ul>
+<li>user：捡漂流瓶的人的用户名或用户id；</li>
+<li>type：漂流瓶类型，这里我们设置三种类型：all 代表全部，male 代表男性，female 代表女性，默认时为 all；</li>
+</ul>
+]]></content>
+      <categories>
+        <category>大前端</category>
+        <category>node</category>
+      </categories>
+      <tags>
+        <tag>大前端</tag>
+        <tag>node</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>gridsome 安裝</title>
     <url>/2021/10/19/init-gridsome/</url>
     <content><![CDATA[<p>Gridsome 初始化安装，参照<a href="https://www.gridsome.cn/docs/#how-to-install">官网</a> </p>
