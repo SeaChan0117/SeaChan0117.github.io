@@ -94,7 +94,7 @@ disable_top_img: false
 index_img:
 
 # If the banner of page not setting, it will show the top_img
-default_top_img: http://api.dujin.org/bing/1920.php
+default_top_img: https://i.loli.net/2020/05/01/gkihqEjXxJ5UZ1C.jpg
 
 # The banner image of archive page
 archive_img:
