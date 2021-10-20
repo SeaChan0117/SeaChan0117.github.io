@@ -38,6 +38,48 @@
       </tags>
   </entry>
   <entry>
+    <title>远程服务器 Linux 常用操作</title>
+    <url>/2021/10/20/Linux/</url>
+    <content><![CDATA[<h1 id="About"><a href="#About" class="headerlink" title="About"></a>About</h1><blockquote>
+<p><strong>用于记录平时开发常用的远程操作命令，不定期更新；</strong></p>
+</blockquote>
+<h1 id="安装-node-pm2-配置相关路径"><a href="#安装-node-pm2-配置相关路径" class="headerlink" title="安装 node / pm2 / 配置相关路径"></a>安装 node / pm2 / 配置相关路径</h1><h2 id="脚本安装"><a href="#脚本安装" class="headerlink" title="脚本安装"></a>脚本安装</h2><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> 命令1 &amp;&amp; 命令2   命令1执行完成后，再执行命令2</span></span><br><span class="line">nver=&#x27;v14.16.1&#x27;                 #定义版本变量 nver</span><br><span class="line">ndir=&quot;node-$&#123;nver&#125;-linux-x64&quot;   #定义目录变量 ndir </span><br><span class="line">nfile=&quot;$&#123;ndir&#125;.tar.xz&quot;          #定义压缩文件名变量 nfile</span><br><span class="line"></span><br><span class="line">cd /usr/local                   #切换目录</span><br><span class="line">wget https://nodejs.org/dist/$nver/$nfile  $下载文件</span><br><span class="line">tar xvf $nfile    #文件拆包解压</span><br><span class="line">mv $ndir nodejs   #对目录重命名</span><br><span class="line">rm -rf $nfile     #删除压缩包文件</span><br><span class="line"></span><br><span class="line">cd nodejs/bin     #进入目录</span><br><span class="line"><span class="meta"></span></span><br><span class="line"><span class="meta">#</span><span class="bash"> 获取真实路径, 软链接到 /usr/bin 中, 使命令全局可用. -f为强制创建，会覆盖</span></span><br><span class="line">ln -sf `readlink -f node` /usr/bin/node</span><br><span class="line">ln -sf `readlink -f npm`  /usr/bin/npm</span><br><span class="line">ln -sf `readlink -f npx`  /usr/bin/npx</span><br><span class="line"><span class="meta"></span></span><br><span class="line"><span class="meta"></span></span><br><span class="line"><span class="meta">#</span><span class="bash"> 配置镜像</span></span><br><span class="line">npm config set registry http://registry.npm.taobao.org</span><br><span class="line"><span class="meta">#</span><span class="bash"> 全局安装pm2</span></span><br><span class="line">npm i pm2 -g   </span><br><span class="line"><span class="meta">#</span><span class="bash"> 建立软链接. 使pm2全局使用</span></span><br><span class="line">ln -sf `readlink -f pm2`  /usr/bin/pm2</span><br><span class="line"><span class="meta">#</span><span class="bash"> 返回目录</span></span><br><span class="line">cd</span><br></pre></td></tr></table></figure>
+
+<h2 id="通过-nvm-安装-github-不稳定，暂时不用这种方式"><a href="#通过-nvm-安装-github-不稳定，暂时不用这种方式" class="headerlink" title="通过 nvm 安装 ( github 不稳定，暂时不用这种方式 )"></a>通过 nvm 安装 ( github 不稳定，暂时不用这种方式 )</h2><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> 1.安装 nvm</span></span><br><span class="line">cd</span><br><span class="line">wget -qO- https://raw.githubusercontent.com/nvm-sh/nvm/v0.38.0/install.sh | bash</span><br><span class="line"><span class="meta"></span></span><br><span class="line"><span class="meta">#</span><span class="bash"> 2.断开+重新连接 或 执行下面命令使 nvm 生效</span></span><br><span class="line">  source ~/.bashrc # bash</span><br><span class="line"><span class="meta">#</span><span class="bash"> <span class="built_in">source</span> ~/.zshrc  <span class="comment"># zsh  MacOS ?</span></span></span><br><span class="line"><span class="meta"></span></span><br><span class="line"><span class="meta">#</span><span class="bash"> 3.安装 node 稳定版</span></span><br><span class="line">nvm install --lts</span><br><span class="line"><span class="meta"></span></span><br><span class="line"><span class="meta">#</span><span class="bash"> 4.安装 pm2 到全局</span></span><br><span class="line">npm i pm2 -g</span><br><span class="line"><span class="meta"></span></span><br><span class="line"><span class="meta">#</span><span class="bash"> 5.建立软链接</span></span><br><span class="line">nver=&#x27;v14.16.1&#x27; &amp;&amp; cd /root/.nvm/versions/node/$nver/bin &amp;&amp;  ln -sf `readlink -f node` /usr/bin/node &amp;&amp; ln -sf `readlink -f npm`  /usr/bin/npm &amp;&amp; ln -sf `readlink -f npx`  /usr/bin/npx &amp;&amp; ln -sf `readlink -f pm2`  /usr/bin/pm2 &amp;&amp; cd</span><br></pre></td></tr></table></figure>
+
+<h1 id="内部防火墙"><a href="#内部防火墙" class="headerlink" title="内部防火墙"></a>内部防火墙</h1><p><strong>( 建议不要开启内部防火墙 )</strong></p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> 关闭内部防火墙</span></span><br><span class="line">systemctl stop firewalld      # 临时关</span><br><span class="line">systemctl disable firewalld   # 永久关. 重启以后也是关着的</span><br><span class="line"><span class="meta"></span></span><br><span class="line"><span class="meta">#</span><span class="bash"> 开启内部防火墙</span></span><br><span class="line"><span class="meta">#</span><span class="bash">systemctl start firewalld</span></span><br><span class="line"><span class="meta">#</span><span class="bash">查看防火墙状态</span></span><br><span class="line"><span class="meta">#</span><span class="bash">systemctl status firewalld.service</span></span><br><span class="line"><span class="meta"></span></span><br><span class="line"><span class="meta">#</span><span class="bash"> 添加开放端口规则</span></span><br><span class="line"><span class="meta">#</span><span class="bash">firewall-cmd --zone=public --add-port=22/tcp   --permanent</span></span><br><span class="line"><span class="meta">#</span><span class="bash">firewall-cmd --zone=public --add-port=80/tcp   --permanent</span></span><br><span class="line"><span class="meta">#</span><span class="bash">firewall-cmd --zone=public --add-port=443/tcp  --permanent</span></span><br><span class="line"><span class="meta">#</span><span class="bash">firewall-cmd --zone=public --add-port=1337/tcp --permanent</span></span><br><span class="line"><span class="meta">#</span><span class="bash">firewall-cmd --zone=public --add-port=3000/tcp --permanent</span></span><br><span class="line"><span class="meta">#</span><span class="bash">firewall-cmd --zone=public --add-port=3306/tcp --permanent</span></span><br><span class="line"><span class="meta">#</span><span class="bash">firewall-cmd --zone=public --add-port=8080/tcp --permanent</span></span><br><span class="line"><span class="meta"></span></span><br><span class="line"><span class="meta">#</span><span class="bash"> 重新加载规则. 使之立刻生效.</span></span><br><span class="line"><span class="meta">#</span><span class="bash">firewall-cmd --reload</span></span><br></pre></td></tr></table></figure>
+
+<h1 id="安装配置-GIT"><a href="#安装配置-GIT" class="headerlink" title="安装配置 GIT"></a>安装配置 GIT</h1><h2 id="安装"><a href="#安装" class="headerlink" title="安装"></a>安装</h2><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">yum -y install git</span><br></pre></td></tr></table></figure>
+
+<h2 id="SSH-配置-GIT"><a href="#SSH-配置-GIT" class="headerlink" title="SSH 配置 GIT"></a>SSH 配置 GIT</h2><ol>
+<li><p>进入当前用户目录，输入以下命令，连续回车 3 次；</p>
+<ul>
+<li>key生成成功后用户主目录生成.ssh文件夹；</li>
+<li>id_rsa是私钥，id_rsa.pub是公钥；</li>
+</ul>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">ssh-keygen -t rsa -C &quot;自己的github账号&quot;</span><br></pre></td></tr></table></figure></li>
+<li><p>查看 <code>id_rsa.pub</code> 公钥内容，秘钥信息以 <code>ssh-rsa</code> 开始，邮箱结束；</p>
+</li>
+<li><p>登录自己的 <code>github</code> ，找到 <code>Settings=&gt;SSH and GPG keys</code> 设置；</p>
+</li>
+<li><p>点击 <code>New SSH key</code> ，<code>Title</code> 输入框随意，<code>Key</code> 输入框填入步骤 <em>2</em> 公钥的内容；</p>
+</li>
+<li><p>服务器命令窗口输入以下命令测试是否成功；</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">ssh -T git@github.com</span><br></pre></td></tr></table></figure></li>
+<li><p>成功后即可 <code>clone</code> 代码；</p>
+</li>
+</ol>
+<h1 id="PM2-常用命令"><a href="#PM2-常用命令" class="headerlink" title="PM2 常用命令"></a>PM2 常用命令</h1><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">npm run dev  等同于 pm2 start  npm -- run dev</span><br><span class="line">npm start  等同于 pm2 start npm -- start </span><br><span class="line"><span class="meta"></span></span><br><span class="line"><span class="meta">#</span><span class="bash"> 命名进程名</span></span><br><span class="line">pm2 start npm --name test -- run dev</span><br><span class="line">pm2 start npm --name test -- start </span><br><span class="line"><span class="meta"></span></span><br><span class="line"><span class="meta">#</span><span class="bash"> 查看</span></span><br><span class="line">pm2 list</span><br><span class="line"><span class="meta">#</span><span class="bash"> 重载进程</span></span><br><span class="line">pm2 reload &lt;id&gt;</span><br></pre></td></tr></table></figure>
+]]></content>
+      <categories>
+        <category>大前端</category>
+      </categories>
+      <tags>
+        <tag>linux</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>gridsome 安裝</title>
     <url>/2021/10/20/init-gridsome/</url>
     <content><![CDATA[<p>Gridsome 初始化安装，参照<a href="https://www.gridsome.cn/docs/#how-to-install">官网</a> </p>
