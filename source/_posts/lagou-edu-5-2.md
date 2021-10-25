@@ -7,6 +7,7 @@ categories:
 tags:
 - 大前端
 - node
+cover: https://tse1-mm.cn.bing.net/th/id/OIP-C.Wb-Xm0eazG3N8h6f5mgT3wHaD4?pid=ImgDet&rs=1
 ---
 
 NodeJS + Redis 实现漂流瓶接口
