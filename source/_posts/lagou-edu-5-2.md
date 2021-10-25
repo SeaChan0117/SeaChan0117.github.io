@@ -1,5 +1,5 @@
 ---
-title: 拉钩学习 5-2 作业
+title: NodeJS + Redis 实现漂流瓶接口
 date: 2021-10-19 22:02:54
 categories:
 - 大前端
@@ -9,7 +9,7 @@ tags:
 - node
 ---
 
-拉钩学习 5-2 作业
+NodeJS + Redis 实现漂流瓶接口
 <!--more-->
 
 ## 界面：http://117.50.1.138/
