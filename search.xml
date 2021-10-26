@@ -1945,7 +1945,7 @@
     <title>JavaScript 中的 this 到底是什么</title>
     <url>/2021/06/07/this/</url>
     <content><![CDATA[<p>文章刚初始化，后续完善内容。。。</p>
-<iframe src="../page/index.html" frameborder="0"></iframe>
+<iframe src="/page/index.html" frameborder="0"></iframe>
 ]]></content>
       <categories>
         <category>JavaScript</category>
