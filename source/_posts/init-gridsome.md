@@ -2,6 +2,7 @@
 title: gridsome 安裝
 categories: Tools
 tags: gridsome
+cover: https://dev-to-uploads.s3.amazonaws.com/i/yeq5sadxv3265n70vody.jpeg
 ---
 
 Gridsome 初始化安装，参照[官网](https://www.gridsome.cn/docs/#how-to-install) 

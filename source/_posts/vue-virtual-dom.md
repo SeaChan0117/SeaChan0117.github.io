@@ -5,6 +5,7 @@ categories:
 - Vue
 tags:
 - 虚拟DOM
+cover: https://tse2-mm.cn.bing.net/th/id/OIP-C.I8WjG7t5TvYF6NQkVjIU0gHaFB?pid=ImgDet&rs=1
 ---
 
 学习 **vue** 源码前，需对 **虚拟Dom** 有一定的了解，本文将通过 **snabbdom** 库，对 **虚拟Dom** 进行学习，原因是 **Vue** 的 **虚拟Dom** 实现就是基于 **snabbdom** 改造的。

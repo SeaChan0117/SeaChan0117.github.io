@@ -5,6 +5,7 @@ categories:
 - JavaScript
 tags:
 - JavaScript
+cover: https://tse3-mm.cn.bing.net/th/id/OIP-C.qKma0rit1EkV8n_94yqXggHaD4?pid=ImgDet&rs=1
 ---
 找工作的小伙伴是否有注意到，现在招聘要求中基本都会涉及性能优化的部分？  
 前端涉及优化点很多，本文重点关注JavaScript语言层面能做的优化，今天我们就来让 JavaScript 搞快点，从以下几点展开介绍：

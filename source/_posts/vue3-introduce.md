@@ -3,6 +3,7 @@ title: Vue3 介绍
 date: 2021-07-17 15:59:08
 categories:
 tags:
+cover: https://res.cloudinary.com/dgvkvirqh/image/upload/v1603096497/1_xg4ZkSYAKYoJ5TV_vrEVug_ybnh6m.png
 ---
 
 # Vue.js 3.0 源码组织方式

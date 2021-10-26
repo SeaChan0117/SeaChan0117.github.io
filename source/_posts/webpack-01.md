@@ -6,6 +6,7 @@ categories:
 - 工程化
 tags:
 - webpack
+cover: https://zhaoda.gitbooks.io/webpack/content/images/what-is-webpack.png
 ---
 ![gulp](bg.jpg)
 

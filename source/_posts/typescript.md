@@ -7,6 +7,7 @@ categories:
 tags:
 - TypeScript
 - 大前端
+cover: https://tse1-mm.cn.bing.net/th/id/R-C.7a4ae007197ceb746e17f73c4e14120e?rik=W17GuvHJ8u%2fF8Q&riu=http%3a%2f%2fwww.redspark.io%2fwp-content%2fuploads%2f2015%2f11%2ftypescript.png&ehk=tlOAUZbvbaRCPihITuGnh6BEwAFwJwioeifMWqJPa0w%3d&risl=&pid=ImgRaw&r=0
 ---
 ![TypeScript][pic_1]
 <!--more-->

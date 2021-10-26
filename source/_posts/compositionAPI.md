@@ -3,6 +3,7 @@ title: Composition API
 date: 2021-07-17 17:36:18
 categories: Vue3
 tags: Vue3
+cover: https://tse4-mm.cn.bing.net/th/id/OIP-C.XAFDevIS3H4zaftHefYOsAHaGH?pid=ImgDet&rs=1
 ---
 
 # Composition API

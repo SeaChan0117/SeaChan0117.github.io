@@ -7,6 +7,7 @@ categories:
 tags:
 - React
 - Redux
+cover: https://tse2-mm.cn.bing.net/th/id/OIP-C.nM2Q6i_p3uOqoU2tboGzygHaD6?pid=ImgDet&rs=1
 ---
 
 ![redux 工作流程](redux-workflow.png)

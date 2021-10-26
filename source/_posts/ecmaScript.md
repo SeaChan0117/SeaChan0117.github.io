@@ -8,6 +8,7 @@ tags:
 - JavaScript
 - ES6
 - ES2015
+cover: https://tse1-mm.cn.bing.net/th/id/OIP-C.CZ0sjpBMOZw23b5CzpnbzwHaEK?pid=ImgDet&rs=1
 ---
 # ECMAScript（ES）：
 也是脚本语言，通常被看成是JavaScript的标准化规范，实际上JavaScript是ES的扩展语言，ES提供了基本的语法，比如怎么去定义变量，怎么进行条件判断等。JavaScript则实现了这些语法，并做了相应的扩展，比如在浏览器环境中操作BOM/DOM，在node环境中操作文件等操作。

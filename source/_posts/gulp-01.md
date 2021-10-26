@@ -6,6 +6,7 @@ categories:
 - 工程化
 tags:
 - gulp
+cover: https://tse1-mm.cn.bing.net/th/id/R-C.a04c6d4902fe140cf7df7207212e1f4d?rik=DTzKlZiCsyHl1w&riu=http%3a%2f%2fwww.michaellerner.net%2fwp-content%2fuploads%2f2016%2f09%2fgulp-logo.jpg&ehk=S79Nwe6ktUUU00%2bq29NiHTeBz4HolYy5q8oZqO34Rho%3d&risl=&pid=ImgRaw&r=0
 ---
 ![gulp](bg.jpg)
 

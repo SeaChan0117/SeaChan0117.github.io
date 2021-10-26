@@ -6,6 +6,7 @@ categories:
 - 自动化部署
 tags:
 - Github Actions
+cover: https://tse4-mm.cn.bing.net/th/id/OIP-C.sraD8ACyrCwmTgj26uRjiQHaDv?pid=ImgDet&rs=1
 ---
 **CI/CD** 已经是现代互联网项目的主流，它能帮助我们处理繁琐的打包构建工作，本博客是基于 **Travis CI** 构建的，最近在学习中遇到了 Github Actions，感觉很强大，很好玩，就此记录一下学习过程中的使用。
 

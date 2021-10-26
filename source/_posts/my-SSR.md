@@ -7,6 +7,7 @@ categories:
 tags:
 - SSR
 - 服务端渲染
+cover: https://tse4-mm.cn.bing.net/th/id/OIP-C.7DmLGiBJMEkcF40ALjWKmgHaE4?pid=ImgDet&rs=1
 ---
 # SSR（Server Side Render）
 

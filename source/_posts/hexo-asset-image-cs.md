@@ -5,6 +5,7 @@ categories:
 - Hexo
 tags:
 - Hexo
+cover: https://tse2-mm.cn.bing.net/th/id/OIP-C._0Uk0LR-X6hfrBl7Jc1eDAHaEK?pid=ImgDet&rs=1
 ---
 都说 Hexo 是 markdown 语法，插入图片不也用语法插入就OK了么，但是我在插入图片时，遇到了问题。
 
