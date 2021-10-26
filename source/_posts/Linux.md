@@ -191,7 +191,7 @@ vi /etc/profile
 #编辑,在文档最后一行 添加下边代码
 export PATH=$PATH:你的MySQL解压路径/mysql-8.0.25/bin:你的MySQL解压路径/mysql-8.0.25/lib
 ```
-
+![配置profile](配置profile.png)
 ## 编辑 `my.cnf`
 
 * 打开文件
@@ -261,7 +261,7 @@ cd /data01/mysql/mysql-8.0.25/bin/
 2021-10-26T01:51:52.076838Z 1 [System] [MY-013577] [InnoDB] InnoDB initialization has ended.
 2021-10-26T01:51:53.498736Z 6 [Note] [MY-010454] [Server] A temporary password is generated for root@localhost: dj7=M4ajHok1
 ```
-
+![初始化成功](初始化成功.png)
 ## 启动 `MySQL`
 
 ```sh
