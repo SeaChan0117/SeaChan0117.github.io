@@ -1017,7 +1017,7 @@
 <p>2.使用 Monorepo 管理项目结构，把不同功能的代码放在不同的 package 中管理，功能模块划分明确，依赖关系明确，功能模块也可单独使用；</p>
 <span id="more"></span>
 <h1 id="Vue-js-3-0-不同构建版本"><a href="#Vue-js-3-0-不同构建版本" class="headerlink" title="Vue.js 3.0 不同构建版本"></a>Vue.js 3.0 不同构建版本</h1><h2 id="cjs"><a href="#cjs" class="headerlink" title="cjs"></a>cjs</h2><p>完整版的 vue ，包含运行时和编译器；</p>
-<h3 id="vue-cjs-js"><a href="#vue-cjs-js" class="headerlink" title="vue.cjs.js"></a>vue.cjs.js</h3><p>开发版本，代码未没有被压缩；</p>
+<h3 id="vue-cjs-js"><a href="#vue-cjs-js" class="headerlink" title="vue.cjs.js"></a>vue.cjs.js</h3><p>开发版本，代码没有被压缩；</p>
 <h3 id="vue-cjs-prod-js"><a href="#vue-cjs-prod-js" class="headerlink" title="vue.cjs.prod.js"></a>vue.cjs.prod.js</h3><p>生产版本，代码被压缩；</p>
 <h2 id="global"><a href="#global" class="headerlink" title="global"></a>global</h2><p>以下都可以在浏览器中使用 script 标签进行导入，导入后会有一个全局的 Vue 对象；</p>
 <h3 id="vue-global-js"><a href="#vue-global-js" class="headerlink" title="vue.global.js"></a>vue.global.js</h3><p>完整版的 vue，包含编译器和运行时，开发版本，代码没有压缩；</p>
