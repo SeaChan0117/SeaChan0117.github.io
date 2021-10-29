@@ -2,7 +2,7 @@
 <search>
   <entry>
     <title>通过 Hexo 和 Travis 构建一个属于自己的博客</title>
-    <url>/2021/10/28/hexo-usage/</url>
+    <url>/2021/10/29/hexo-usage/</url>
     <content><![CDATA[<p>　　<strong>最近开启了大前端学习的道路，从事前端行业两年多了，想要一个自己的 Blog，不管是学习记录还是生活记录，都可以使用起来，而不是繁杂难选的三方平台，乘着学习过程中看到过的 Hexo＋Travis 的方式搭建自己的博客，我也兴致勃勃的想试试，此时你看到的就是搭建结果，这也是第一篇博客！</strong>  </p>
 <h1 id="前置准备"><a href="#前置准备" class="headerlink" title="前置准备"></a>前置准备</h1><p>　　流浪在大前端的今天怎么能没有 node 呢，node 是必备的，大家自行安装即可=。=；  </p>
 <span id="more"></span>
@@ -35,6 +35,33 @@
       </categories>
       <tags>
         <tag>hexo</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>gridsome 安裝</title>
+    <url>/2021/10/29/init-gridsome/</url>
+    <content><![CDATA[<p>Gridsome 初始化安装，参照<a href="https://www.gridsome.cn/docs/#how-to-install">官网</a> </p>
+<h1 id="安装"><a href="#安装" class="headerlink" title="安装"></a>安装</h1><p>全局安装 gridsome 的脚手架工具，<code>yarn global add @gridsome/cli</code></p>
+<h1 id="创建项目"><a href="#创建项目" class="headerlink" title="创建项目"></a>创建项目</h1><h2 id="sharp"><a href="#sharp" class="headerlink" title="sharp"></a>sharp</h2><p>官方给出在上一步安装脚手架后，可直接使用脚手架命令 <code>gridsome create my-gridsome-site</code> 创建一个名为 my-gridsome-site 的初始化项目，但是这样创建很难成功，因为 gridsome 依赖第三方的包 sharp，用于处理图片，它包含很多 C++ 文件，安装时需要编译，即需要 C++ 编译环境；sharp 还依赖一个 libvips 包，该包文件较大，在国内下载容易失败，即导致 sharp 难以安装成功；<a href="https://sharp.pixelplumbing.com/install#chinese-mirror">sharp官网</a> 提供了一个中国镜像解决该问题；</p>
+<span id="more"></span>
+<p>执行命令配置 sharp 镜像：</p>
+<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line">npm config <span class="built_in">set</span> sharp_binary_host <span class="string">&quot;https://npm.taobao.org/mirrors/sharp&quot;</span></span><br><span class="line">npm config <span class="built_in">set</span> sharp_libvips_binary_host <span class="string">&quot;https://npm.taobao.org/mirrors/sharp-libvips&quot;</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="C-编译环境"><a href="#C-编译环境" class="headerlink" title="C++ 编译环境"></a>C++ 编译环境</h2><p>以上配置完之后，在执行初始化项目时会安装 sharp，我们还差一个 C++ 编译环境；</p>
+<p>安装 node-gyp</p>
+<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line">yarn global add node-gyp</span><br></pre></td></tr></table></figure>
+
+<p>node-gyp 安装后，还需要安装 node-gyp 相关的使用套件，参考<a href="https://github.com/nodejs/node-gyp#on-windows">官方库文档</a> ，此处我本地以 Windows 为例；</p>
+<h3 id="安装-Python"><a href="#安装-Python" class="headerlink" title="安装 Python"></a><a href="https://docs.python.org/3/using/windows.html#the-microsoft-store-package">安装 Python</a></h3><h3 id="安装-windows-build-tools"><a href="#安装-windows-build-tools" class="headerlink" title="安装 windows-build-tools"></a>安装 windows-build-tools</h3><figure class="highlight sh"><table><tr><td class="code"><pre><span class="line">npm install --global --production windows-build-tools</span><br></pre></td></tr></table></figure>
+
+<p>安装 windows-build-tools 过程安装失败，查了资料，要使用 32 位的 node.js，故重新安装 node，再执行上边命令安装 windows-build-tools 即可；</p>
+<h2 id="创建"><a href="#创建" class="headerlink" title="创建"></a>创建</h2><p>执行 <code>gridsome create my-gridsome-site</code> 创建即可；</p>
+]]></content>
+      <categories>
+        <category>Tools</category>
+      </categories>
+      <tags>
+        <tag>gridsome</tag>
       </tags>
   </entry>
   <entry>
@@ -98,33 +125,6 @@
       </categories>
       <tags>
         <tag>MongoDB</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>gridsome 安裝</title>
-    <url>/2021/10/28/init-gridsome/</url>
-    <content><![CDATA[<p>Gridsome 初始化安装，参照<a href="https://www.gridsome.cn/docs/#how-to-install">官网</a> </p>
-<h1 id="安装"><a href="#安装" class="headerlink" title="安装"></a>安装</h1><p>全局安装 gridsome 的脚手架工具，<code>yarn global add @gridsome/cli</code></p>
-<h1 id="创建项目"><a href="#创建项目" class="headerlink" title="创建项目"></a>创建项目</h1><h2 id="sharp"><a href="#sharp" class="headerlink" title="sharp"></a>sharp</h2><p>官方给出在上一步安装脚手架后，可直接使用脚手架命令 <code>gridsome create my-gridsome-site</code> 创建一个名为 my-gridsome-site 的初始化项目，但是这样创建很难成功，因为 gridsome 依赖第三方的包 sharp，用于处理图片，它包含很多 C++ 文件，安装时需要编译，即需要 C++ 编译环境；sharp 还依赖一个 libvips 包，该包文件较大，在国内下载容易失败，即导致 sharp 难以安装成功；<a href="https://sharp.pixelplumbing.com/install#chinese-mirror">sharp官网</a> 提供了一个中国镜像解决该问题；</p>
-<span id="more"></span>
-<p>执行命令配置 sharp 镜像：</p>
-<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line">npm config <span class="built_in">set</span> sharp_binary_host <span class="string">&quot;https://npm.taobao.org/mirrors/sharp&quot;</span></span><br><span class="line">npm config <span class="built_in">set</span> sharp_libvips_binary_host <span class="string">&quot;https://npm.taobao.org/mirrors/sharp-libvips&quot;</span></span><br></pre></td></tr></table></figure>
-
-<h2 id="C-编译环境"><a href="#C-编译环境" class="headerlink" title="C++ 编译环境"></a>C++ 编译环境</h2><p>以上配置完之后，在执行初始化项目时会安装 sharp，我们还差一个 C++ 编译环境；</p>
-<p>安装 node-gyp</p>
-<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line">yarn global add node-gyp</span><br></pre></td></tr></table></figure>
-
-<p>node-gyp 安装后，还需要安装 node-gyp 相关的使用套件，参考<a href="https://github.com/nodejs/node-gyp#on-windows">官方库文档</a> ，此处我本地以 Windows 为例；</p>
-<h3 id="安装-Python"><a href="#安装-Python" class="headerlink" title="安装 Python"></a><a href="https://docs.python.org/3/using/windows.html#the-microsoft-store-package">安装 Python</a></h3><h3 id="安装-windows-build-tools"><a href="#安装-windows-build-tools" class="headerlink" title="安装 windows-build-tools"></a>安装 windows-build-tools</h3><figure class="highlight sh"><table><tr><td class="code"><pre><span class="line">npm install --global --production windows-build-tools</span><br></pre></td></tr></table></figure>
-
-<p>安装 windows-build-tools 过程安装失败，查了资料，要使用 32 位的 node.js，故重新安装 node，再执行上边命令安装 windows-build-tools 即可；</p>
-<h2 id="创建"><a href="#创建" class="headerlink" title="创建"></a>创建</h2><p>执行 <code>gridsome create my-gridsome-site</code> 创建即可；</p>
-]]></content>
-      <categories>
-        <category>Tools</category>
-      </categories>
-      <tags>
-        <tag>gridsome</tag>
       </tags>
   </entry>
   <entry>
