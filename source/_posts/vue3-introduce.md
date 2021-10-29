@@ -19,7 +19,7 @@ cover: https://res.cloudinary.com/dgvkvirqh/image/upload/v1603096497/1_xg4ZkSYAK
 
 ### vue.cjs.js
 
-开发版本，代码未没有被压缩；
+开发版本，代码没有被压缩；
 
 ### vue.cjs.prod.js
 
