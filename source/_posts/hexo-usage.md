@@ -2,7 +2,6 @@
 title: 通过 Hexo 和 Travis 构建一个属于自己的博客
 categories: Tools
 tags: hexo
-top: true
 cover: https://tse2-mm.cn.bing.net/th/id/OIP-C._0Uk0LR-X6hfrBl7Jc1eDAHaEK?pid=ImgDet&rs=1
 ---
 　　**最近开启了大前端学习的道路，从事前端行业两年多了，想要一个自己的 Blog，不管是学习记录还是生活记录，都可以使用起来，而不是繁杂难选的三方平台，乘着学习过程中看到过的 Hexo＋Travis 的方式搭建自己的博客，我也兴致勃勃的想试试，此时你看到的就是搭建结果，这也是第一篇博客！**  
