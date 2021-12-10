@@ -1,8 +1,90 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
+    <title>图片懒加载</title>
+    <url>/2021/12/10/lazy-load/</url>
+    <content><![CDATA[<h1 id="注"><a href="#注" class="headerlink" title="注"></a>注</h1><p>本文针对不理解懒加载实现或者没实践过懒加载实现的开发人员，老手可忽略=。=</p>
+<h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>懒加载对于稍微有点开发经验的开发人员来说，多多少少都用过，至少听过，也都大概知道是为了用户体验优化性能而做的，说起来今天为什么突然想记录图片懒加载呢？</p>
+<p>主要原因是，目前太多的插件或类库有现成的懒加载供开发者使用，越来越多的年轻开发者对懒加载的实现不是很在意，毕竟很多拿来就用了，正好自己最近在面试（还没被问过），顺带记录一下。</p>
+<h1 id="什么是图片懒加载"><a href="#什么是图片懒加载" class="headerlink" title="什么是图片懒加载"></a>什么是图片懒加载</h1><p>懒加载，即按需加载，需要的时候再加载，最常见的就是图片懒加载，树的懒加载，包括目前前端框架的一些组件或页面懒加载等；</p>
+<p>图片懒加载，就是在用户打开一个有很多图片的页面时，初始化只加载用户可视区域的图片，当用户滚动时再将接下来 <em>要展示</em> 的图片加载，通过减少或者延迟请求次数，缓解浏览器压力，增强用户体验。</p>
+<p>本文后续使用 <em>懒加载</em> 统一表示本文主题 <em>图片懒加载</em></p>
+<h1 id="实现原理"><a href="#实现原理" class="headerlink" title="实现原理"></a>实现原理</h1><h2 id="没有懒加载"><a href="#没有懒加载" class="headerlink" title="没有懒加载"></a>没有懒加载</h2><blockquote>
+<p>代码</p>
+</blockquote>
+<figure class="highlight html"><table><tr><td class="code"><pre><span class="line"><span class="meta">&lt;!DOCTYPE <span class="meta-keyword">html</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">html</span> <span class="attr">lang</span>=<span class="string">&quot;en&quot;</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">head</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">meta</span> <span class="attr">charset</span>=<span class="string">&quot;UTF-8&quot;</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">title</span>&gt;</span>No LazyLoad<span class="tag">&lt;/<span class="name">title</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">style</span>&gt;</span><span class="css"></span></span><br><span class="line"><span class="css">        <span class="selector-tag">img</span> &#123;</span></span><br><span class="line"><span class="css">            <span class="attribute">display</span>: block;</span></span><br><span class="line"><span class="css">            <span class="attribute">width</span>: <span class="number">300px</span>;</span></span><br><span class="line"><span class="css">            <span class="attribute">height</span>: <span class="number">200px</span>;</span></span><br><span class="line"><span class="css">        &#125;</span></span><br><span class="line"><span class="css">    </span><span class="tag">&lt;/<span class="name">style</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">head</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">body</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">img</span> <span class="attr">src</span>=<span class="string">&quot;imgs/1.jpg&quot;</span> <span class="attr">alt</span>=<span class="string">&quot;1&quot;</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">img</span> <span class="attr">src</span>=<span class="string">&quot;imgs/2.jpg&quot;</span> <span class="attr">alt</span>=<span class="string">&quot;2&quot;</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">img</span> <span class="attr">src</span>=<span class="string">&quot;imgs/3.jpg&quot;</span> <span class="attr">alt</span>=<span class="string">&quot;3&quot;</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">img</span> <span class="attr">src</span>=<span class="string">&quot;imgs/4.jpg&quot;</span> <span class="attr">alt</span>=<span class="string">&quot;4&quot;</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">img</span> <span class="attr">src</span>=<span class="string">&quot;imgs/5.jpg&quot;</span> <span class="attr">alt</span>=<span class="string">&quot;5&quot;</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">img</span> <span class="attr">src</span>=<span class="string">&quot;imgs/6.jpg&quot;</span> <span class="attr">alt</span>=<span class="string">&quot;6&quot;</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">img</span> <span class="attr">src</span>=<span class="string">&quot;imgs/7.jpg&quot;</span> <span class="attr">alt</span>=<span class="string">&quot;7&quot;</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">img</span> <span class="attr">src</span>=<span class="string">&quot;imgs/8.jpg&quot;</span> <span class="attr">alt</span>=<span class="string">&quot;8&quot;</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">img</span> <span class="attr">src</span>=<span class="string">&quot;imgs/9.jpg&quot;</span> <span class="attr">alt</span>=<span class="string">&quot;9&quot;</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">body</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">html</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>页面结果</p>
+</blockquote>
+<p><img src="/2021/12/10/lazy-load/%E5%85%A8%E5%8A%A0%E8%BD%BD%E9%A1%B5%E9%9D%A2.png" alt="全加载页面.png"></p>
+<h2 id="懒加载原理"><a href="#懒加载原理" class="headerlink" title="懒加载原理"></a>懒加载原理</h2><p>懒加载实现原理我做了一张图示：<br><img src="/2021/12/10/lazy-load/%E5%9B%BE%E7%89%87%E6%87%92%E5%8A%A0%E8%BD%BD.png" alt="图片懒加载.png"></p>
+<h2 id="懒加载实现"><a href="#懒加载实现" class="headerlink" title="懒加载实现"></a>懒加载实现</h2><p>懒加载要做以下几件事：</p>
+<blockquote>
+<ol>
+<li>初始化默认视口内的图片已加载；</li>
+</ol>
+</blockquote>
+<blockquote>
+<ol start="2">
+<li>未加载的 <code>img</code> 默认通过一统一的图片占位，即一般使用一张 <code>loading</code> 状态的图，当加载过程慢时，给用户一种交互式的体验；</li>
+</ol>
+</blockquote>
+<blockquote>
+<ol start="3">
+<li>未加载的 <code>img</code> 要预存真实图片的待加载路径，一般使用 <code>data-set</code>，即此处使用 <code>data-src</code> 预存加载路径；</li>
+</ol>
+</blockquote>
+<blockquote>
+<ol start="3">
+<li>滚动时判断图片距离视窗顶部的距离，即上边原理图中的结论，当条件成立时，将 <code>img</code> 的 <code>src</code> 替换为 <code>data-src</code>；</li>
+</ol>
+</blockquote>
+<blockquote>
+<ol start="4">
+<li><code>img</code> 标签通过替换过来的 <code>src</code> 去加载所需图片，懒加载完成；</li>
+</ol>
+</blockquote>
+<p>上代码：</p>
+<figure class="highlight html"><table><tr><td class="code"><pre><span class="line"><span class="meta">&lt;!DOCTYPE <span class="meta-keyword">html</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">html</span> <span class="attr">lang</span>=<span class="string">&quot;en&quot;</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">head</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">meta</span> <span class="attr">charset</span>=<span class="string">&quot;UTF-8&quot;</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">title</span>&gt;</span>LazyLoad<span class="tag">&lt;/<span class="name">title</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">style</span>&gt;</span><span class="css"></span></span><br><span class="line"><span class="css">        <span class="selector-tag">img</span> &#123;</span></span><br><span class="line"><span class="css">            <span class="attribute">display</span>: block;</span></span><br><span class="line"><span class="css">            <span class="attribute">width</span>: <span class="number">300px</span>;</span></span><br><span class="line"><span class="css">            <span class="attribute">height</span>: <span class="number">200px</span>;</span></span><br><span class="line"><span class="css">        &#125;</span></span><br><span class="line"><span class="css">    </span><span class="tag">&lt;/<span class="name">style</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">head</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">body</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">img</span> <span class="attr">src</span>=<span class="string">&quot;imgs/load.gif&quot;</span> <span class="attr">data-src</span>=<span class="string">&quot;imgs/1.jpg&quot;</span> <span class="attr">alt</span>=<span class="string">&quot;1&quot;</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">img</span> <span class="attr">src</span>=<span class="string">&quot;imgs/load.gif&quot;</span> <span class="attr">data-src</span>=<span class="string">&quot;imgs/2.jpg&quot;</span> <span class="attr">alt</span>=<span class="string">&quot;2&quot;</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">img</span> <span class="attr">src</span>=<span class="string">&quot;imgs/load.gif&quot;</span> <span class="attr">data-src</span>=<span class="string">&quot;imgs/3.jpg&quot;</span> <span class="attr">alt</span>=<span class="string">&quot;3&quot;</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">img</span> <span class="attr">src</span>=<span class="string">&quot;imgs/load.gif&quot;</span> <span class="attr">data-src</span>=<span class="string">&quot;imgs/4.jpg&quot;</span> <span class="attr">alt</span>=<span class="string">&quot;4&quot;</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">img</span> <span class="attr">src</span>=<span class="string">&quot;imgs/load.gif&quot;</span> <span class="attr">data-src</span>=<span class="string">&quot;imgs/5.jpg&quot;</span> <span class="attr">alt</span>=<span class="string">&quot;5&quot;</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">img</span> <span class="attr">src</span>=<span class="string">&quot;imgs/load.gif&quot;</span> <span class="attr">data-src</span>=<span class="string">&quot;imgs/6.jpg&quot;</span> <span class="attr">alt</span>=<span class="string">&quot;6&quot;</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">img</span> <span class="attr">src</span>=<span class="string">&quot;imgs/load.gif&quot;</span> <span class="attr">data-src</span>=<span class="string">&quot;imgs/7.jpg&quot;</span> <span class="attr">alt</span>=<span class="string">&quot;7&quot;</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">img</span> <span class="attr">src</span>=<span class="string">&quot;imgs/load.gif&quot;</span> <span class="attr">data-src</span>=<span class="string">&quot;imgs/8.jpg&quot;</span> <span class="attr">alt</span>=<span class="string">&quot;8&quot;</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">img</span> <span class="attr">src</span>=<span class="string">&quot;imgs/load.gif&quot;</span> <span class="attr">data-src</span>=<span class="string">&quot;imgs/9.jpg&quot;</span> <span class="attr">alt</span>=<span class="string">&quot;9&quot;</span>&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="tag">&lt;<span class="name">script</span>&gt;</span><span class="javascript"></span></span><br><span class="line"><span class="javascript">    <span class="keyword">const</span> imgs = <span class="built_in">document</span>.getElementsByTagName(<span class="string">&#x27;img&#x27;</span>)</span></span><br><span class="line"><span class="javascript">    <span class="keyword">const</span> len = imgs.length</span></span><br><span class="line"><span class="javascript">    <span class="comment">// 初始化默认视口内的图片已加载, lazyLoad 默认执行一遍</span></span></span><br><span class="line"><span class="javascript">    lazyLoad()</span></span><br><span class="line"><span class="javascript">    <span class="built_in">window</span>.onscroll = lazyLoad</span></span><br><span class="line"><span class="javascript"></span></span><br><span class="line"><span class="javascript">    <span class="function"><span class="keyword">function</span> <span class="title">lazyLoad</span> (<span class="params"></span>) </span>&#123;</span></span><br><span class="line"><span class="javascript">        <span class="keyword">const</span> H0 = <span class="built_in">document</span>.documentElement.clientHeight</span></span><br><span class="line"><span class="javascript">        <span class="keyword">const</span> H1 = <span class="built_in">document</span>.documentElement.scrollTop || <span class="built_in">document</span>.body.scrollTop</span></span><br><span class="line"><span class="javascript">        <span class="keyword">for</span> (<span class="keyword">let</span> i = <span class="number">0</span>; i &lt; len; i++) &#123;</span></span><br><span class="line"><span class="javascript">            <span class="keyword">const</span> img = imgs[i]</span></span><br><span class="line"><span class="javascript">            <span class="keyword">if</span> ((img.offsetTop &lt; H0 + H1)) &#123;</span></span><br><span class="line"><span class="javascript">                <span class="keyword">if</span> (img.getAttribute(<span class="string">&#x27;src&#x27;</span>) === <span class="string">&#x27;imgs/load.gif&#x27;</span>) &#123;</span></span><br><span class="line"><span class="javascript">                    img.src = img.getAttribute(<span class="string">&#x27;data-src&#x27;</span>)</span></span><br><span class="line"><span class="javascript">                &#125;</span></span><br><span class="line"><span class="javascript">            &#125;</span></span><br><span class="line"><span class="javascript">        &#125;</span></span><br><span class="line"><span class="javascript">    &#125;</span></span><br><span class="line"><span class="javascript"></span><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">body</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">html</span>&gt;</span></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p> 懒加载结果：<br> <img src="/2021/12/10/lazy-load/%E6%87%92%E5%8A%A0%E8%BD%BD%E9%A1%B5%E9%9D%A2.png" alt="懒加载页面.png"><br> <img src="/2021/12/10/lazy-load/%E6%87%92%E5%8A%A0%E8%BD%BD%E6%BB%9A%E5%8A%A8.gif" alt="懒加载滚动.gif"></p>
+<p>可以看到，经过懒加载后，初始化只加载了 4 张图片，对比全加载时，减少了很多初始化时的请求，当浏滚动条滚动时，依次加载所需图片，一个简单的懒加载就实现了，是不是很简单呢。</p>
+<h2 id="优化"><a href="#优化" class="headerlink" title="优化"></a>优化</h2><p>上述代码很明显可以看出两个问题：</p>
+<ul>
+<li>滚动事件频繁触发，需要节流操作；</li>
+<li>每次执行 <code>lazyLoad</code> 都会遍历所有的 <code>img</code>；</li>
+</ul>
+<p>直接上代码：</p>
+<figure class="highlight js"><table><tr><td class="code"><pre><span class="line"><span class="keyword">const</span> imgs = <span class="built_in">document</span>.getElementsByTagName(<span class="string">&#x27;img&#x27;</span>)</span><br><span class="line"><span class="keyword">const</span> len = imgs.length</span><br><span class="line"></span><br><span class="line"><span class="comment">// start 标记已加载过的图片索引</span></span><br><span class="line"><span class="keyword">let</span> start = <span class="number">0</span></span><br><span class="line"><span class="comment">// 初始化默认视口内的图片已加载, lazyLoad 默认执行一遍</span></span><br><span class="line">lazyLoad()</span><br><span class="line"><span class="comment">// throttle 节流</span></span><br><span class="line"><span class="built_in">window</span>.onscroll = throttle(lazyLoad)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">lazyLoad</span> (<span class="params"></span>) </span>&#123;</span><br><span class="line">    <span class="keyword">const</span> H0 = <span class="built_in">document</span>.documentElement.clientHeight</span><br><span class="line">    <span class="keyword">const</span> H1 = <span class="built_in">document</span>.documentElement.scrollTop || <span class="built_in">document</span>.body.scrollTop</span><br><span class="line">    <span class="comment">// start === len 后，lazyLoad 触发也不再进行加载操作，即所有图片加载完了</span></span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">let</span> i = start; i &lt; len; i++) &#123;</span><br><span class="line">        <span class="built_in">console</span>.log(start)</span><br><span class="line">        <span class="keyword">const</span> img = imgs[i]</span><br><span class="line">        <span class="keyword">if</span> ((img.offsetTop &lt; H0 + H1)) &#123;</span><br><span class="line">            <span class="keyword">if</span> (img.getAttribute(<span class="string">&#x27;src&#x27;</span>) === <span class="string">&#x27;imgs/load.gif&#x27;</span>) &#123;</span><br><span class="line">                img.src = img.getAttribute(<span class="string">&#x27;data-src&#x27;</span>)</span><br><span class="line">                start++</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 实现个简单的节流函数，也可使用第三方类库</span></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">throttle</span>(<span class="params">fn</span>) </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="function"><span class="keyword">function</span> (<span class="params">...args</span>) </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (fn.flag) <span class="keyword">return</span></span><br><span class="line">        fn.flag = <span class="literal">true</span></span><br><span class="line">        <span class="built_in">setTimeout</span>(<span class="function">() =&gt;</span> &#123;</span><br><span class="line">            fn(...args)</span><br><span class="line">            <span class="built_in">Reflect</span>.deleteProperty(fn, <span class="string">&#x27;flag&#x27;</span>)</span><br><span class="line">        &#125;, <span class="number">300</span>)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>通过标记加载过的图片索引和节流，针对上边的问题进行了优化，一个差不多的懒加载过程就这样完成了。</p>
+<p>但是，还有一个问题，细心的同学应该也发现了，当我们滚动到最下边时，再刷新浏览器，你会发现所有的图片都加载了。</p>
+<h1 id="IntersectionObserver"><a href="#IntersectionObserver" class="headerlink" title="IntersectionObserver"></a>IntersectionObserver</h1><p>上边说到的问题我们使用 <code>IntersectionObserver API</code> 来解决。</p>
+<h2 id="什么是-IntersectionObserver"><a href="#什么是-IntersectionObserver" class="headerlink" title="什么是 IntersectionObserver"></a>什么是 IntersectionObserver</h2><p>MDN 上这样描述：</p>
+<p><a href="https://developer.mozilla.org/zh-CN/docs/Web/API/IntersectionObserver">IntersectionObserver</a> 接口 (从属于Intersection Observer API) 提供了一种异步观察目标元素与其祖先元素或顶级文档视窗(viewport)交叉状态的方法。祖先元素与视窗(viewport)被称为根(root)。</p>
+<p>简单来说，就是监听元素是否进入了视口；</p>
+<p>具体用法可查阅相关资料，本文不做过多说明；</p>
+<p>相关链接：<br><a href="http://www.ruanyifeng.com/blog/2016/11/intersectionobserver_api.html">http://www.ruanyifeng.com/blog/2016/11/intersectionobserver_api.html</a></p>
+<h2 id="通过-IntersectionObserver-API-改造优化懒加载"><a href="#通过-IntersectionObserver-API-改造优化懒加载" class="headerlink" title="通过 IntersectionObserver API 改造优化懒加载"></a>通过 IntersectionObserver API 改造优化懒加载</h2><figure class="highlight js"><table><tr><td class="code"><pre><span class="line">lazyLoad()</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">lazyLoad</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">    <span class="keyword">const</span> imgs = <span class="built_in">document</span>.getElementsByTagName(<span class="string">&#x27;img&#x27;</span>)</span><br><span class="line">    <span class="keyword">const</span> len = imgs.length</span><br><span class="line">    <span class="comment">// 通过构造函数返回实例，实例中定义了进入视口的回调</span></span><br><span class="line">    <span class="keyword">let</span> lazyLoadObserver = <span class="keyword">new</span> IntersectionObserver(<span class="function">(<span class="params">entries, observer</span>) =&gt;</span> &#123;</span><br><span class="line">        entries.forEach(<span class="function">(<span class="params">entry, index</span>) =&gt;</span> &#123;</span><br><span class="line">            <span class="keyword">let</span> img = entry.target</span><br><span class="line">            <span class="comment">// intersectionRatio 相交率，默认是相对于浏览器视窗视口，大于 0 说明进入视口</span></span><br><span class="line">            <span class="keyword">if</span> (entry.intersectionRatio &gt; <span class="number">0</span>) &#123;</span><br><span class="line">                img.src = img.getAttribute(<span class="string">&#x27;data-src&#x27;</span>)</span><br><span class="line">                <span class="comment">// 当前图片加载完之后需要去掉监听</span></span><br><span class="line">                lazyLoadObserver.unobserve(img)</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">        &#125;)</span><br><span class="line">    &#125;)</span><br><span class="line">    <span class="comment">// 遍历 imgs，上边定义的 IntersectionObserver 实例去监听各 img</span></span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">let</span> i = <span class="number">0</span>; i &lt; len; i++) &#123;</span><br><span class="line">        lazyLoadObserver.observe(imgs[i])</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>实现结果：<br><img src="/2021/12/10/lazy-load/IntersectionObserver%E6%87%92%E5%8A%A0%E8%BD%BD.png" alt="IntersectionObserver懒加载.png"></p>
+<p>可以看到，通过 <code>IntersectionObserver API</code> 实现的懒加载，在滚动条滚动到底部后刷新浏览器，初始化只加载最后几张图片，当向上滚动滚动条时，依次向上加载图片，<br>在图片加载后通过 <code>unobserve</code> 解除监听，同时解决了上边提到的三个问题，是不是很奈斯。</p>
+<h1 id="Vue-自定义懒加载指令"><a href="#Vue-自定义懒加载指令" class="headerlink" title="Vue 自定义懒加载指令"></a>Vue 自定义懒加载指令</h1><p>既然实现了懒加载，那接下来就是套入常用的框架了，这里以 Vue 为例，将懒加载通过自定义指令方式实现。</p>
+<h2 id="Vue-自定义指令"><a href="#Vue-自定义指令" class="headerlink" title="Vue 自定义指令"></a>Vue 自定义指令</h2><p><a href="https://cn.vuejs.org/v2/guide/custom-directive.html">https://cn.vuejs.org/v2/guide/custom-directive.html</a><br><a href="https://juejin.cn/post/6844903537625808904">https://juejin.cn/post/6844903537625808904</a></p>
+<h2 id="实现图片懒加载"><a href="#实现图片懒加载" class="headerlink" title="实现图片懒加载"></a>实现图片懒加载</h2><figure class="highlight html"><table><tr><td class="code"><pre><span class="line"><span class="meta">&lt;!DOCTYPE <span class="meta-keyword">html</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">html</span> <span class="attr">lang</span>=<span class="string">&quot;en&quot;</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">head</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">meta</span> <span class="attr">charset</span>=<span class="string">&quot;UTF-8&quot;</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">title</span>&gt;</span>LazyLoad<span class="tag">&lt;/<span class="name">title</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">style</span>&gt;</span><span class="css"></span></span><br><span class="line"><span class="css">        <span class="selector-tag">img</span> &#123;</span></span><br><span class="line"><span class="css">            <span class="attribute">display</span>: block;</span></span><br><span class="line"><span class="css">            <span class="attribute">width</span>: <span class="number">300px</span>;</span></span><br><span class="line"><span class="css">            <span class="attribute">height</span>: <span class="number">200px</span>;</span></span><br><span class="line"><span class="css">        &#125;</span></span><br><span class="line"><span class="css">    </span><span class="tag">&lt;/<span class="name">style</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">head</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">body</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">div</span> <span class="attr">id</span>=<span class="string">&quot;app&quot;</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">template</span> <span class="attr">v-for</span>=<span class="string">&quot;item in 9&quot;</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">img</span> <span class="attr">v-lazyload</span>=<span class="string">&quot;`imgs/$&#123;item&#125;.jpg`&quot;</span> <span class="attr">:alt</span>=<span class="string">&quot;item&quot;</span> <span class="attr">:key</span>=<span class="string">&quot;`imgs/$&#123;item&#125;.jpg`&quot;</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">template</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="tag">&lt;<span class="name">script</span> <span class="attr">src</span>=<span class="string">&quot;https://cdn.jsdelivr.net/npm/vue/dist/vue.js&quot;</span>&gt;</span><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">script</span>&gt;</span><span class="javascript"></span></span><br><span class="line"><span class="javascript"></span></span><br><span class="line"><span class="javascript">    Vue.directive(<span class="string">&#x27;lazyload&#x27;</span>, &#123;</span></span><br><span class="line"><span class="javascript">        <span class="attr">bind</span>: <span class="function"><span class="keyword">function</span> (<span class="params">el, binding</span>) </span>&#123;</span></span><br><span class="line"><span class="javascript">            <span class="keyword">let</span> lazyLoadObserver = <span class="keyword">new</span> IntersectionObserver(<span class="function">(<span class="params">entries, observer</span>) =&gt;</span> &#123;</span></span><br><span class="line"><span class="javascript">                entries.forEach(<span class="function">(<span class="params">entry, index</span>) =&gt;</span> &#123;</span></span><br><span class="line"><span class="javascript">                    <span class="keyword">let</span> img = entry.target</span></span><br><span class="line"><span class="javascript">                    <span class="keyword">if</span> (entry.intersectionRatio &gt; <span class="number">0</span>) &#123;</span></span><br><span class="line"><span class="javascript">                        img.src = binding.value</span></span><br><span class="line"><span class="javascript">                        lazyLoadObserver.unobserve(img)</span></span><br><span class="line"><span class="javascript">                    &#125;</span></span><br><span class="line"><span class="javascript">                &#125;)</span></span><br><span class="line"><span class="javascript">            &#125;)</span></span><br><span class="line"><span class="javascript">            lazyLoadObserver.observe(el)</span></span><br><span class="line"><span class="javascript">        &#125;</span></span><br><span class="line"><span class="javascript">    &#125;)</span></span><br><span class="line"><span class="javascript">    <span class="keyword">new</span> Vue(&#123;</span></span><br><span class="line"><span class="javascript">        <span class="attr">el</span>: <span class="string">&#x27;#app&#x27;</span></span></span><br><span class="line"><span class="javascript">    &#125;)</span></span><br><span class="line"><span class="javascript"></span></span><br><span class="line"><span class="javascript"></span><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">body</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">html</span>&gt;</span></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>以上结果验证懒加载 OK，一个简单的 Vue 懒加载自定义指令就完成啦。</p>
+]]></content>
+      <categories>
+        <category>大前端</category>
+      </categories>
+      <tags>
+        <tag>懒加载</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>通过 Hexo 和 Travis 构建一个属于自己的博客</title>
-    <url>/2021/11/04/hexo-usage/</url>
+    <url>/2021/12/10/hexo-usage/</url>
     <content><![CDATA[<p>　　<strong>最近开启了大前端学习的道路，从事前端行业两年多了，想要一个自己的 Blog，不管是学习记录还是生活记录，都可以使用起来，而不是繁杂难选的三方平台，乘着学习过程中看到过的 Hexo＋Travis 的方式搭建自己的博客，我也兴致勃勃的想试试，此时你看到的就是搭建结果，这也是第一篇博客！</strong>  </p>
 <h1 id="前置准备"><a href="#前置准备" class="headerlink" title="前置准备"></a>前置准备</h1><p>　　流浪在大前端的今天怎么能没有 node 呢，node 是必备的，大家自行安装即可=。=；  </p>
 <span id="more"></span>
@@ -39,7 +121,7 @@
   </entry>
   <entry>
     <title>gridsome 安裝</title>
-    <url>/2021/11/04/init-gridsome/</url>
+    <url>/2021/12/10/init-gridsome/</url>
     <content><![CDATA[<p>Gridsome 初始化安装，参照<a href="https://www.gridsome.cn/docs/#how-to-install">官网</a> </p>
 <h1 id="安装"><a href="#安装" class="headerlink" title="安装"></a>安装</h1><p>全局安装 gridsome 的脚手架工具，<code>yarn global add @gridsome/cli</code></p>
 <h1 id="创建项目"><a href="#创建项目" class="headerlink" title="创建项目"></a>创建项目</h1><h2 id="sharp"><a href="#sharp" class="headerlink" title="sharp"></a>sharp</h2><p>官方给出在上一步安装脚手架后，可直接使用脚手架命令 <code>gridsome create my-gridsome-site</code> 创建一个名为 my-gridsome-site 的初始化项目，但是这样创建很难成功，因为 gridsome 依赖第三方的包 sharp，用于处理图片，它包含很多 C++ 文件，安装时需要编译，即需要 C++ 编译环境；sharp 还依赖一个 libvips 包，该包文件较大，在国内下载容易失败，即导致 sharp 难以安装成功；<a href="https://sharp.pixelplumbing.com/install#chinese-mirror">sharp官网</a> 提供了一个中国镜像解决该问题；</p>
@@ -100,6 +182,90 @@
       </categories>
       <tags>
         <tag>plop</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>钉子问题-动态规划</title>
+    <url>/2021/11/03/boxes-fn/</url>
+    <content><![CDATA[<h1 id="问题描述"><a href="#问题描述" class="headerlink" title="问题描述"></a>问题描述</h1><p>小明装修需要 n(1&lt;=n&lt;=200) 颗钉子，但是五金店没有散装钉子卖，只有两种盒装包装的，一种包装 4 颗，一种包装有 9 颗，请问小明最少需要买多少盒钉子才能刚好买够 n 颗，无答案时输出 -1？</p>
+<h1 id="递归"><a href="#递归" class="headerlink" title="递归"></a>递归</h1><figure class="highlight js"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">boxesFn</span>(<span class="params">n</span>) </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (n === <span class="number">0</span>) <span class="keyword">return</span> <span class="number">0</span></span><br><span class="line">    <span class="keyword">let</span> res = <span class="literal">Infinity</span></span><br><span class="line">    <span class="keyword">if</span> (n &gt;= <span class="number">4</span>) &#123;</span><br><span class="line">        res = <span class="built_in">Math</span>.min(boxesFn(n - <span class="number">4</span>) + <span class="number">1</span>, res)</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (n &gt;= <span class="number">9</span>) &#123;</span><br><span class="line">        res = <span class="built_in">Math</span>.min(boxesFn(n - <span class="number">9</span>) + <span class="number">1</span>, res)</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> res || -<span class="number">1</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="built_in">console</span>.time(<span class="string">&#x27;boxes&#x27;</span>)</span><br><span class="line"><span class="built_in">console</span>.log(boxesFn(<span class="number">100</span>))</span><br><span class="line"><span class="built_in">console</span>.timeEnd(<span class="string">&#x27;boxes&#x27;</span>)</span><br></pre></td></tr></table></figure>
+
+<h1 id="动态规划"><a href="#动态规划" class="headerlink" title="动态规划"></a>动态规划</h1><figure class="highlight js"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">boxesFn_dy</span>(<span class="params">n</span>) </span>&#123;</span><br><span class="line">    <span class="keyword">let</span> numArr = [<span class="number">4</span>, <span class="number">9</span>]</span><br><span class="line">    <span class="keyword">const</span> res = <span class="keyword">new</span> <span class="built_in">Array</span>(n + <span class="number">1</span>).fill(-<span class="number">1</span>)</span><br><span class="line">    res[<span class="number">0</span>] = <span class="number">0</span></span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">let</span> i = <span class="number">1</span>; i &lt;= n; i++) &#123;</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">let</span> j = <span class="number">0</span>; j &lt; numArr.length; j++) &#123;</span><br><span class="line">            <span class="keyword">if</span> (i &gt;= numArr[j] &amp;&amp; res[i - numArr[j]] !== -<span class="number">1</span>) &#123;</span><br><span class="line">                res[i] = <span class="built_in">Math</span>.min(res[i - numArr[j]] + <span class="number">1</span>, <span class="literal">Infinity</span>)</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> res[n]</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="built_in">console</span>.time(<span class="string">&#x27;boxesFn_dy&#x27;</span>)</span><br><span class="line"><span class="built_in">console</span>.log(boxesFn_dy(<span class="number">100</span>))</span><br><span class="line"><span class="built_in">console</span>.timeEnd(<span class="string">&#x27;boxesFn_dy&#x27;</span>)</span><br></pre></td></tr></table></figure>
+]]></content>
+      <categories>
+        <category>算法</category>
+        <category>动态规划</category>
+      </categories>
+      <tags>
+        <tag>动态规划</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>鸿蒙OS JS UI</title>
+    <url>/2021/11/02/harmony-os/</url>
+    <content><![CDATA[<h1 id="鸿蒙OS-JS-UI-框架"><a href="#鸿蒙OS-JS-UI-框架" class="headerlink" title="鸿蒙OS JS UI 框架"></a>鸿蒙OS JS UI 框架</h1><h2 id="什么是鸿蒙"><a href="#什么是鸿蒙" class="headerlink" title="什么是鸿蒙"></a>什么是鸿蒙</h2><ul>
+<li>鸿蒙（HarmonyOS）是一款由华为开发的，面向全场景的分布式操作系统，其开源项目为 OpenHarmony。</li>
+<li>超级小程序<ul>
+<li>H5 -&gt; 小程序（可使用移动端功能，离不开微信等超集 APP） -&gt; 超级小程序（脱离了 APP 的限制，依旧能使用移动端功能，且可跨设备使用移动端功能，eg: 手机端操作其他设备）</li>
+</ul>
+</li>
+<li>可剪裁的系统<ul>
+<li>128 KB - 128 MB - 4 GB （根据硬件的大小或强弱，选择性地运行整个操作系统的某些部分）</li>
+</ul>
+</li>
+<li>模改的通讯协议<ul>
+<li>类似普通话统一方言，鸿蒙成为 IOT(Internet Of Things) 互联互通的标准语言</li>
+</ul>
+</li>
+</ul>
+<h2 id="发展历史"><a href="#发展历史" class="headerlink" title="发展历史"></a>发展历史</h2><ul>
+<li>2012年，华为开始规划自有操作系统 “鸿蒙”</li>
+<li>2019年8月9日，华为发布鸿蒙 1.0</li>
+<li>2020年9月10日，华为发布鸿蒙 2.0</li>
+<li>2021年6月2日，鸿蒙正式商用<ul>
+<li>华为正式发布 HarmonyOS 2.0 及多款搭载 HarmonyOS 2.0 的新产品</li>
+</ul>
+</li>
+</ul>
+<h2 id="相关网站"><a href="#相关网站" class="headerlink" title="相关网站"></a>相关网站</h2><ul>
+<li>鸿蒙官网：<a href="https://www.harmonyos.com/">https://www.harmonyos.com/</a></li>
+<li>鸿蒙系统开发者：<a href="https://developer.harmonyos.com/">https://developer.harmonyos.com/</a></li>
+<li>华为开发者：<a href="https://developer.huawei.com/cn/">https://developer.huawei.com/cn/</a></li>
+<li>在线体验：<a href="https://playground.harmonyos.com/">https://playground.harmonyos.com/</a></li>
+<li>Gitee：<a href="https://gitee.com/openharmony">https://gitee.com/openharmony</a></li>
+<li>JS API：<a href="https://developer.harmonyos.com/cn/docs/documentation/doc-references/js-apis-overview-0000001056361791">https://developer.harmonyos.com/cn/docs/documentation/doc-references/js-apis-overview-0000001056361791</a></li>
+</ul>
+<h2 id="开发前知识储备"><a href="#开发前知识储备" class="headerlink" title="开发前知识储备"></a>开发前知识储备</h2><ul>
+<li>熟悉前端技术栈（HTML、CSS、JS）<ul>
+<li>鸿蒙开发不是浏览器环境，里面的关键字，都是仿 Web 端的（eg：鸿蒙中的 div 是自己封装的，不是 Web 端的 div）</li>
+</ul>
+</li>
+<li>熟悉微信小程序<ul>
+<li>页面结构、API、配置方式等都是参照小程序</li>
+</ul>
+</li>
+<li>熟悉 Vue<ul>
+<li>数据绑定、自定义组件、全局变量等都是参照 Vue 2</li>
+</ul>
+</li>
+<li>有安卓开发经验更好</li>
+</ul>
+<h1 id="系统架构"><a href="#系统架构" class="headerlink" title="系统架构"></a>系统架构</h1><p>鸿蒙系统架构⼀共分四层：应⽤层、框架层、系统服务层、内核层。<br><img src="/2021/11/02/harmony-os/%E7%B3%BB%E7%BB%9F%E6%9E%B6%E6%9E%84.png" alt="系统架构"></p>
+<h2 id="架构"><a href="#架构" class="headerlink" title="架构"></a>架构</h2><ul>
+<li>应用层<ul>
+<li>鸿蒙的应用由一个或多个 FA(Feature Ability) 或 PA(Particle Ability) 组成</li>
+<li>FA 有 UI 界面，提供与用户交互的能力，而 PA 无 UI 界面，提供后台运行任务的能力</li>
+</ul>
+</li>
+</ul>
+<p>因为某些原因暂时没时间学习鸿蒙啦，后续学习会继续更新</p>
+]]></content>
+      <categories>
+        <category>大前端</category>
+        <category>鸿蒙</category>
+      </categories>
+      <tags>
+        <tag>鸿蒙</tag>
       </tags>
   </entry>
   <entry>
