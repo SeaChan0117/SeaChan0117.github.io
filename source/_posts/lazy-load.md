@@ -286,3 +286,180 @@ MDN 上这样描述：
 ```
 
 以上结果验证懒加载 OK，一个简单的 Vue 懒加载自定义指令就完成啦。
+
+# 后续
+## 2021-12-14 面试
+2021-12-14 面试必要工业科技的前端岗位，面试官针对我这篇文章问了一些我对懒加载实现的思路，并且在这个基础上做了一些延展出去的场景和问题
+### 问题一
+页面图片很多，比如一千张，用户直接拖动滚动条到底部，这时上边未显示的图片加载了吗？为什么？怎么处理？  
+答：
+> 因为这篇文章一开始没打算把懒加载做得那么完善，这个问题确实没想过，上边的图确实会加载（思考了一下），所以也确实还有性能问题，因为不管是一开始实现的监听滚动事件还是 IntersectionObserver API 的实现方法，滚动过程中都上边未在视口中的图都经历了懒加载的逻辑，其实也是懒加载，但是这个场景下，用户没打算看上边那些，还是会造成性能问题或者是资源浪费的问题，有违兰懒加载的初衷；
+> 面试时针对这个问题我想的是滚动结束的时候再进懒加载的逻辑，并且懒加载的逻辑里边还要判断图片是否在视口内，包括一开始实现的图片顶部到视口的距离小于视口加滚动距离，还需要加上图片底部到视口底部的距离要小于视口高度，这样就能完善该问题；
+
+#### 实现
+```js
+const imgs = [...document.getElementsByTagName('img')]
+    // 初始化默认视口内的图片已加载, lazyLoad 默认执行一遍
+    lazyLoad()
+    // debounce 防抖，使用防抖函数在滚动停止间歇大于等于 delay 时，执行（即面试官问题中滚动停止到当前视口时，才执行）
+    window.onscroll = debounce(lazyLoad)
+
+    function lazyLoad () {
+        const H0 = document.documentElement.clientHeight
+        const H1 = document.documentElement.scrollTop || document.body.scrollTop
+        for (let i = 0; i < imgs.length; i++) {
+            const img = imgs[i]
+            if ((img.offsetTop < H0 + H1) && (img.offsetTop + img.offsetHeight > H1)) {
+                if (img.getAttribute('src') === 'imgs/load.gif') {
+                    img.src = img.getAttribute('data-src')
+                    // 从待加载图片集合中移除，全部移除后，后续不进此循环，减少不必要操作，此时 i-1 保证下一个循环的图片正确
+                    imgs.splice(i, 1)
+                    i--
+                }
+            }
+        }
+    }
+
+    // 防抖函数，滚动停止间歇大于等于 delay 时，执行
+    function debounce(fn, delay = 300) {
+     return function (...args) {
+      clearTimeout(fn.timer)
+      fn.timer = setTimeout(() => {
+       fn(...args)
+      }, delay)
+     }
+    }
+```
+
+![debounce.gif](debounce.gif)
+
+通过 debounce 修改后，得到上图结果，拖动结束时才触发懒加载，减少直接下拉太多造成的不必要加载，同时也保证了初始化默认在非顶部时刷新只加载当前视口内图片；每加载一张图片后通过 splice 将其从待加载图片集合中移除，保证后续的重复加载，减少额外的性能消耗。
+
+### 问题二
+图片加载失败的时候，需要显示一张默认裂开的图片，怎么处理？  
+答：
+> 拿到待加载图片 src 时不要直接替换页面上 img 标签的 src，通过 Image 实例设置 src 的 onerror 回调判断获取失败，并且设置 img 标签的 src 是某一默认的裂开图片。
+
+#### 实现
+```js
+    const imgs = [...document.getElementsByTagName('img')]
+    // 初始化默认视口内的图片已加载, lazyLoad 默认执行一遍
+    lazyLoad()
+    // debounce 防抖
+    window.onscroll = debounce(lazyLoad)
+    function lazyLoad () {
+        const H0 = document.documentElement.clientHeight
+        const H1 = document.documentElement.scrollTop || document.body.scrollTop
+        for (let i = 0; i < imgs.length; i++) {
+            const img = imgs[i]
+            if ((img.offsetTop < H0 + H1) && (img.offsetTop + img.offsetHeight > H1)) {
+                if (img.getAttribute('src') === 'imgs/load.gif') {
+                    // img.src = img.getAttribute('data-src')
+                    loadImage(img, img.getAttribute('data-src'))
+                    // 从待加载图片集合中移除，全部移除后，后续不进此循环，减少不必要操作，此时 i-1 保证下一个循环的图片正确
+                    imgs.splice(i, 1)
+                    i--
+                }
+            }
+        }
+    }
+
+    // 加载图片方法，失败时默认展示 errPath
+    function loadImage(imgEl, src, errPath = 'imgs/error.jpg') {
+        let img = new Image()
+        img.onload = function (e) {
+            imgEl.src = src
+        }
+        img.onerror = function (e) {
+            imgEl.src = errPath
+        }
+        img.src = src
+    }
+    
+    // 防抖函数，滚动停止间歇大于等于 delay 时，执行
+    function debounce(fn, delay = 300) {
+        return function (...args) {
+            clearTimeout(fn.timer)
+            fn.timer = setTimeout(() => {
+                fn(...args)
+            }, delay)
+        }
+    }
+```
+![加载失败展示默认一张裂开图片.png](加载失败展示默认一张裂开图片.png)
+
+
+经过实践，证明了面试时的问题应该 OK。
+
+### 问题四
+基于上一个问题，假如加载失败了让它重新再加载试一次呢，如果第二次成功就用成功的，否则就展示裂开？  
+答：
+> 加载图片方法中失败了我再调一次加载方法，甚至可以把重试次数作为参数，失败一次重试次数减一，再调加载方法就行。
+
+#### 实现
+```js
+    const imgs = [...document.getElementsByTagName('img')]
+    // 初始化默认视口内的图片已加载, lazyLoad 默认执行一遍
+    lazyLoad()
+    // debounce 防抖
+    window.onscroll = debounce(lazyLoad)
+    function lazyLoad () {
+        const H0 = document.documentElement.clientHeight
+        const H1 = document.documentElement.scrollTop || document.body.scrollTop
+        for (let i = 0; i < imgs.length; i++) {
+            const img = imgs[i]
+            if ((img.offsetTop < H0 + H1) && (img.offsetTop + img.offsetHeight > H1)) {
+                if (img.getAttribute('src') === 'imgs/load.gif') {
+                    // img.src = img.getAttribute('data-src')
+                    loadImage(img, img.getAttribute('data-src'))
+                    // 从待加载图片集合中移除，全部移除后，后续不进此循环，减少不必要操作，此时 i-1 保证下一个循环的图片正确
+                    imgs.splice(i, 1)
+                    i--
+                }
+            }
+        }
+    }
+
+    // 加载图片方法，失败时默认展示 errPath， attempt 加载错误后重试次数
+    function loadImage(imgEl, src, attempt = 3, errPath = 'imgs/error.jpg') {
+        const img = new Image()
+        img.onload = function (e) {
+            imgEl.src = src
+        }
+        img.onerror = function (e) {
+            if (attempt === 0) {
+                return imgEl.src = errPath
+            }
+           loadImage(imgEl, src, --attempt, errPath)
+        }
+        img.src = src
+    }
+    
+    // 防抖函数，滚动停止间歇大于等于 delay 时，执行
+    function debounce(fn, delay = 300) {
+        return function (...args) {
+            clearTimeout(fn.timer)
+            fn.timer = setTimeout(() => {
+                fn(...args)
+            }, delay)
+        }
+    }
+```
+
+![加载失败重试.png](加载失败重试.png)
+
+添加 attempt 参数和相关处理后，默认 attempt 重试 3 次，可以看出，图片找不到时重试了 3 次，加上一开始的一次，总的对该路径请求了 4 次。
+
+bingo，我们的懒加载又强大了！
+
+### 面试总结
+这次换工作唯一一个去现场面的，本来一开始计划都是线上面的，虽然自己对“必要”没有很了解，但莫名之中对它有很大的期待吧，也还有就是知道当天都面完，自己不用跑很多次。
+
+面试前了解到是两个技术面，顺利的话加 HR 三面。实际是四面 T T，前端面试官 + 前端负责人 + 技术总监 + HR。
+
+三个技术面都没有太着重的揪着问一些技术理论上的点，就像上边懒加载这个问题一样，很多都是具体的场景延伸出的问题，让你给解决方法或者一些思路，能看出面试官们比较老道，不是那种背一堆理论知识就能简单应付的，
+他们很看重你解决问题的能力和学习能力。整个面试过程了解到他们团队的技术范围，也能感受到这样一个团队能对个人的成长是非常大的。HR 面的话主要了解了一些我的工作经历和现在的找工作情况，也和我讲了一些公司的业务及相关情况，包括一些加班状态啥的。
+
+对这次面试的整体感觉挺好，面试官都挺不错的，整个技术团队是比较有吸引力的。
+
+看后续吧，加油学习去咯。
